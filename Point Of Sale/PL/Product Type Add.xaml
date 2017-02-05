@@ -1,0 +1,27 @@
+﻿<Window x:Class="Point_Of_Sale.PL.Product_Type_Add"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Point_Of_Sale.PL"
+        mc:Ignorable="d"
+        Title="New Product" Height="288" Width="325.666" WindowStartupLocation="CenterScreen" ResizeMode="NoResize">
+    <Grid x:Name="mainGrid">
+        <Label x:Name="label_Copy" Content="Product Type" HorizontalAlignment="Left" Margin="21,7,0,0" VerticalAlignment="Top" FontSize="13"/>
+        
+        <Label x:Name="label_Copy1" Content="Product Model" HorizontalAlignment="Left" Margin="11,44,0,0" VerticalAlignment="Top" FontSize="13"/>
+        <TextBox x:Name="newProductModel"  HorizontalAlignment="Left" Height="23" Margin="115,45,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="177" FontSize="13" CharacterCasing="Upper"/>
+        <Label x:Name="label_Copy2" Content="Unit Price" HorizontalAlignment="Left" Margin="41,79,0,0" VerticalAlignment="Top" FontSize="13"/>
+        <TextBox x:Name="unitPrice" HorizontalAlignment="Left" Height="23" Margin="115,81,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="177"  FontSize="13" LostKeyboardFocus="unitPrice_LostKeyboardFocus"/>
+        <Label x:Name="label_Copy3" Content="Selling Price" HorizontalAlignment="Left" Margin="26,118,0,0" VerticalAlignment="Top" FontSize="13"/>
+        <TextBox x:Name="sellingPrice" HorizontalAlignment="Left" Height="23" Margin="115,119,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="177" FontSize="13" LostKeyboardFocus="sellingPrice_LostKeyboardFocus"/>
+        <Button x:Name="ok" Content="Create" HorizontalAlignment="Left" Margin="177,199,0,0" VerticalAlignment="Top" Width="74" FontSize="13" Click="ok_Click"/>
+        <Button x:Name="close" Content="Close" HorizontalAlignment="Left" Margin="68,199,0,0" VerticalAlignment="Top" Width="74" IsCancel="True" FontSize="13" Click="close_Click"/>
+        <Label x:Name="label" Content="Note: No duplication is Allowed" HorizontalAlignment="Left" Margin="17,225,0,0" VerticalAlignment="Top" FontSize="11"/>
+        
+        <RadioButton x:Name="uniqBarcode" GroupName='Guardian' IsChecked="TRUE" Content="Unique Barcode" HorizontalAlignment="Left" Margin="16,158,0,0" VerticalAlignment="Top"/>
+        <RadioButton x:Name="sameBarcode" GroupName='Guardian' Content="Same Barcode" HorizontalAlignment="Left" Margin="124,159,0,0" VerticalAlignment="Top"/>
+        <RadioButton x:Name="noBarcode" GroupName='Guardian' Content="No Barcode" HorizontalAlignment="Left" Margin="224,160,0,0" VerticalAlignment="Top" />
+
+    </Grid>
+</Window>

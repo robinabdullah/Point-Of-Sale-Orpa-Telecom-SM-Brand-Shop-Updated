@@ -1,0 +1,28 @@
+﻿ <Window x:Class="Point_Of_Sale.PL.Reports"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Point_Of_Sale.PL"
+        mc:Ignorable="d"
+        Title="Reports" Height="465.72" Width="750" WindowStartupLocation="CenterScreen" ResizeMode="NoResize">
+    <Grid>
+        <StackPanel  HorizontalAlignment="Left" Height="286" Margin="76,48,0,0" VerticalAlignment="Top" Width="570">
+            <Button x:Name="stockQuantity" Content="All Products Stock Summary (Short)" Click="stockQuantity_Click" Height="31" FontSize="14"/>
+            <Separator Opacity="0" Height="5"/>
+            <Button x:Name="stockQuantity_Copy" Content="All Products Stock Summary" Click="stockSummaryFull_Click" Height="31" FontSize="14"/>
+            <Separator Opacity="0" Height="5"/>
+            <Button x:Name="stockQuantity_Copy1" Content="Date Wise Sales 1" Click="dateWiseSales1_Click" Height="31" FontSize="14"/>
+            <Separator Opacity="0" Height="5"/>
+            <Button x:Name="stockQuantity_Copy3" Content="Date Wise Sales 2" Click="dateWiseSales2_Click" Height="31" FontSize="14"/>
+            <Separator Opacity="0" Height="5"/>
+            <Button x:Name="stockQuantity_Copy2" Content="Promotional Event" Click="promotionalEventSales_Click" Height="31" FontSize="14"/>
+            <Separator Opacity="0" Height="5"/>
+            <Button x:Name="stockQuantity_Copy8" Content="Date Wise Stock (Mobile)" Click="dateWise_Stock_Click" Height="31" FontSize="14"/>
+            <Separator Opacity="0" Height="5"/>
+            <Button x:Name="stockQuantity_Copy4" Content="Print Previous Invoice" Click="Print_Previous_Invoice_Click" Height="31" FontSize="14"/>
+        </StackPanel>
+        <TextBox x:Name="invoiceTextBox"  Visibility="Hidden" HorizontalAlignment="Left" Height="23" Margin="195,339,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="174"/>
+        <Button x:Name="invoiceFindNPrintPreview" Visibility="Hidden" Content="Find and Preview"  HorizontalAlignment="Left" VerticalAlignment="Top" Width="100" Margin="395,339,0,0" Height="23" Click="find_and_print_preview"/>
+    </Grid>
+</Window>

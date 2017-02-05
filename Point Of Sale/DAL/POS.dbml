@@ -1,0 +1,89 @@
+﻿<?xml version="1.0" encoding="utf-8"?><Database Name="POSNew12" Class="POSDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+  <Connection Mode="AppSettings" ConnectionString="Data Source=DESKTOP-5BN9EJ4\SQLEXPRESS;Initial Catalog=POSNew12;Integrated Security=True;Encrypt=False;TrustServerCertificate=True" SettingsObjectName="Point_Of_Sale.Properties.Settings" SettingsPropertyName="POSNew12ConnectionString1" Provider="System.Data.SqlClient" />
+  <Table Name="dbo.Customer" Member="Customers">
+    <Type Name="Customer">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Name" Type="System.String" DbType="VarChar(30)" CanBeNull="true" />
+      <Column Name="Phone2" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Address" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Association Name="Customer_Sale" Member="Sales" ThisKey="ID" OtherKey="Customer_ID" Type="Sale" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Customer_Sale" Member="Customer_Sales">
+    <Type Name="Customer_Sale">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Invoice_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Product_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Quantity" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Unit_Price" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Sold_Price" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Association Name="Customer_Sale_Gift" Member="Gifts" ThisKey="ID" OtherKey="Customer_Sale_ID" Type="Gift" />
+      <Association Name="Product_Customer_Sale" Member="Product" ThisKey="Product_ID" OtherKey="ID" Type="Product" IsForeignKey="true" />
+      <Association Name="Sale_Customer_Sale" Member="Sale" ThisKey="Invoice_ID" OtherKey="Invoice_ID" Type="Sale" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Product" Member="Products">
+    <Type Name="Product">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Type" Type="System.String" DbType="VarChar(25)" CanBeNull="true" />
+      <Column Name="Model" Type="System.String" DbType="VarChar(30)" CanBeNull="true" />
+      <Column Name="Quantity_Available" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Quantity_Sold" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Unit_Price" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Selling_Price" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Des" Type="System.String" DbType="VarChar(70)" CanBeNull="true" />
+      <Column Name="Date_Updated" Type="System.DateTime" DbType="Date" CanBeNull="true" />
+      <Column Name="Unique_Barcode" Type="System.String" DbType="Char(3)" CanBeNull="true" />
+      <Association Name="Product_Customer_Sale" Member="Customer_Sales" ThisKey="ID" OtherKey="Product_ID" Type="Customer_Sale" />
+      <Association Name="Product_Free_Product" Member="Free_Products" ThisKey="ID" OtherKey="Product_ID" Type="Free_Product" />
+      <Association Name="Product_Barcode" Member="Barcodes" ThisKey="ID" OtherKey="Product_ID" Type="Barcode" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Sales" Member="Sales">
+    <Type Name="Sale">
+      <Column Name="Invoice_ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Customer_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Date" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Association Name="Sale_Customer_Sale" Member="Customer_Sales" ThisKey="Invoice_ID" OtherKey="Invoice_ID" Type="Customer_Sale" />
+      <Association Name="Sale_Free_Product" Member="Free_Products" ThisKey="Invoice_ID" OtherKey="Invoice_ID" Type="Free_Product" />
+      <Association Name="Customer_Sale" Member="Customer" ThisKey="Customer_ID" OtherKey="ID" Type="Customer" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Gift" Member="Gifts">
+    <Type Name="Gift">
+      <Column Name="Barcode" Type="System.String" DbType="VarChar(20) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Customer_Sale_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="SL" Type="System.String" DbType="VarChar(18)" CanBeNull="true" />
+      <Column Name="[Gift Code]" Member="Gift_Code" Type="System.String" DbType="VarChar(18)" CanBeNull="true" />
+      <Column Name="[Discount Price]" Member="Discount_Price" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Association Name="Customer_Sale_Gift" Member="Customer_Sale" ThisKey="Customer_Sale_ID" OtherKey="ID" Type="Customer_Sale" IsForeignKey="true" />
+      <Association Name="Barcode_Gift" Member="Barcode1" ThisKey="Barcode" OtherKey="Barcode_Serial" Type="Barcode" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Login" Member="Logins">
+    <Type Name="Login">
+      <Column Name="Username" Type="System.String" DbType="VarChar(50) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Password" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="Last_Login" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Free_Product" Member="Free_Products">
+    <Type Name="Free_Product">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Invoice_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Product_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Association Name="Sale_Free_Product" Member="Sale" ThisKey="Invoice_ID" OtherKey="Invoice_ID" Type="Sale" IsForeignKey="true" />
+      <Association Name="Product_Free_Product" Member="Product" ThisKey="Product_ID" OtherKey="ID" Type="Product" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Barcode" Member="Barcodes">
+    <Type Name="Barcode">
+      <Column Name="Barcode_Serial" Type="System.String" DbType="VarChar(20) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Product_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Color" Type="System.String" DbType="VarChar(15)" CanBeNull="true" />
+      <Column Name="Date" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Association Name="Barcode_Gift" Member="Gift" ThisKey="Barcode_Serial" OtherKey="Barcode" Type="Gift" Cardinality="One" />
+      <Association Name="Product_Barcode" Member="Product" ThisKey="Product_ID" OtherKey="ID" Type="Product" IsForeignKey="true" />
+    </Type>
+  </Table>
+</Database>
