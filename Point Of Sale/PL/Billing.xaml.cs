@@ -52,7 +52,7 @@ namespace Point_Of_Sale.PL
 
             try
             {
-                productType.ItemsSource = FileManagement.getAllProductTypes();
+                productType.ItemsSource = ProductTableData.getAllProductTypes();
                 
             }
             catch (Exception ex)

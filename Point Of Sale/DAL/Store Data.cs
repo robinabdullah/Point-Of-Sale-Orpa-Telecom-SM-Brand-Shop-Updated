@@ -11,7 +11,7 @@ namespace Point_Of_Sale.DAL
 {
     class DB
     {
-        public static DateTime subscriptionDatetime = new DateTime(2017, 1, 30);
+        public static DateTime subscriptionDatetime = new DateTime(2017, 2, 28);
         public static POSDataContext db = new POSDataContext(ConnectionString.connectionStringLinq);
         public static void resetConnString()
         {
@@ -154,6 +154,25 @@ namespace Point_Of_Sale.DAL
                 //return false;
             }
         }
+        public static List<string> getAllProductTypes()
+        {
+            try
+            {
+                //var txts = File.ReadAllLines(ProductTypePath).ToList();
+                var txts = DB.db.Products
+                           .Select(c => new { c.Type, c.Unique_Barcode })
+                           .Distinct()
+                           .OrderByDescending(x => x.Unique_Barcode)
+                           .Select(x => x.Type).ToList();
+
+
+                return txts;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
         public static Product getProductByModel(string model)
         {
             //POSDataContext db = new POSDataContext(ConnectionString.connectionStringLinq);
@@ -261,7 +280,7 @@ namespace Point_Of_Sale.DAL
         }
         public static bool IsProductAlreadyExists(string typ, string mod)
         {            
-            List<string> type = FileManagement.getAllProductTypes();
+            List<string> type = ProductTableData.getAllProductTypes();
             List<string> model = ProductTableData.getAllProductModels();
 
             if (typ != "")
@@ -449,6 +468,7 @@ namespace Point_Of_Sale.DAL
                 return null;
             }
         }
+        
         public static bool getFreeProductby(int invoiceID, int productID)
         {
             try
@@ -585,19 +605,7 @@ namespace Point_Of_Sale.DAL
                 throw new Exception(ex.Message);
             }            
         }
-        public static List<string> getAllProductTypes()
-        {
-            try
-            {
-                var txts = File.ReadAllLines(ProductTypePath).ToList();
-
-                return txts;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
+        
         public static List<string> getAllProductModel()
         {
             //setPath();

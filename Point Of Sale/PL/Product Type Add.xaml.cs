@@ -130,7 +130,7 @@ namespace Point_Of_Sale.PL
                     FileManagement.setNewProductType(product.Type);
                     //FileManagement.setNewProductModel(product.Model);
 
-                    productType.ItemsSource = FileManagement.getAllProductTypes();
+                    productType.ItemsSource = ProductTableData.getAllProductTypes();
                     productModel.ItemsSource = ProductTableData.getAllTypeMachedModels(product.Type);
 
                     productType.SelectedIndex = productType.Items.Count - 1;
@@ -155,7 +155,7 @@ namespace Point_Of_Sale.PL
                     
                     //FileManagement.setNewProductModel(product.Model);
 
-                    productType.ItemsSource = FileManagement.getAllProductTypes();
+                    productType.ItemsSource = ProductTableData.getAllProductTypes();
                     productModel.ItemsSource = ProductTableData.getAllTypeMachedModels(product.Type);
 
                     //productType.SelectedIndex = productType.Items.Count - 1;

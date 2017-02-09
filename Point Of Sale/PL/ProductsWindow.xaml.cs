@@ -42,7 +42,7 @@ namespace Point_Of_Sale.PL
                                   new TextChangedEventHandler(ProductModel_ComboBox_TextChanged));
 
 
-            productType.ItemsSource = FileManagement.getAllProductTypes();
+            productType.ItemsSource = ProductTableData.getAllProductTypes();
         }
 
         public void addDatagridColumninStockHistory()
@@ -318,7 +318,7 @@ namespace Point_Of_Sale.PL
                     if (FileManagement.deleteProductType(productType.Text)) 
                     {
                         productType.SelectedIndex = -1;
-                        productType.ItemsSource = FileManagement.getAllProductTypes();
+                        productType.ItemsSource = ProductTableData.getAllProductTypes();
                         Xceed.Wpf.Toolkit.MessageBox.Show("Product Type deleted.");
                     }
                 }

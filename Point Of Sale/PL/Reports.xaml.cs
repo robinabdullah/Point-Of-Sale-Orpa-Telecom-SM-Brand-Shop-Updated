@@ -76,7 +76,7 @@ namespace Point_Of_Sale.PL
 
             try
             {
-                var allTypes = FileManagement.getAllProductTypes();
+                var allTypes = ProductTableData.getAllProductTypes();
 
                 foreach (var type in allTypes)
                 {
@@ -169,7 +169,7 @@ namespace Point_Of_Sale.PL
             try
             {
                 int netTotal = 0, total = 0;
-                var allTypes = FileManagement.getAllProductTypes();
+                var allTypes = ProductTableData.getAllProductTypes();
 
                 foreach (var type in allTypes)
                 {

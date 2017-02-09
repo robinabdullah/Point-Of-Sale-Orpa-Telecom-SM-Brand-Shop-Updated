@@ -54,23 +54,27 @@ namespace Point_Of_Sale.PL
             DB.resetConnString();
         }
 
-        private bool hasSubscription()
+        private int hasSubscription()
         {
-            
+            DateTime date1 = DB.subscriptionDatetime;
+            DateTime date2 = DateTime.Now;
             int result = DateTime.Compare(DB.subscriptionDatetime, DateTime.Now);
-
-            if (result > 0)
-                return true;
-
-            return false;
+            TimeSpan span = date1.Subtract(date2);
+            //Console.WriteLine(span.TotalDays);
+            return (int) span.TotalDays;
 
         }
         private void goButton_Click(object sender, RoutedEventArgs e)
         {
+            int subscription = hasSubscription();
             //checking subscription till a date
-            if (hasSubscription() == false)
+            if (subscription <= 7 && subscription >= 0)
             {
-                Xceed.Wpf.Toolkit.MessageBox.Show("Your trial subscription has expired. Please contact with the Developer.","Trial Subscription Ends", MessageBoxButton.OK, MessageBoxImage.Warning);
+                Xceed.Wpf.Toolkit.MessageBox.Show("Your subscription will be expired withing " + subscription + " days. Please contact with the Developer as soon as possible.", "Trial Subscription expired", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+            else if (subscription < 0)
+            {
+                Xceed.Wpf.Toolkit.MessageBox.Show("Your trial subscription has expired. Please contact with the Developer.", "Trial Subscription expired", MessageBoxButton.OK, MessageBoxImage.Stop);
                 return;
             }
 
