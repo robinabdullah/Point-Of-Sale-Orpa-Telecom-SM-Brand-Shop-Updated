@@ -18,7 +18,7 @@
             <Separator Opacity="0" Height="5"/>
             <Button x:Name="stockQuantity_Copy2" Content="Promotional Event" Click="promotionalEventSales_Click" Height="31" FontSize="14"/>
             <Separator Opacity="0" Height="5"/>
-            <Button x:Name="stockQuantity_Copy8" Content="Date Wise Stock (Mobile)" Click="dateWise_Stock_Click" Height="31" FontSize="14"/>
+            <Button x:Name="stock_Copy8" Content="Date Wise Stock (Mobile)" Click="dateWise_Stock_Click" Height="31" FontSize="14"/>
             <Separator Opacity="0" Height="5"/>
             <Button x:Name="stockQuantity_Copy4" Content="Print Previous Invoice" Click="Print_Previous_Invoice_Click" Height="31" FontSize="14"/>
         </StackPanel>

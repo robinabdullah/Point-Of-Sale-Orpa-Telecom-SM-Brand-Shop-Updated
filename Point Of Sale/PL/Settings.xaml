@@ -10,14 +10,14 @@
         <Label x:Name="label" Content="Receipt Saving Location:" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
         <TextBox x:Name="receiptSavingLocationTextbox" HorizontalAlignment="Left" Height="23" Margin="153,13,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="501" IsEnabled="False"/>
         <Button x:Name="changeReceiptSavingLocation" Content="Change" HorizontalAlignment="Left" Margin="665,15,0,0" VerticalAlignment="Top" Width="64" Click="changeReceiptSavingLocation_Click"/>
-        <Label x:Name="label1" Content="Username:" HorizontalAlignment="Left" Margin="72,69,0,0" VerticalAlignment="Top"/>
-        <ComboBox x:Name="usernameCombo" HorizontalAlignment="Left" Margin="153,73,0,0" VerticalAlignment="Top" Width="204"/>
-        <Label x:Name="label1_Copy" Content="Current Password:" HorizontalAlignment="Left" Margin="33,106,0,0" VerticalAlignment="Top"/>
-        <Label x:Name="label1_Copy1" Content="New Password:" HorizontalAlignment="Left" Margin="49,144,0,0" VerticalAlignment="Top"/>
-        <Label x:Name="label1_Copy2" Content="Confirm Password:" HorizontalAlignment="Left" Margin="30,183,0,0" VerticalAlignment="Top"/>
-        <PasswordBox x:Name="currentPassBox" HorizontalAlignment="Left" Margin="153,110,0,0" VerticalAlignment="Top" Width="204" Height="23"/>
-        <PasswordBox x:Name="newPasswordBox" HorizontalAlignment="Left" Margin="153,148,0,0" VerticalAlignment="Top" Width="204" Height="23"/>
-        <PasswordBox x:Name="confirmpasswordBox" HorizontalAlignment="Left" Margin="153,187,0,0" VerticalAlignment="Top" Width="204" Height="23"/>
-        <Button x:Name="change_PassButton" Content="Change Password" HorizontalAlignment="Left" Margin="250,228,0,0" VerticalAlignment="Top" Width="107" Height="28" Click="change_PassButton_Click"/>
+        <Label x:Name="label1" Content="Username:" HorizontalAlignment="Left" Margin="72,53,0,0" VerticalAlignment="Top"/>
+        <ComboBox x:Name="usernameCombo" HorizontalAlignment="Left" Margin="153,57,0,0" VerticalAlignment="Top" Width="204"/>
+        <Label x:Name="label1_Copy" Content="Current Password:" HorizontalAlignment="Left" Margin="33,90,0,0" VerticalAlignment="Top"/>
+        <Label x:Name="label1_Copy1" Content="New Password:" HorizontalAlignment="Left" Margin="49,128,0,0" VerticalAlignment="Top"/>
+        <Label x:Name="label1_Copy2" Content="Confirm Password:" HorizontalAlignment="Left" Margin="30,167,0,0" VerticalAlignment="Top"/>
+        <PasswordBox x:Name="currentPassBox" HorizontalAlignment="Left" Margin="153,94,0,0" VerticalAlignment="Top" Width="204" Height="23"/>
+        <PasswordBox x:Name="newPasswordBox" HorizontalAlignment="Left" Margin="153,132,0,0" VerticalAlignment="Top" Width="204" Height="23"/>
+        <PasswordBox x:Name="confirmpasswordBox" HorizontalAlignment="Left" Margin="153,171,0,0" VerticalAlignment="Top" Width="204" Height="23"/>
+        <Button x:Name="change_PassButton" Content="Change Password" HorizontalAlignment="Left" Margin="250,212,0,0" VerticalAlignment="Top" Width="107" Height="28" Click="change_PassButton_Click"/>
     </Grid>
 </Window>

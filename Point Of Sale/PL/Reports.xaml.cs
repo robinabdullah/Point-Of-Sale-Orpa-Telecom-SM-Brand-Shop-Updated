@@ -138,16 +138,17 @@ namespace Point_Of_Sale.PL
             PdfWriter.GetInstance(doc, new FileStream("test.pdf", FileMode.Create));
             doc.Open();
 
-            PdfPTable table = new PdfPTable(2);
+            int columns = 3;
+            PdfPTable table = new PdfPTable(columns);
             PdfPCell cell;
             
-            float[] widths = new float[] { 3.5f, 1.5f };
+            float[] widths = new float[] { 3.4f, 1.1f, 1.7f };
             table.SetWidths(widths);
-            table.TotalWidth = 450f;
+            table.TotalWidth = 500f;
             //table.LockedWidth = true;
 
             cell = new PdfPCell(new Phrase("Stock Summary", headerFont));
-            cell.Colspan = 2;
+            cell.Colspan = columns;
             cell.MinimumHeight = 40;
             cell.HorizontalAlignment = 1;
             cell.Border = 0;
@@ -157,7 +158,6 @@ namespace Point_Of_Sale.PL
             cell.Colspan = 1;
             cell.DisableBorderSide(12);
             cell.PaddingBottom = 6;
-
             table.AddCell(cell);
 
             cell = new PdfPCell(new Phrase("Color", columnHeaderFont));
@@ -166,9 +166,16 @@ namespace Point_Of_Sale.PL
             cell.PaddingBottom = 6;
             table.AddCell(cell);
 
+            cell = new PdfPCell(new Phrase("Purchase Date", columnHeaderFont));
+            cell.Colspan = 1;
+            cell.DisableBorderSide(12);
+            cell.PaddingBottom = 6;
+            table.AddCell(cell);
+
             try
             {
                 int netTotal = 0, total = 0;
+                string tempDate;
                 var allTypes = ProductTableData.getAllProductTypes();
 
                 foreach (var type in allTypes)
@@ -179,7 +186,7 @@ namespace Point_Of_Sale.PL
                     {
                         int qu = ProductTableData.getTotalQ(type);
                         cell = new PdfPCell(new Phrase(string.Format("{0} ({1} Pcs.)", type, qu), columnHeaderFont));
-                        cell.Colspan = 3;
+                        cell.Colspan = columns;
                         cell.DisableBorderSide(13);
                         cell.PaddingBottom = 6;
                         cell.Indent = 0;
@@ -191,7 +198,7 @@ namespace Point_Of_Sale.PL
                         var product = ProductTableData.getProductByModel(model);
                         //printing the product type 
                         cell = new PdfPCell(new Phrase(string.Format("{0} [ID: {1}]", product.Model, product.ID), columnHeaderFont));
-                        cell.Colspan = 2;
+                        cell.Colspan = columns;
                         cell.Border = 0;
                         cell.Indent = 10;
                         table.AddCell(cell);
@@ -214,6 +221,12 @@ namespace Point_Of_Sale.PL
                                 cell.Border = 0;
                                 cell.Indent = 10;
                                 table.AddCell(cell);
+                                tempDate = bar.Date.Value.ToString("dd-MM-yy    hh:mm tt");
+                                cell = new PdfPCell(new Phrase(tempDate, rowDataFont));
+                                cell.Colspan = 1;
+                                cell.Border = 0;
+                                cell.Indent = 10;
+                                table.AddCell(cell);
                             }                            
                         }
                         //printing the Quantity Available ar total taka for that quantity
@@ -221,7 +234,7 @@ namespace Point_Of_Sale.PL
                         netTotal += total; ///calculating net total taka
                         string temp = string.Format("Quantity Available: {0}Pcs. Unit Price: {1} taka. Total Amount = {2} taka", product.Quantity_Available, product.Unit_Price, total);
                         cell = new PdfPCell(new Phrase(temp, rowDataFont));
-                        cell.Colspan = 2;
+                        cell.Colspan = columns;
                         cell.Border = 0;
                         cell.PaddingBottom = 10;
                         cell.Indent = 10;
@@ -230,14 +243,14 @@ namespace Point_Of_Sale.PL
                 }
                 //printing the net stock cash taka
                 cell = new PdfPCell(new Phrase("Total Products in Cash TK. " + netTotal.ToString(), columnHeaderFont));
-                cell.Colspan = 2;
+                cell.Colspan = columns;
                 //cell.HorizontalAlignment = 2;
-                cell.Border = 0;
+                cell.Border = 15;
                 table.AddCell(cell);
 
                 //printing the file created date
                 cell = new PdfPCell(new Phrase("Report Created Date: " + DateTime.Now, rowDataFont));
-                cell.Colspan = 2;
+                cell.Colspan = columns;
                 cell.Border = 0;
                 cell.PaddingTop = 10;
                 //cell.HorizontalAlignment = 0;
@@ -372,6 +385,9 @@ namespace Point_Of_Sale.PL
             Date_to_Date dateToDate = new Date_to_Date();
             dateToDate.ShowDialog();
 
+            if (Reports.preview == false) ///if the date to date windows closes then retun
+                return; 
+            
             Document doc = new Document(PageSize.A4);
             PdfWriter.GetInstance(doc, new FileStream("test.pdf", FileMode.Create));
             doc.Open();
@@ -653,6 +669,9 @@ namespace Point_Of_Sale.PL
         {
             Date_to_Date dateToDate = new Date_to_Date();
             dateToDate.ShowDialog();
+
+            if (Reports.preview == false)///if the date to date windows closes then retun
+                return;
 
             Document doc = new Document(PageSize.A4);
             PdfWriter.GetInstance(doc, new FileStream("test.pdf", FileMode.Create));
@@ -937,6 +956,9 @@ namespace Point_Of_Sale.PL
             Date_to_Date dateToDate = new Date_to_Date();
             dateToDate.ShowDialog();
 
+            if (Reports.preview == false)///if the date to date windows closes then retun
+                return;
+
             Document doc = new Document(PageSize.A4);
             PdfWriter.GetInstance(doc, new FileStream("test.pdf", FileMode.Create));
             doc.Open();
@@ -1184,6 +1206,8 @@ namespace Point_Of_Sale.PL
         {
             Date_to_Date dateToDate = new Date_to_Date();
             dateToDate.ShowDialog();
+            if (Reports.preview == false)///if the date to date windows closes then retun
+                return;
 
             Document doc = new Document(PageSize.A4);
             PdfWriter.GetInstance(doc, new FileStream("test.pdf", FileMode.Create));

@@ -29,7 +29,7 @@ namespace Point_Of_Sale.PL
             InitializeComponent();
             toDatee.Text = DateTime.Now.ToString();
             fromDatee.Text = DateTime.Now.ToString();
-            Reports.preview = false; // reset print preview of report
+            Reports.preview = false; /// reset print preview of report
         }
                 
         private void printPreviewButton_Click(object sender, RoutedEventArgs e)
