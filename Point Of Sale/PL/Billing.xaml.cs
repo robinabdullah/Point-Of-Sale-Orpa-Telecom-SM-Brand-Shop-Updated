@@ -797,7 +797,7 @@ namespace Point_Of_Sale.PL
             try
             {
                 
-                if (checkErrors() == false) //check all text fields text format
+                if (checkErrors() == false) ///check all text fields text format
                     return;
 
                 if(dataGrid.Items.Count == 9)
@@ -805,15 +805,15 @@ namespace Point_Of_Sale.PL
                     Xceed.Wpf.Toolkit.MessageBox.Show("You can add only 9 products in one invoice or sale receipt.");
                     return;
                 }
-                if (DateTime.TryParse(date.ToString(), out datetime) == false)//parsing date for bill
+                if (DateTime.TryParse(date.ToString(), out datetime) == false)///parsing date for bill
                     datetime = DateTime.Now;
-                if (DateTime.Compare(datetime, DB.subscriptionDatetime) > 0)
+                if (DateTime.Compare(datetime.Date, DB.subscriptionDatetime) > 0)
                 {
                     Xceed.Wpf.Toolkit.MessageBox.Show("Hey Contact to the developer.", " Subscription Error:", MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
-
-                if (hasCustomerinDB == false) // if customer is not in db then creates new customer
+                
+                if (hasCustomerinDB == false) /// if customer is not in db then creates new customer
                 {
                     if (mobile2.Text == "")
                         mobile2.Text = "0";

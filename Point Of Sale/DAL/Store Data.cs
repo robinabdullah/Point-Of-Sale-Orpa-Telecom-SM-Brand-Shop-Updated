@@ -11,7 +11,7 @@ namespace Point_Of_Sale.DAL
 {
     class DB
     {
-        public static DateTime subscriptionDatetime = new DateTime(2017, 2, 28);
+        public static DateTime subscriptionDatetime = new DateTime(2017, 2, 20);
         public static POSDataContext db = new POSDataContext(ConnectionString.connectionStringLinq);
         public static void resetConnString()
         {
@@ -26,10 +26,10 @@ namespace Point_Of_Sale.DAL
 
             try
             {
-                // Hangs if connectionString is invalid rather than throw an exception
+                /// Hangs if connectionString is invalid rather than throw an exception
                 db.Connection.Open();
 
-                // Initially, I was just trying to call DatabaseExists but, this hangs as well if the conn string is invalid
+                /// Initially, I was just trying to call DatabaseExists but, this hangs as well if the conn string is invalid
                 if (!db.DatabaseExists())
                 {
                     result = false;
