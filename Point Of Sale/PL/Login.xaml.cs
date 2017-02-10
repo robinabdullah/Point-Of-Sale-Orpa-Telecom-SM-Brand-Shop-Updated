@@ -56,9 +56,9 @@ namespace Point_Of_Sale.PL
 
         private void checkSubscription()
         {
-            DateTime date1 = DB.subscriptionDatetime;
+            DateTime date1 = RegistrationApp.subscriptionDatetime;
             DateTime date2 = DateTime.Now;
-            int result = DateTime.Compare(DB.subscriptionDatetime, DateTime.Now.Date);
+            int result = DateTime.Compare(RegistrationApp.subscriptionDatetime, DateTime.Now.Date);
             TimeSpan span = date1.Subtract(date2);
             //Console.WriteLine(span.TotalDays);
             int subscription = (int) span.TotalDays;

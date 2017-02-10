@@ -170,6 +170,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="PL\Registration.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="PL\Login.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -222,6 +226,9 @@
     </Compile>
     <Compile Include="PL\Date to Date.xaml.cs">
       <DependentUpon>Date to Date.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="PL\Registration.xaml.cs">
+      <DependentUpon>Registration.xaml</DependentUpon>
     </Compile>
     <Compile Include="PL\Login.xaml.cs">
       <DependentUpon>Login.xaml</DependentUpon>

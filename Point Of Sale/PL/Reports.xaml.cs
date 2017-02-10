@@ -28,6 +28,7 @@ namespace Point_Of_Sale.PL
         Font headerFont = new Font(bf, 18, Font.UNDERLINE);
         Font columnHeaderFont = new Font(bf, 12, Font.NORMAL);
         Font rowDataFont = new Font(bf1, 11, Font.NORMAL);
+        string tempFile = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\" + "test.pdf";
         public static bool preview = false;
         public Reports()
         {
@@ -37,7 +38,7 @@ namespace Point_Of_Sale.PL
         private void stockQuantity_Click(object sender, RoutedEventArgs e)
         {
             Document doc = new Document(PageSize.A4);
-            PdfWriter.GetInstance(doc, new FileStream("test.pdf", FileMode.Create));
+            PdfWriter.GetInstance(doc, new FileStream(tempFile, FileMode.Create));
             doc.Open();
 
             PdfPTable table = new PdfPTable(3);
@@ -123,7 +124,7 @@ namespace Point_Of_Sale.PL
 
                 doc.Close();
 
-                Print.previewPdfFile("test.pdf");
+                Print.previewPdfFile(tempFile);
             }
             catch (Exception ex)
             {
@@ -135,7 +136,7 @@ namespace Point_Of_Sale.PL
         private void stockSummaryFull_Click(object sender, RoutedEventArgs e)
         {
             Document doc = new Document(PageSize.A4);
-            PdfWriter.GetInstance(doc, new FileStream("test.pdf", FileMode.Create));
+            PdfWriter.GetInstance(doc, new FileStream(tempFile, FileMode.Create));
             doc.Open();
 
             int columns = 3;
@@ -259,7 +260,7 @@ namespace Point_Of_Sale.PL
                 doc.Add(table);
                 doc.Close();
 
-                Print.previewPdfFile("test.pdf");
+                Print.previewPdfFile(tempFile);
 
             }
             catch (Exception ex)
@@ -389,7 +390,7 @@ namespace Point_Of_Sale.PL
                 return; 
             
             Document doc = new Document(PageSize.A4);
-            PdfWriter.GetInstance(doc, new FileStream("test.pdf", FileMode.Create));
+            PdfWriter.GetInstance(doc, new FileStream(tempFile, FileMode.Create));
             doc.Open();
 
             int totalColumn = 6;
@@ -657,7 +658,7 @@ namespace Point_Of_Sale.PL
                 doc.Close();
 
                 if (preview == true)
-                    Print.previewPdfFile("test.pdf"); ///preview the created file
+                    Print.previewPdfFile(tempFile); ///preview the created file
 
             }
             catch (Exception ex)
@@ -674,7 +675,7 @@ namespace Point_Of_Sale.PL
                 return;
 
             Document doc = new Document(PageSize.A4);
-            PdfWriter.GetInstance(doc, new FileStream("test.pdf", FileMode.Create));
+            PdfWriter.GetInstance(doc, new FileStream(tempFile, FileMode.Create));
             doc.Open();
 
             int totalColumn = 6;
@@ -942,7 +943,7 @@ namespace Point_Of_Sale.PL
                 doc.Close();
 
                 if (preview == true)
-                    Print.previewPdfFile("test.pdf"); ///preview the created file
+                    Print.previewPdfFile(tempFile); ///preview the created file
 
             }
             catch (Exception ex)
@@ -960,7 +961,7 @@ namespace Point_Of_Sale.PL
                 return;
 
             Document doc = new Document(PageSize.A4);
-            PdfWriter.GetInstance(doc, new FileStream("test.pdf", FileMode.Create));
+            PdfWriter.GetInstance(doc, new FileStream(tempFile, FileMode.Create));
             doc.Open();
 
             int totalColumn = 5;
@@ -1191,7 +1192,7 @@ namespace Point_Of_Sale.PL
                 doc.Close();
 
                 if (preview == true)
-                    Print.previewPdfFile("test.pdf"); ///preview the created file
+                    Print.previewPdfFile(tempFile); ///preview the created file
 
             }
             catch (Exception ex)
@@ -1210,7 +1211,7 @@ namespace Point_Of_Sale.PL
                 return;
 
             Document doc = new Document(PageSize.A4);
-            PdfWriter.GetInstance(doc, new FileStream("test.pdf", FileMode.Create));
+            PdfWriter.GetInstance(doc, new FileStream(tempFile, FileMode.Create));
             doc.Open();
 
             int totalColumn = 5;
@@ -1419,7 +1420,7 @@ namespace Point_Of_Sale.PL
                 doc.Close();
 
                 if (preview == true)
-                    Print.previewPdfFile("test.pdf"); ///preview the created file
+                    Print.previewPdfFile(tempFile); ///preview the created file
 
             }
             catch (Exception ex)

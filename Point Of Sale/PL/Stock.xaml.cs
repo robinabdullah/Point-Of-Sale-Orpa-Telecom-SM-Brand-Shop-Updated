@@ -363,7 +363,7 @@ namespace Point_Of_Sale.PL
             if (DateTime.TryParse(date.ToString(), out datetime) == false)//parsing date for bill
                 datetime = DateTime.Now;
             //checking trial subscription 
-            if (DateTime.Compare(datetime, DB.subscriptionDatetime) > 0)
+            if (DateTime.Compare(datetime, RegistrationApp.subscriptionDatetime) > 0)
             {
                 Xceed.Wpf.Toolkit.MessageBox.Show("Hey Contact to the developer.", " Subscription Error:", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;

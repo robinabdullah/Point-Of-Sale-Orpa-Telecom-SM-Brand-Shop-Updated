@@ -15,6 +15,18 @@
     {
         "Entry"
         {
+        "MsmKey" = "8:_04DB872FCF9A40E296976E514887AA7B"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_340FC45C72194D5494928F7FF2C5E3C2"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_62E8480396B1F2B23260DC1D27386803"
         "OwnerKey" = "8:_D5DC6CD930DF4EDE9350CBB0E2CA9D10"
         "MsmSig" = "8:_UNDEFINED"
@@ -23,6 +35,12 @@
         {
         "MsmKey" = "8:_6609A32B822A5A5FEF3AA3BB7FD432A2"
         "OwnerKey" = "8:_D5DC6CD930DF4EDE9350CBB0E2CA9D10"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_770129EC75C546C0808706A829F11B64"
+        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -45,8 +63,26 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_A4B4A3E4FB9A4E029EB98A562CCD6F66"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_B4B9AD63F19445DDB1AA23C8198582EF"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_BE50FBDFF060113F2A85839DE4427ADC"
         "OwnerKey" = "8:_D5DC6CD930DF4EDE9350CBB0E2CA9D10"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_C25CB2B0839C4726BB6DB66968E2C35C"
+        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -232,6 +268,14 @@
             "PrerequisitesLocation" = "2:1"
             "Url" = "8:"
             "ComponentsUrl" = "8:"
+                "Items"
+                {
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:.NETFramework,Version=v4.5"
+                    {
+                    "Name" = "8:Microsoft .NET Framework 4.5 (x86 and x64)"
+                    "ProductCode" = "8:.NETFramework,Version=v4.5"
+                    }
+                }
             }
         }
     }
@@ -262,6 +306,46 @@
         }
         "File"
         {
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_04DB872FCF9A40E296976E514887AA7B"
+            {
+            "SourcePath" = "8:..\\Point Of Sale\\Files\\Receipt File Path.dat"
+            "TargetName" = "8:Receipt File Path.dat"
+            "Tag" = "8:"
+            "Folder" = "8:_30F582889B2843D292011CFB403B7F60"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_340FC45C72194D5494928F7FF2C5E3C2"
+            {
+            "SourcePath" = "8:..\\Point Of Sale\\Files\\Product Reg.dat"
+            "TargetName" = "8:Product Reg.dat"
+            "Tag" = "8:"
+            "Folder" = "8:_30F582889B2843D292011CFB403B7F60"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_62E8480396B1F2B23260DC1D27386803"
             {
             "AssemblyRegister" = "3:1"
@@ -322,6 +406,26 @@
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_770129EC75C546C0808706A829F11B64"
+            {
+            "SourcePath" = "8:..\\Point Of Sale\\Files\\Product Model.dat"
+            "TargetName" = "8:Product Model.dat"
+            "Tag" = "8:"
+            "Folder" = "8:_30F582889B2843D292011CFB403B7F60"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_79D2CD9AC365D6008353B5063542F90B"
@@ -386,6 +490,46 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_A4B4A3E4FB9A4E029EB98A562CCD6F66"
+            {
+            "SourcePath" = "8:..\\Point Of Sale\\Files\\Product Type.dat"
+            "TargetName" = "8:Product Type.dat"
+            "Tag" = "8:"
+            "Folder" = "8:_30F582889B2843D292011CFB403B7F60"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_B4B9AD63F19445DDB1AA23C8198582EF"
+            {
+            "SourcePath" = "8:..\\Point Of Sale\\Files\\receipt form field.pdf"
+            "TargetName" = "8:receipt form field.pdf"
+            "Tag" = "8:"
+            "Folder" = "8:_30F582889B2843D292011CFB403B7F60"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_BE50FBDFF060113F2A85839DE4427ADC"
             {
             "AssemblyRegister" = "3:1"
@@ -415,6 +559,26 @@
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_C25CB2B0839C4726BB6DB66968E2C35C"
+            {
+            "SourcePath" = "8:..\\Point Of Sale\\Files\\Color.dat"
+            "TargetName" = "8:Color.dat"
+            "Tag" = "8:"
+            "Folder" = "8:_30F582889B2843D292011CFB403B7F60"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_CD7410F11D70DE8169693A8CA598C4E0"
@@ -599,6 +763,17 @@
             "Property" = "8:TARGETDIR"
                 "Folders"
                 {
+                    "{9EF0B969-E518-4E46-987F-47570745A589}:_30F582889B2843D292011CFB403B7F60"
+                    {
+                    "Name" = "8:Files"
+                    "AlwaysCreate" = "11:FALSE"
+                    "Condition" = "8:"
+                    "Transitive" = "11:FALSE"
+                    "Property" = "8:_5FDC47CF2DA7444DB572D3BFDA53758D"
+                        "Folders"
+                        {
+                        }
+                    }
                 }
             }
             "{1525181F-901A-416C-8A58-119130FE478E}:_C2D1EDFF228645A387DFCAE1D1FBEE83"
@@ -640,7 +815,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:POS"
         "ProductCode" = "8:{3B4601F0-18F5-4C33-A575-977C240B97DE}"
-        "PackageCode" = "8:{008851E0-7C0C-4466-AD25-234AC72780A5}"
+        "PackageCode" = "8:{B9BDCD74-E611-4995-B067-02545BA6C711}"
         "UpgradeCode" = "8:{97D14E39-B2D5-4002-81B9-816AFD604AC2}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"

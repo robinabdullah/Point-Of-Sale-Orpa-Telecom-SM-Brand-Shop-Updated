@@ -6,12 +6,97 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Collections;
 using System.Collections.ObjectModel;
+using System.Net.NetworkInformation;
 
 namespace Point_Of_Sale.DAL
 {
+    class RegistrationApp
+    {
+        public static DateTime subscriptionDatetime = new DateTime(2017, 3, 10);
+        public static bool validateRegistration()
+        {
+            return true;
+        }
+        public static string getMac()
+        {
+            NetworkInterface[] nics = NetworkInterface.GetAllNetworkInterfaces();
+            string sMacAddress = string.Empty;
+            foreach (NetworkInterface adapter in nics)
+            {
+                if (sMacAddress == String.Empty)// only return MAC Address from first card  
+                {
+                    //IPInterfaceProperties properties = adapter.GetIPProperties(); Line is not required
+                    sMacAddress = adapter.GetPhysicalAddress().ToString();
+                }
+            }
+            return sMacAddress;
+        }
+        public static string Encrypt( string stringToEncrypt, string key)
+        {
+            if (string.IsNullOrEmpty(stringToEncrypt))
+            {
+                throw new ArgumentException("An empty string value cannot be encrypted.");
+            }
+
+            if (string.IsNullOrEmpty(key))
+            {
+                throw new ArgumentException("Cannot encrypt using an empty key. Please supply an encryption key.");
+            }
+
+            System.Security.Cryptography.CspParameters cspp = new System.Security.Cryptography.CspParameters();
+            cspp.KeyContainerName = key;
+
+            System.Security.Cryptography.RSACryptoServiceProvider rsa = new System.Security.Cryptography.RSACryptoServiceProvider(cspp);
+            rsa.PersistKeyInCsp = true;
+
+            byte[] bytes = rsa.Encrypt(System.Text.UTF8Encoding.UTF8.GetBytes(stringToEncrypt), true);
+
+            return BitConverter.ToString(bytes);
+        }
+
+        public static string Decrypt( string stringToDecrypt, string key)
+        {
+            string result = null;
+
+            if (string.IsNullOrEmpty(stringToDecrypt))
+            {
+                throw new ArgumentException("An empty string value cannot be encrypted.");
+            }
+
+            if (string.IsNullOrEmpty(key))
+            {
+                throw new ArgumentException("Cannot decrypt using an empty key. Please supply a decryption key.");
+            }
+
+            try
+            {
+                System.Security.Cryptography.CspParameters cspp = new System.Security.Cryptography.CspParameters();
+                cspp.KeyContainerName = key;
+
+                System.Security.Cryptography.RSACryptoServiceProvider rsa = new System.Security.Cryptography.RSACryptoServiceProvider(cspp);
+                rsa.PersistKeyInCsp = true;
+
+                string[] decryptArray = stringToDecrypt.Split(new string[] { "-" }, StringSplitOptions.None);
+                byte[] decryptByteArray = Array.ConvertAll<string, byte>(decryptArray, (s => Convert.ToByte(byte.Parse(s, System.Globalization.NumberStyles.HexNumber))));
+
+
+                byte[] bytes = rsa.Decrypt(decryptByteArray, true);
+
+                result = System.Text.UTF8Encoding.UTF8.GetString(bytes);
+
+            }
+            finally
+            {
+                // no need for further processing
+            }
+
+            return result;
+        }
+
+    }
     class DB
     {
-        public static DateTime subscriptionDatetime = new DateTime(2017, 2, 20);
+        
         public static POSDataContext db = new POSDataContext(ConnectionString.connectionStringLinq);
         public static void resetConnString()
         {
@@ -563,6 +648,7 @@ namespace Point_Of_Sale.DAL
         public static string ProductTypePath = filePath + @"\Product Type.dat";
         public static string ProductModelPath = filePath + @"\Product Model.dat";
         public static string ColorPath = filePath + @"\Color.dat";
+        public static string ProductRegPath = filePath + @"\Product Reg.dat";
         public static string ReceiptSavingLocation_datFile = filePath + @"\Receipt File Path.dat";
 
         public static string ReceiptSavingPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
@@ -570,7 +656,12 @@ namespace Point_Of_Sale.DAL
         public static string receipt = filePath + @"\receipt form field.pdf";
         public static string generatedReceipt = ReceiptSavingPath + @"\Fillied Receipt.pdf";
 
+        public static string getProductReg()
+        {
+            var txts = File.ReadAllLines(ProductRegPath).ToString();
 
+            return txts;
+        }
         public static bool checkReceiptSavingLocation()
         {
             string txt = "";

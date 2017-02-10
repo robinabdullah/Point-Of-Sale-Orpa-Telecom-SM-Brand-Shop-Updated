@@ -807,7 +807,7 @@ namespace Point_Of_Sale.PL
                 }
                 if (DateTime.TryParse(date.ToString(), out datetime) == false)///parsing date for bill
                     datetime = DateTime.Now;
-                if (DateTime.Compare(datetime.Date, DB.subscriptionDatetime) > 0)
+                if (DateTime.Compare(datetime.Date, RegistrationApp.subscriptionDatetime) > 0)
                 {
                     Xceed.Wpf.Toolkit.MessageBox.Show("Hey Contact to the developer.", " Subscription Error:", MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
