@@ -26,12 +26,61 @@ namespace Point_Of_Sale.PL
         private MainWindow main = new MainWindow();
         private Reports reports;
         private ProductsWindow products;
-        
+
         public Login()
         {
             InitializeComponent();
+            
+            validateRegistration();
+            
+            
             password.Focus();
             //DB.resetConnString();
+        }
+        public void validateRegistration()
+        {
+            int count = FileManagement.getProductReg().Count();
+            string storedEncryptedMac, storedEncryptedOrg, storedEncryptedDate;
+            
+            if (count != 0)/// if the Product Reg.dat is not empty
+            {
+                storedEncryptedOrg = FileManagement.getProductReg().ElementAt(0); ///stored in file
+                storedEncryptedMac = FileManagement.getProductReg().ElementAt(1); ///stored in file
+                storedEncryptedDate = FileManagement.getProductReg().ElementAt(2); ///stored in file
+                try
+                {
+                    Register.OrgName = Register.Decrypt(storedEncryptedOrg, Register.ProductKey);
+                    Register.Mac = Register.Decrypt(storedEncryptedMac, Register.ProductKey);
+                    Register.SubscriptionDateString = Register.Decrypt(storedEncryptedDate, Register.ProductKey);
+                    
+                    Console.WriteLine(Register.OrgName + " " + Register.Mac + " " + Register.SubscriptionDateString + "HI");
+                }
+                catch
+                {
+                    MessageBoxResult res = Xceed.Wpf.Toolkit.MessageBox.Show("Product registration failed because of incorrect binding with Product Key. Please Register again.", "Registration Failed", MessageBoxButton.OKCancel, MessageBoxImage.Stop, MessageBoxResult.Cancel);
+                    if (res == MessageBoxResult.Cancel)
+                        Environment.Exit(0);///exit
+                    this.Close();
+                    Registration rr = new Registration();
+                    rr.Show();
+                    return;
+                }
+            }
+
+            ///Console.WriteLine(decryptedMac);
+            if (count == 0) /// if the file empty
+            {
+                Xceed.Wpf.Toolkit.MessageBox.Show("This copy of product is not registered. Press OK to Enter the details and register the product.");
+                this.Close();
+                Registration rr = new Registration();
+                rr.Show();
+            }
+            else if (Register.Mac != Register.getPcMac()) ///matching pc mac with stored encrypted mac 
+            {
+                Xceed.Wpf.Toolkit.MessageBox.Show("Please contact with the developer.");
+                
+            }
+            
         }
         public Login(Settings setting)
         {
@@ -56,12 +105,12 @@ namespace Point_Of_Sale.PL
 
         private void checkSubscription()
         {
-            DateTime date1 = RegistrationApp.subscriptionDatetime;
+            DateTime date1 = Register.SubscriptionDateEnd;
             DateTime date2 = DateTime.Now;
-            int result = DateTime.Compare(RegistrationApp.subscriptionDatetime, DateTime.Now.Date);
+            int result = DateTime.Compare(Register.SubscriptionDateEnd, DateTime.Now.Date);
             TimeSpan span = date1.Subtract(date2);
             //Console.WriteLine(span.TotalDays);
-            int subscription = (int) span.TotalDays;
+            int subscription = (int)span.TotalDays;
             if (subscription <= 7 && subscription >= 0)
             {
                 Xceed.Wpf.Toolkit.MessageBox.Show("Your subscription will be expired withing " + subscription + " days. Please contact with the Developer as soon as possible.", " Subscription", MessageBoxButton.OK, MessageBoxImage.Warning);
@@ -79,7 +128,7 @@ namespace Point_Of_Sale.PL
             {
                 DB.TestDBConnection();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Xceed.Wpf.Toolkit.MessageBox.Show(ex.Message);
                 return;
@@ -108,6 +157,7 @@ namespace Point_Of_Sale.PL
                 else
                 {
                     this.Close();
+                    main.welcome.Content = "WELCOME TO " + Register.OrgName;///saving org name in dsply
                     main.Show();
                 }
             }

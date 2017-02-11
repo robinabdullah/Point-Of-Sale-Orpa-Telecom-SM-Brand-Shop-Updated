@@ -28,7 +28,7 @@
     <ProductName>Point of Sale %28ORPA Telecom%29</ProductName>
     <PublisherName>Robin</PublisherName>
     <AutorunEnabled>true</AutorunEnabled>
-    <ApplicationRevision>119</ApplicationRevision>
+    <ApplicationRevision>121</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
@@ -207,6 +207,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="BL\CustomMessage.cs" />
+    <Compile Include="BL\Validate Registration.cs" />
     <Compile Include="DAL\ConnectionString.cs" />
     <Compile Include="DAL\POS.cs">
       <DependentUpon>POS.dbml</DependentUpon>
@@ -306,6 +307,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Files\Receipt File Path.dat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Files\Product Reg.dat">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <None Include="packages.config" />

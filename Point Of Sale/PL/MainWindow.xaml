@@ -13,7 +13,7 @@
         <Button x:Name="products" Content="Products" HorizontalAlignment="Center" Margin="489,185,114,281" VerticalAlignment="Center"  Width="139" Height="54" FontSize="16" Click="products_Click"/>
         <Button x:Name="settings" Content="Settings" HorizontalAlignment="Center" Margin="489,311,114,155" VerticalAlignment="Center"  Width="139" Height="54" FontSize="16" Click="settings_Click"/>
         <Button x:Name="reports" Content="Reports" HorizontalAlignment="Center" Margin="297,407,306,57" VerticalAlignment="Center"  Width="139" Height="56" FontSize="16" Click="reports_Click"/>
-        <Label x:Name="label" Content="Copy Right 2017  Friends Software Solution " HorizontalAlignment="Left" Margin="10,0,0,10" VerticalAlignment="Bottom" Width="266" FontWeight="Bold"/>
-        <Label x:Name="label1" Content="Welcome to Orpa Telecom" HorizontalAlignment="Center" Margin="193,10,202,0" VerticalAlignment="Top" FontSize="30" FontWeight="Bold" FontFamily="Times New Roman"/>
+        <Label x:Name="label" Content="Copy Right 2017  Friends Software Solution. Call for Support 01676797123" HorizontalAlignment="Left" Margin="10,0,0,10" VerticalAlignment="Bottom" Width="476" FontWeight="Bold"/>
+        <Label x:Name="welcome" Content="Welcome" HorizontalAlignment="Center" Margin="193,10,202,0" VerticalAlignment="Top" FontSize="30" FontWeight="Bold" FontFamily="Times New Roman"/>
     </Grid>
 </Window>

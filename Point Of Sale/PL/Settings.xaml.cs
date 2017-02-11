@@ -25,6 +25,9 @@ namespace Point_Of_Sale.PL
         public Settings()
         {
             InitializeComponent();
+
+            organization.Text = Register.OrgName;
+
             try
             {
                 FileManagement.checkReceiptSavingLocation();

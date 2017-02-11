@@ -10,14 +10,19 @@ using System.Net.NetworkInformation;
 
 namespace Point_Of_Sale.DAL
 {
-    class RegistrationApp
+    class Register
     {
-        public static DateTime subscriptionDatetime = new DateTime(2017, 3, 10);
+        public static DateTime SubscriptionDateEnd = new DateTime(2017, 3, 10);
+        public static string ProductKey = "45659123in";
+        public static string OrgName = "";
+        public static string Mac = "";
+        public static string SubscriptionDateString = "";
+
         public static bool validateRegistration()
         {
             return true;
         }
-        public static string getMac()
+        public static string getPcMac()
         {
             NetworkInterface[] nics = NetworkInterface.GetAllNetworkInterfaces();
             string sMacAddress = string.Empty;
@@ -60,7 +65,8 @@ namespace Point_Of_Sale.DAL
 
             if (string.IsNullOrEmpty(stringToDecrypt))
             {
-                throw new ArgumentException("An empty string value cannot be encrypted.");
+                //throw new ArgumentException("An empty string value cannot be encrypted.");
+                
             }
 
             if (string.IsNullOrEmpty(key))
@@ -84,6 +90,10 @@ namespace Point_Of_Sale.DAL
 
                 result = System.Text.UTF8Encoding.UTF8.GetString(bytes);
 
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
             }
             finally
             {
@@ -656,11 +666,31 @@ namespace Point_Of_Sale.DAL
         public static string receipt = filePath + @"\receipt form field.pdf";
         public static string generatedReceipt = ReceiptSavingPath + @"\Fillied Receipt.pdf";
 
-        public static string getProductReg()
+        public static List<string> getProductReg()
         {
-            var txts = File.ReadAllLines(ProductRegPath).ToString();
-
-            return txts;
+            try
+            {
+                var txts = File.ReadAllLines(ProductRegPath).ToList();
+                return txts;
+            }
+            catch(Exception ex)
+            {
+                throw new Exception("Error while reading Registration file. \n\nDetailed Error:" + ex.Message + ex.StackTrace);
+            }
+        }
+        public static bool saveProductReg(string org, string newMac, string date)
+        {
+            try
+            {
+                string temp = String.Format("{0}\n{1}\n{2}", org, newMac, date);
+                //File.SetAttributes(ProductRegPath, FileAttributes.Normal);
+                File.WriteAllText(ProductRegPath, temp);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
         public static bool checkReceiptSavingLocation()
         {

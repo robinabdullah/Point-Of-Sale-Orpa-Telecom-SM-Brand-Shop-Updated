@@ -1,4 +1,5 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,7 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-
+using Point_Of_Sale.DAL;
 
 namespace Point_Of_Sale.PL
 {
@@ -24,6 +25,7 @@ namespace Point_Of_Sale.PL
         public MainWindow()
         {
             InitializeComponent();
+            
         }
 
         private void sellProduct_Click(object sender, RoutedEventArgs e)

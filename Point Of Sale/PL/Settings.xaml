@@ -19,5 +19,7 @@
         <PasswordBox x:Name="newPasswordBox" HorizontalAlignment="Left" Margin="153,132,0,0" VerticalAlignment="Top" Width="204" Height="23"/>
         <PasswordBox x:Name="confirmpasswordBox" HorizontalAlignment="Left" Margin="153,171,0,0" VerticalAlignment="Top" Width="204" Height="23"/>
         <Button x:Name="change_PassButton" Content="Change Password" HorizontalAlignment="Left" Margin="250,212,0,0" VerticalAlignment="Top" Width="107" Height="28" Click="change_PassButton_Click"/>
+        <Label x:Name="label_Copy" Content="Organization:" HorizontalAlignment="Left" Margin="57,272,0,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="organization" HorizontalAlignment="Left" Height="23" Margin="153,274,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="204"/>
     </Grid>
 </Window>

@@ -5,14 +5,19 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Point_Of_Sale.PL"
         mc:Ignorable="d"
-        Title="Login" Height="322.368" Width="456.579" WindowStartupLocation="CenterScreen" ResizeMode="NoResize">
+        Title="Registration" Height="404.777" Width="456.579" WindowStartupLocation="CenterScreen" ResizeMode="NoResize">
     <Grid>
-        <Button x:Name="register" Content="Register" Margin="293,0,0,44" FontSize="20" FontWeight="Bold" Height="35" VerticalAlignment="Bottom" HorizontalAlignment="Left" Width="121" IsDefault="True" Click="Register_Click"/>
+        <TextBox x:Name="org" CharacterCasing="Upper" HorizontalAlignment="Left" Height="36" Margin="172,68,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="242" FontSize="20" Focusable="True" GotKeyboardFocus="userName_GotKeyboardFocus"/>
         <Label x:Name="label" Content="Registration" HorizontalAlignment="Left" VerticalAlignment="Top" Height="45" Width="167" FontSize="25" FontWeight="Bold"/>
-        <Label x:Name="label_Copy" Content="Mac" HorizontalAlignment="Left" VerticalAlignment="Top" Height="45" Width="142" FontSize="23" FontWeight="Bold" Margin="25,77,0,0"/>
-        <Label x:Name="label_Copy1" Content="Product Key" HorizontalAlignment="Left" VerticalAlignment="Top" Height="45" Width="142" FontSize="23" FontWeight="Bold" Margin="25,140,0,0"/>
-        <TextBox x:Name="mac" CharacterCasing="Upper" HorizontalAlignment="Left" Height="36" Margin="172,81,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="242" FontSize="20" Focusable="True" GotKeyboardFocus="userName_GotKeyboardFocus"/>
-        <PasswordBox x:Name="productKey" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="172,148,0,0" Height="36" Width="242" FontSize="20" GotKeyboardFocus="password_GotKeyboardFocus" Password="45659123in"/>
+        <Label x:Name="label_Copy" Content="Mac" HorizontalAlignment="Left" VerticalAlignment="Top" Height="45" Width="59" FontSize="23" FontWeight="Bold" Margin="108,123,0,0"/>
+        <Label x:Name="label_Copy1" Content="Subscription" HorizontalAlignment="Left" VerticalAlignment="Top" Height="45" Width="147" FontSize="23" FontWeight="Bold" Margin="20,184,0,0"/>
+        <TextBox x:Name="mac" CharacterCasing="Upper" HorizontalAlignment="Left" Height="36" Margin="172,129,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="242" FontSize="20" Focusable="True" GotKeyboardFocus="userName_GotKeyboardFocus" IsEnabled="False"/>
+        <ComboBox x:Name="subscription" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="172,192,0,0" Height="36" Width="131" FontSize="20" SelectionChanged="subscription_SelectionChanged"/>
+        <TextBox x:Name="trialDays" CharacterCasing="Upper" HorizontalAlignment="Left" Height="36" Margin="320,192,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="94" FontSize="20" Focusable="True" GotKeyboardFocus="userName_GotKeyboardFocus" ToolTip="Enter Trial Days"/>
+        <PasswordBox x:Name="productKey" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="172,253,0,0" Height="36" Width="242" FontSize="20" GotKeyboardFocus="password_GotKeyboardFocus"/>
+        <Label x:Name="label_Copy2" Content="Organization" HorizontalAlignment="Left" VerticalAlignment="Top" Height="45" Width="150" FontSize="23" FontWeight="Bold" Margin="17,63,0,0"/>
+        <Button x:Name="register" Content="Register" Margin="293,0,0,28" FontSize="20" FontWeight="Bold" Height="35" VerticalAlignment="Bottom" HorizontalAlignment="Left" Width="121" IsDefault="True" Click="validateRegistration_Click"/>
+        <Label x:Name="label_Copy3" Content="Product Key" HorizontalAlignment="Left" VerticalAlignment="Top" Height="45" Width="142" FontSize="23" FontWeight="Bold" Margin="20,245,0,0"/>
 
     </Grid>
 </Window>
