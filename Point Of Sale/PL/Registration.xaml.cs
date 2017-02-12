@@ -105,7 +105,7 @@ namespace Point_Of_Sale.PL
             else if (subscription.SelectedIndex == 1)
             {
                 trialDays.IsEnabled = false;
-                days = 1095; ///3 years
+                days = 1095; ///3 years 
             }
         }
     }

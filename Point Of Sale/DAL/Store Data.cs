@@ -348,7 +348,7 @@ namespace Point_Of_Sale.DAL
             {
                 List<string> list = new List<string>();
 
-                var models = from ee in db.Products where ee.Type == type && ee.Quantity_Available != 0 orderby ee.Unique_Barcode select ee.Model ;
+                var models = from ee in db.Products where ee.Type == type && ee.Quantity_Available != 0 orderby ee.Model select ee.Model ;
                 foreach (string obj in models)
                 {
                     list.Add(obj);

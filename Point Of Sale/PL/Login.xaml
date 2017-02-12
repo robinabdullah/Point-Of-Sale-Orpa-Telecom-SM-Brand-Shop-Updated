@@ -11,7 +11,7 @@
         <Label x:Name="label" Content="Login" HorizontalAlignment="Left" VerticalAlignment="Top" Height="45" Width="82" FontSize="25" FontWeight="Bold"/>
         <Label x:Name="label_Copy" Content="Username" HorizontalAlignment="Left" VerticalAlignment="Top" Height="45" Width="149" FontSize="25" FontWeight="Bold" Margin="35,72,0,0"/>
         <Label x:Name="label_Copy1" Content="Password" HorizontalAlignment="Left" VerticalAlignment="Top" Height="45" Width="149" FontSize="25" FontWeight="Bold" Margin="35,140,0,0"/>
-        <TextBox x:Name="userName" CharacterCasing="Upper" HorizontalAlignment="Left" Height="36" Margin="189,81,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="225" FontSize="20" Focusable="True" Text="ORPA" GotKeyboardFocus="userName_GotKeyboardFocus"/>
+        <TextBox x:Name="userName" CharacterCasing="Upper" HorizontalAlignment="Left" Height="36" Margin="189,81,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="225" FontSize="20" Focusable="True" GotKeyboardFocus="userName_GotKeyboardFocus"/>
         <PasswordBox x:Name="password" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="189,148,0,0" Height="36" Width="225" FontSize="20" GotKeyboardFocus="password_GotKeyboardFocus"/>
 
     </Grid>

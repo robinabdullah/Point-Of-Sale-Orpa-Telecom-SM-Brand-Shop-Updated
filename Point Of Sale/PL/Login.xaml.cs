@@ -34,7 +34,7 @@ namespace Point_Of_Sale.PL
             validateRegistration();
             
             
-            password.Focus();
+            userName.Focus();
             //DB.resetConnString();
         }
         public void validateRegistration()
