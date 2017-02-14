@@ -968,7 +968,7 @@ namespace Point_Of_Sale.PL
             PdfPTable table = new PdfPTable(totalColumn);
             PdfPCell cell;
 
-            float[] widths = new float[] { 4f, 1f, 1f, 1f, 1f }; //column widths
+            float[] widths = new float[] { 3.6f, 1f, 1.2f, 1f, 1f }; //column widths
             table.SetWidths(widths);
             table.TotalWidth = 450f;
             table.LockedWidth = true;

@@ -821,7 +821,7 @@ namespace Point_Of_Sale.PL
                     //sale.Customer = customer;
                 }
 
-                Customer_Sale cus_Sale = new Customer_Sale { Quantity = int.Parse(quantity.Text), Unit_Price = product.Unit_Price, Sold_Price = int.Parse(sellingPrice.Text) };
+                Customer_Sale cus_Sale = new Customer_Sale { Quantity = int.Parse(quantity.Text), Unit_Price = product.Unit_Price, Sold_Price = int.Parse(sellingPrice.Text), Sale_Price_was = product.Selling_Price };
 
                 product.Quantity_Sold += cus_Sale.Quantity;
                 product.Quantity_Available -= cus_Sale.Quantity;
@@ -863,6 +863,7 @@ namespace Point_Of_Sale.PL
                         dataGridItemsBilling.gift = gift;
                     }
                 }
+                /// if the product is free
                 if (freeProduct.IsChecked == true)
                 {
                     if(dataGrid.Items.Count == 0)
@@ -888,15 +889,15 @@ namespace Point_Of_Sale.PL
                     freePro.Product_ID = product.ID;
                     listFree_Product.Add(freePro);
 
-                    cus_Sale.Sold_Price = product.Unit_Price; //sold price changed because of free
+                    cus_Sale.Sold_Price = product.Unit_Price; ///sold price changed because of free
                     dataGridItemsBilling.Discount = (int)product.Selling_Price;
                     dataGridItemsBilling.DiscountPrice = 0;
 
                 }
                 else
                 {
-                    totalTaka = totalTaka + ((float)cus_Sale.Sold_Price - dis) * (int)cus_Sale.Quantity; // calculating total bill
-                    dataGridItemsBilling.DiscountPrice = ((float)cus_Sale.Sold_Price - dis) * (int)cus_Sale.Quantity; // price after discount
+                    totalTaka = totalTaka + ((float)cus_Sale.Sold_Price - dis) * (int)cus_Sale.Quantity; /// calculating total bill
+                    dataGridItemsBilling.DiscountPrice = ((float)cus_Sale.Sold_Price - dis) * (int)cus_Sale.Quantity; /// price after discount
                 }
 
                 totalAmount.Content = totalTaka; // set total taka on bill screen

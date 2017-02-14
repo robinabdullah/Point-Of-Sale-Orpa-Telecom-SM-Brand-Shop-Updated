@@ -12,9 +12,9 @@
             <Separator Opacity="0" Height="5"/>
             <Button x:Name="stockQuantity_Copy" Content="All Products Stock Summary" Click="stockSummaryFull_Click" Height="31" FontSize="14"/>
             <Separator Opacity="0" Height="5"/>
-            <Button x:Name="stockQuantity_Copy1" Content="Date Wise Sales 1" Click="dateWiseSales1_Click" Height="31" FontSize="14"/>
+            <Button x:Name="stockQuantity_Copy1" Content="Date Wise Sales (Adding Discount)" Click="dateWiseSales1_Click" Height="31" FontSize="14"/>
             <Separator Opacity="0" Height="5"/>
-            <Button x:Name="stockQuantity_Copy3" Content="Date Wise Sales 2" Click="dateWiseSales2_Click" Height="31" FontSize="14"/>
+            <Button x:Name="stockQuantity_Copy3" Content="Date Wise Sales" Click="dateWiseSales2_Click" Height="31" FontSize="14"/>
             <Separator Opacity="0" Height="5"/>
             <Button x:Name="stockQuantity_Copy2" Content="Promotional Event" Click="promotionalEventSales_Click" Height="31" FontSize="14"/>
             <Separator Opacity="0" Height="5"/>

@@ -44,5 +44,14 @@ namespace Point_Of_Sale.Properties {
                 return ((string)(this["POSNew12ConnectionString1"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public float Setting {
+            get {
+                return ((float)(this["Setting"]));
+            }
+        }
     }
 }
