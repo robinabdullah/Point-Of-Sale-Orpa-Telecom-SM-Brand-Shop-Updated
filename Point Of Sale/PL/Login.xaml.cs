@@ -53,7 +53,7 @@ namespace Point_Of_Sale.PL
                     Register.Mac = Register.Decrypt(storedEncryptedMac, Register.ProductKey);
                     Register.SubscriptionDateString = Register.Decrypt(storedEncryptedDate, Register.ProductKey);
                     
-                    Console.WriteLine(Register.OrgName + " " + Register.Mac + " " + Register.SubscriptionDateString + "HI");
+                    ///Console.WriteLine(Register.OrgName + " " + Register.Mac + " " + Register.SubscriptionDateString + "HI");
                 }
                 catch
                 {
@@ -77,10 +77,11 @@ namespace Point_Of_Sale.PL
             }
             else if (Register.Mac != Register.getPcMac()) ///matching pc mac with stored encrypted mac 
             {
-                Xceed.Wpf.Toolkit.MessageBox.Show("Please contact with the developer.");
-                
+                Xceed.Wpf.Toolkit.MessageBox.Show("Fake MAC Detected. Please contact with the vendor.", "Fake MAC", MessageBoxButton.OK, MessageBoxImage.Stop, MessageBoxResult.OK);
+                this.Close();
+                Environment.Exit(0);///exit from application
             }
-            
+
         }
         public Login(Settings setting)
         {

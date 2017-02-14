@@ -1071,13 +1071,13 @@ namespace Point_Of_Sale.PL
                                 sale = (int)cus_sale.Sold_Price;
                                 if (cus_sale.Sale.Date.Value.Date == increDate)
                                 {
-                                    countSale++;
+                                    countSale++;/// sold product count
                                     saleOnDate += (int)sale;
                                 }
                             }
 
                             if (barc.Date.Value.Date == increDate)
-                                countStock++;// stock product count
+                                countStock++;/// stock product count
                         }
 
                         cell = new PdfPCell(new Phrase(countStock.ToString(), rowDataFont));

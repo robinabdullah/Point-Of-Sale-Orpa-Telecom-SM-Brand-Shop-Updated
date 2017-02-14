@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using System.Collections;
 using System.Collections.ObjectModel;
 using System.Net.NetworkInformation;
+using System.Security.AccessControl;
+using System.Security.Principal;
 
 namespace Point_Of_Sale.DAL
 {
@@ -665,7 +667,13 @@ namespace Point_Of_Sale.DAL
         
         public static string receipt = filePath + @"\receipt form field.pdf";
         public static string generatedReceipt = ReceiptSavingPath + @"\Fillied Receipt.pdf";
-
+        private static void GrantAccess(string fullPath)
+        {
+            var directoryInfo = new DirectoryInfo(fullPath);
+            var directorySecurity = directoryInfo.GetAccessControl();
+            var currentUserIdentity = WindowsIdentity.GetCurrent();
+            var fileSystemRule = new FileSystemAccessRule(currentUserIdentity.Name, FileSystemRights.Read, InheritanceFlags.ObjectInherit | InheritanceFlags.ContainerInherit, PropagationFlags.None, AccessControlType.Allow); directorySecurity.AddAccessRule(fileSystemRule); directoryInfo.SetAccessControl(directorySecurity);
+        }
         public static List<string> getProductReg()
         {
             try
@@ -682,6 +690,7 @@ namespace Point_Of_Sale.DAL
         {
             try
             {
+                //GrantAccess(ProductRegPath);
                 string temp = String.Format("{0}\n{1}\n{2}", org, newMac, date);
                 //File.SetAttributes(ProductRegPath, FileAttributes.Normal);
                 File.WriteAllText(ProductRegPath, temp);
@@ -1018,7 +1027,7 @@ namespace Point_Of_Sale.DAL
             try
             {
                 var temp1 = (from xx in db.Customer_Sales
-                             where xx.Product == product
+                             where xx.Product == product orderby xx.ID descending
                              select xx).ToList();
                 return temp1;
             }
