@@ -964,13 +964,13 @@ namespace Point_Of_Sale.PL
             PdfWriter.GetInstance(doc, new FileStream(tempFile, FileMode.Create));
             doc.Open();
 
-            int totalColumn = 5;
+            int totalColumn = 6;
             PdfPTable table = new PdfPTable(totalColumn);
             PdfPCell cell;
 
-            float[] widths = new float[] { 3.6f, 1f, 1.2f, 1f, 1f }; //column widths
+            float[] widths = new float[] { 3.6f, 1f, 1.2f, 1f, 1f, 1.2f }; //column widths
             table.SetWidths(widths);
-            table.TotalWidth = 450f;
+            table.TotalWidth = 500f;
             table.LockedWidth = true;
 
             cell = new PdfPCell(new Phrase("Date wise Stock", headerFont));
@@ -1018,14 +1018,20 @@ namespace Point_Of_Sale.PL
             cell.DisableBorderSide(12);
             cell.PaddingBottom = 6;
             table.AddCell(cell);
+
+            cell = new PdfPCell(new Phrase("Sale Cash(Com. Price)", columnHeaderFont));
+            cell.Colspan = 1;
+            cell.DisableBorderSide(12);
+            cell.PaddingBottom = 6;
+            table.AddCell(cell);
             // printing the column headings ends
 
-            int stockINCash = 0, saleOutCash = 0;
+            int stockINCash = 0, saleOutCash = 0,saleOutCashCompanyPrice = 0;
             int countStockTotal = 0, countSalesTotal = 0;
-            int netStockINCash = 0, netSaleOutCash = 0;
+            int netStockINCash = 0, netSaleOutCash = 0, netSaleOutCashCompanyPrice = 0;
             int netCountStock = 0, netCountSales = 0;
             int countStock = 0, countSale = 0;
-            int saleOnDate = 0;
+            int saleOnDate = 0, saleOnDateCompanyPrice = 0;
             int borderSide = 12;
             
 
@@ -1073,6 +1079,7 @@ namespace Point_Of_Sale.PL
                                 {
                                     countSale++;/// sold product count
                                     saleOnDate += (int)sale;
+                                    saleOnDateCompanyPrice += (int)cus_sale.Sale_Price_was;
                                 }
                             }
 
@@ -1100,15 +1107,22 @@ namespace Point_Of_Sale.PL
                         cell.DisableBorderSide(borderSide);
                         table.AddCell(cell);
 
+                        cell = new PdfPCell(new Phrase(saleOnDateCompanyPrice.ToString(), rowDataFont));
+                        cell.Colspan = 1;
+                        cell.DisableBorderSide(borderSide);
+                        table.AddCell(cell);
+
                         countSalesTotal += countSale;
                         countStockTotal += countStock;
 
                         stockINCash += countStock * (int)product.Unit_Price;
                         saleOutCash += saleOnDate;
+                        saleOutCashCompanyPrice += saleOnDateCompanyPrice;
 
                         countStock = 0;
                         countSale = 0;
                         saleOnDate = 0;
+                        saleOnDateCompanyPrice = 0;
                     }
                     increDate = increDate.AddDays(1); ///increase date by one
 
@@ -1138,14 +1152,22 @@ namespace Point_Of_Sale.PL
                     cell.Border = 1;
                     table.AddCell(cell);
 
+                    cell = new PdfPCell(new Phrase(saleOutCashCompanyPrice.ToString(), rowDataFont));
+                    cell.Colspan = 1;
+                    cell.Border = 1;
+                    table.AddCell(cell);
+
+
                     netStockINCash += stockINCash; /// stock cash
                     netSaleOutCash += saleOutCash; /// sale cash
+                    netSaleOutCashCompanyPrice += saleOutCashCompanyPrice; /// sale cash company price
                     netCountStock += countStockTotal; /// stock total in pieces
                     netCountSales += countSalesTotal; /// sale total in pieces
 
                     /// resetting the total sales,profit,discount
                     stockINCash = 0;
                     saleOutCash = 0;
+                    saleOutCashCompanyPrice = 0;
                     countStockTotal = 0;
                     countSalesTotal = 0;
                     //printing the Day End Total Sale, profit, given discount ends
@@ -1174,6 +1196,11 @@ namespace Point_Of_Sale.PL
                 table.AddCell(cell);
 
                 cell = new PdfPCell(new Phrase(netSaleOutCash.ToString(), columnHeaderFont));
+                cell.Colspan = 1;
+                cell.Border = 1;
+                table.AddCell(cell);
+
+                cell = new PdfPCell(new Phrase(netSaleOutCashCompanyPrice.ToString(), columnHeaderFont));
                 cell.Colspan = 1;
                 cell.Border = 1;
                 table.AddCell(cell);
