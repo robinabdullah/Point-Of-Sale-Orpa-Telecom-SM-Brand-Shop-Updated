@@ -26,6 +26,7 @@ namespace Point_Of_Sale.PL
         public Add_New_Values()
         {
             InitializeComponent();
+            newColor.Focus();
         }
 
         public Add_New_Values(ComboBox color): this()
