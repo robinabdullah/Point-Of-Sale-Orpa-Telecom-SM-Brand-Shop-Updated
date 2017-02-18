@@ -27,7 +27,7 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ProductName>Point of Sale %28ORPA Telecom%29</ProductName>
     <PublisherName>Robin</PublisherName>
-    <ApplicationRevision>124</ApplicationRevision>
+    <ApplicationRevision>126</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
@@ -161,7 +161,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="PL\Color Add.xaml">
+    <Page Include="PL\Add New Values.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -221,8 +221,8 @@
     <Compile Include="PL\Billing.xaml.cs">
       <DependentUpon>Billing.xaml</DependentUpon>
     </Compile>
-    <Compile Include="PL\Color Add.xaml.cs">
-      <DependentUpon>Color Add.xaml</DependentUpon>
+    <Compile Include="PL\Add New Values.xaml.cs">
+      <DependentUpon>Add New Values.xaml</DependentUpon>
     </Compile>
     <Compile Include="PL\Date to Date.xaml.cs">
       <DependentUpon>Date to Date.xaml</DependentUpon>

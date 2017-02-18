@@ -217,10 +217,28 @@ namespace Point_Of_Sale.DAL
                 return false;
             }
         }
+        public static bool updateProductQuantity(int newQuantity, int productID)
+        {
+            try
+            {
+                Product pro = (from u in db.Products
+                               where u.ID == productID
+                               select u).FirstOrDefault();
+
+                pro.Quantity_Available = newQuantity;
+                
+                db.SubmitChanges();
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw new Exception(ex.Message);
+            }
+        }
         public static bool updateProduct(int productID, int quantity, int unitP,int sellingP, Barcode[] barcode, string uniqueBarcode, DateTime date)
         {
-
-            //POSDataContext db = new POSDataContext(ConnectionString.connectionStringLinq);
             try
             {                
                 Product pro = (from u in db.Products
@@ -251,7 +269,7 @@ namespace Point_Of_Sale.DAL
                 //return false;
             }
         }
-        public static List<string> getAllProductTypes()
+        public static IQueryable<string> getAllProductTypes()
         {
             try
             {
@@ -260,7 +278,7 @@ namespace Point_Of_Sale.DAL
                            .Select(c => new { c.Type, c.Unique_Barcode })
                            .Distinct()
                            .OrderByDescending(x => x.Unique_Barcode)
-                           .Select(x => x.Type).ToList();
+                           .Select(x => x.Type);
 
 
                 return txts;
@@ -377,7 +395,7 @@ namespace Point_Of_Sale.DAL
         }
         public static bool IsProductAlreadyExists(string typ, string mod)
         {            
-            List<string> type = ProductTableData.getAllProductTypes();
+            List<string> type = ProductTableData.getAllProductTypes().ToList();
             List<string> model = ProductTableData.getAllProductModels();
 
             if (typ != "")

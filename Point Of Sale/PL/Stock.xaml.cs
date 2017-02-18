@@ -321,7 +321,6 @@ namespace Point_Of_Sale.PL
             sort();
         }
 
-
         private void addProdctType_Button_Click(object sender, RoutedEventArgs e)
         {
             Product_Type_Add add = new Product_Type_Add(true, productType, productModel);//enabling productType textfield
@@ -336,7 +335,7 @@ namespace Point_Of_Sale.PL
 
         private void Add_Color_Click(object sender, RoutedEventArgs e)
         {
-            Color_Add add = new Color_Add(color);
+            Add_New_Values add = new Add_New_Values(color);
             add.ShowDialog();
         }
 
@@ -502,6 +501,7 @@ namespace Point_Of_Sale.PL
         public int SL { get; set; }
         public string IMEI { get; set; }
         public string Color { get; set; }
+        public string Date { get; set; }
 
         public ListViewItems(int sl, string imei, string color)
         {
@@ -509,7 +509,13 @@ namespace Point_Of_Sale.PL
             IMEI = imei;
             Color = color;
         }
-
+        public ListViewItems(int sl, string imei, string color, string date)
+        {
+            SL = sl;
+            IMEI = imei;
+            Color = color;
+            Date = date;
+        }
 
     }
     class DataGridItems

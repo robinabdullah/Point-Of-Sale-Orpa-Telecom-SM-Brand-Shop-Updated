@@ -18,21 +18,31 @@ namespace Point_Of_Sale.PL
     /// <summary>
     /// Interaction logic for Color_Add.xaml
     /// </summary>
-    public partial class Color_Add : Window
+    public partial class Add_New_Values : Window
     {
         private ComboBox color;
+        private Product product;
 
-        public Color_Add()
+        public Add_New_Values()
         {
             InitializeComponent();
         }
 
-        public Color_Add(ComboBox color): this()
+        public Add_New_Values(ComboBox color): this()
         {
+            ok.Click -= adjust_quantity_Click; ///removing adjust quantity click
+            ok.Click += ok_color_Click; ///adding adjust quantity click
             this.color = color;
         }
 
-        private void ok_Click(object sender, RoutedEventArgs e)
+        public Add_New_Values(Product product): this()
+        {
+            ok.Click -= ok_color_Click;
+            ok.Click += adjust_quantity_Click;
+            this.product = product;
+        }
+
+        private void ok_color_Click(object sender, RoutedEventArgs e)
         {
             if (FileManagement.IsColorAlreadyExists(newColor.Text) == true)
             {
@@ -50,6 +60,21 @@ namespace Point_Of_Sale.PL
             else
             {
                 Xceed.Wpf.Toolkit.MessageBox.Show("Color textfield empty. Pres ok to exit.", "Empty extfield", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK);
+            }
+        }
+        private void adjust_quantity_Click(object sender, RoutedEventArgs e)
+        {
+            int quantity = 0;
+           
+            if (newColor.Text != "" && int.TryParse(newColor.Text, out quantity) == true)
+            {
+                product.Quantity_Available = quantity;
+                ProductTableData.updateProductQuantity(quantity, product.ID);
+                this.Close();
+            }
+            else
+            {
+                Xceed.Wpf.Toolkit.MessageBox.Show("Invalid value. Pres ok to exit.", "Invalid", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK);
             }
         }
     }

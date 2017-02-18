@@ -48,6 +48,7 @@ namespace Point_Of_Sale.PL
 
             if(isTextBox == true)
             {
+                
                 newProductTypeTextBox.HorizontalAlignment = HorizontalAlignment.Left;
                 newProductTypeTextBox.VerticalAlignment = VerticalAlignment.Top;
                 newProductTypeTextBox.Height = 23;
@@ -57,9 +58,11 @@ namespace Point_Of_Sale.PL
                 newProductTypeTextBox.TextWrapping = TextWrapping.Wrap;
                 mainGrid.Children.Add(newProductTypeTextBox);
                 newProductTypeTextBox.CharacterCasing = CharacterCasing.Upper;
+                newProductTypeTextBox.Focus();
             }
             else
             {
+                newProductModel.Focus();
                 newProductTypeComboBox.HorizontalAlignment = HorizontalAlignment.Left;
                 newProductTypeComboBox.VerticalAlignment = VerticalAlignment.Top;
                 newProductTypeComboBox.Height = 23;
@@ -133,8 +136,8 @@ namespace Point_Of_Sale.PL
                     productType.ItemsSource = ProductTableData.getAllProductTypes();
                     productModel.ItemsSource = ProductTableData.getAllTypeMachedModels(product.Type);
 
-                    productType.SelectedIndex = productType.Items.Count - 1;
-                    productModel.SelectedIndex = productModel.Items.Count - 1;                    
+                    productType.SelectedItem = product.Type;
+                    productModel.SelectedItem = product.Model;                    
                 }
                 else
                     Xceed.Wpf.Toolkit.MessageBox.Show("product is not added.", "No Intput", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK);

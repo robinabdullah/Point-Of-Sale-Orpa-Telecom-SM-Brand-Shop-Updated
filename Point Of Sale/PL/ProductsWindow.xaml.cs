@@ -14,6 +14,8 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Point_Of_Sale.BL;
 using Point_Of_Sale.DAL;
+using System.ComponentModel;
+using System.Threading;
 
 namespace Point_Of_Sale.PL
 {
@@ -30,17 +32,13 @@ namespace Point_Of_Sale.PL
             InitializeComponent();
             DB.resetConnString();
             addDatagridColumninStockHistory();
-
-
-
+            
             Search_Product SP = new Search_Product();
             SP.addDatagridColumninSalesHistory(salesHistoryDG, true); //show unit price
 
             productType.AddHandler(System.Windows.Controls.Primitives.TextBoxBase.TextChangedEvent,
                       new TextChangedEventHandler(ProductType_ComboBox_TextChanged));
-            productModel.AddHandler(System.Windows.Controls.Primitives.TextBoxBase.TextChangedEvent,
-                                  new TextChangedEventHandler(ProductModel_ComboBox_TextChanged));
-
+            productModel.AddHandler(System.Windows.Controls.Primitives.TextBoxBase.TextChangedEvent, new TextChangedEventHandler(ProductModel_ComboBox_TextChanged));
 
             productType.ItemsSource = ProductTableData.getAllProductTypes();
         }
@@ -107,8 +105,22 @@ namespace Point_Of_Sale.PL
         }
         private void ProductType_ComboBox_TextChanged(object sender, TextChangedEventArgs e)
         {
+            deleteProductType.IsEnabled = false;
             productModel.ItemsSource = ProductTableData.getAllTypeMachedModels(productType.Text);
+            if(productModel.Items.Count == 0)
+            {
+                deleteProductType.IsEnabled = true;
+            }
         }
+        
+        
+        private void ProductModel_ComboBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            
+            fillSaleDGandProductDG();
+            
+        }
+        
         private void fillSaleDGandProductDG()
         {
             DB.resetConnString();
@@ -116,21 +128,24 @@ namespace Point_Of_Sale.PL
             salesHistoryDG.Items.Clear();
             listView.Items.Clear();
             deleteSelected.IsEnabled = false;
+            adjustQuantity.IsEnabled = false;
 
             if (productModel.SelectedIndex == -1)
                 return;
 
             // for product and barocde datagrid
-            product = ProductTableData.getProductByModel(productModel.Text);
+            product = ProductTableData.getProductByModel(productModel.SelectedItem.ToString());
             Barcode[] barcodes = ProductTableData.getBarcodesByPID(product.ID);
 
             if (product.Unique_Barcode.StartsWith("Y"))
                 deleteSelected.IsEnabled = true;
+            else
+                adjustQuantity.IsEnabled = true;
 
             foreach (var item in barcodes)
             {
                 if (premitBarcodeinListView(item.Barcode_Serial) == true)
-                    listView.Items.Add(new ListViewItems(listView.Items.Count + 1, item.Barcode_Serial, item.Color));
+                    listView.Items.Add(new ListViewItems(listView.Items.Count + 1, item.Barcode_Serial, item.Color, item.Date.ToString()));
             }
 
             productsDG.Items.Add(product);
@@ -140,7 +155,7 @@ namespace Point_Of_Sale.PL
 
             foreach (var item in customer_Sale_List)
             {
-                if(item.Sale == null)
+                if (item.Sale == null)
                 {
                     MessageBox.Show("Error showing this item. ");
                     continue;
@@ -153,10 +168,6 @@ namespace Point_Of_Sale.PL
 
                 salesHistoryDG.Items.Add(salesHis);
             }
-        }
-        private void ProductModel_ComboBox_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            fillSaleDGandProductDG();
         }
         private void productType_Loaded(object sender, RoutedEventArgs e)
         {
@@ -328,5 +339,17 @@ namespace Point_Of_Sale.PL
                 }
             }
         }
+
+        private void adjustQuantity_Click(object sender, RoutedEventArgs e)
+        {
+            
+            Add_New_Values add = new Add_New_Values(product);
+            add.Title = "Quantity Adjust";
+            add.labelName.Content = "Adjusted Quantity";
+            
+            add.ShowDialog();
+        }
+        
+
     }
 }

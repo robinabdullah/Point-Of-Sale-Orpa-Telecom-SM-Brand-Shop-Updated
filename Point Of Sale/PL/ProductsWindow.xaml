@@ -13,30 +13,33 @@
             <Grid Margin="0,0,0,-1">
                 <Label x:Name="label" FontSize="17.33" Content="Search By:"  HorizontalAlignment="Left" VerticalAlignment="Top" FontWeight="Bold" Margin="-2,0,0,0"/>
                 <Label x:Name="label1_Copy2" Content="Product Type" HorizontalAlignment="Left" Margin="97,3,0,0" VerticalAlignment="Top" Width="104" FontSize="17.333" FontFamily="Times New Roman"/>
-                <ComboBox x:Name="productType" IsEditable="True" IsTextSearchEnabled="True" MaxDropDownHeight="150" HorizontalAlignment="Left" Margin="201,8,0,0" VerticalAlignment="Top" Width="222" Height="23" FontSize="16" FontFamily="Times New Roman" FontWeight="Bold" Loaded="productType_Loaded"/>
-                <ComboBox x:Name="productModel" IsEditable="True"  MaxDropDownHeight="200" HorizontalAlignment="Left" Margin="547,8,0,0" VerticalAlignment="Top" Width="192" Height="23" FontSize="16" FontFamily="Times New Roman" FontWeight="Bold" BorderBrush="#FFACACAC"/>
-                <Label x:Name="label1_Copy3" Content="Product Model:" HorizontalAlignment="Left" Margin="428,3,0,0" VerticalAlignment="Top" Width="114" FontSize="17.333" FontFamily="Times New Roman"/>
+                <ComboBox x:Name="productType" IsEditable="True" IsTextSearchEnabled="True" MaxDropDownHeight="150" HorizontalAlignment="Left" Margin="201,8,0,0" VerticalAlignment="Top" Width="212" Height="23" FontSize="16" FontFamily="Times New Roman" FontWeight="Bold" Loaded="productType_Loaded"/>
+                <ComboBox x:Name="productModel" IsEditable="True"  MaxDropDownHeight="200" HorizontalAlignment="Left" Margin="540,8,0,0" VerticalAlignment="Top" Width="192" Height="23" FontSize="16" FontFamily="Times New Roman" FontWeight="Bold" BorderBrush="#FFACACAC"/>
+                <Label x:Name="label1_Copy3" Content="Product Model:" HorizontalAlignment="Left" Margin="421,3,0,0" VerticalAlignment="Top" Width="114" FontSize="17.333" FontFamily="Times New Roman"/>
             </Grid>
         </Border>
 
         <DataGrid x:Name="productsDG" HorizontalAlignment="Left" Margin="13,89,0,0" VerticalAlignment="Top" Height="77" Width="871"/>
         <Label x:Name="assg" Content="Products:"  HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,61,0,0" Width="70" FontWeight="Bold"/>
-        <ListView x:Name="listView" HorizontalAlignment="Left" Height="137" Margin="272,210,0,0" VerticalAlignment="Top" Width="348" >
+        <ListView x:Name="listView" HorizontalAlignment="Left" Height="137" Margin="220,210,0,0" VerticalAlignment="Top" Width="447" >
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="SL" DisplayMemberBinding="{Binding SL}" Width="40" />
-                    <GridViewColumn Header="IMEI" DisplayMemberBinding="{Binding IMEI}" Width="200"/>
-                    <GridViewColumn Header="Color" DisplayMemberBinding="{Binding Color}" Width="80" />
+                    <GridViewColumn Header="IMEI" DisplayMemberBinding="{Binding IMEI}" />
+                    <GridViewColumn Header="Color" DisplayMemberBinding="{Binding Color}" />
+                    <GridViewColumn Header="Date" DisplayMemberBinding="{Binding Date}"  />
                 </GridView>
             </ListView.View>
         </ListView>
-        <Button x:Name="deleteSelected" Content="Delete Selected" HorizontalAlignment="Left" Margin="630,275,0,0" VerticalAlignment="Top" Width="106" Click="deleteSelectedBarcode_Click" Height="25" FontSize="14" IsEnabled="False" />
-        <Label x:Name="assg_Copy" Content="Products IMEI/Barcode:"  HorizontalAlignment="Left" VerticalAlignment="Top" Margin="122,210,0,0" Width="146" FontWeight="Bold"/>
-        <Button x:Name="updatePrice" Content="Update Price" HorizontalAlignment="Left" Margin="384,177,0,0" VerticalAlignment="Top" Width="106" Click="updatePrice_Click" Height="25" FontSize="14" />
-        <Button x:Name="deleteProduct" Content="Delete Product" HorizontalAlignment="Left" Margin="562,177,0,0" VerticalAlignment="Top" Width="106" Click="deleteProduct_Click" Height="25" FontSize="14" />
+        <Button x:Name="deleteSelected" Content="Delete Selected" HorizontalAlignment="Left" Margin="690,270,0,0" VerticalAlignment="Top" Width="106" Click="deleteSelectedBarcode_Click" Height="25" FontSize="14" IsEnabled="False" />
+        <Label x:Name="assg_Copy" Content="Products IMEI/Barcode:"  HorizontalAlignment="Left" VerticalAlignment="Top" Margin="62,211,0,0" Width="146" FontWeight="Bold"/>
+        <Button x:Name="updatePrice" Content="Update Price" HorizontalAlignment="Left" Margin="488,177,0,0" VerticalAlignment="Top" Width="106" Click="updatePrice_Click" Height="25" FontSize="14" />
+        <Button x:Name="deleteProduct" Content="Delete Product" HorizontalAlignment="Left" Margin="666,177,0,0" VerticalAlignment="Top" Width="106" Click="deleteProduct_Click" Height="25" FontSize="14" />
         <DataGrid  HorizontalAlignment="Left" Margin="10,363,0,0" VerticalAlignment="Top" Height="221" Width="874" x:Name="salesHistoryDG"/>
-        <Button x:Name="deleteSale" Content="Delete Sale" HorizontalAlignment="Left" Margin="346,589,0,0" VerticalAlignment="Top" Width="82" Height="27" Click="delete_Selected_Sales_Click"/>
+        <Button x:Name="deleteSale" Content="Delete Sale" HorizontalAlignment="Left" Margin="410,589,0,0" VerticalAlignment="Top" Width="82" Height="27" Click="delete_Selected_Sales_Click"/>
         <Label x:Name="assg_Copy1" Content="Sales:"  HorizontalAlignment="Left" VerticalAlignment="Top" Margin="14,338,0,0" Width="96" FontWeight="Bold"/>
-        <Button x:Name="deleteProductType" Content="Delete Type" HorizontalAlignment="Left" Margin="204,177,0,0" VerticalAlignment="Top" Width="106" Click="deleteProductType_Click" Height="25" FontSize="14" />
+        <Button x:Name="adjustQuantity" Content="Adjust Quantity" HorizontalAlignment="Left" Margin="122,177,0,0" VerticalAlignment="Top" Width="115" Click="adjustQuantity_Click" Height="25" FontSize="14" IsEnabled="False" />
+        <Button x:Name="deleteProductType" Content="Delete Type" HorizontalAlignment="Left" Margin="308,177,0,0" VerticalAlignment="Top" Width="106" Click="deleteProductType_Click" Height="25" FontSize="14" IsEnabled="False" />
+
     </Grid>
 </Window>
