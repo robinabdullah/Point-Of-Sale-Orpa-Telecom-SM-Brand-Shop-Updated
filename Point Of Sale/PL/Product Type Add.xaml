@@ -15,7 +15,7 @@
         <TextBox x:Name="unitPrice" HorizontalAlignment="Left" Height="23" Margin="115,81,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="177"  FontSize="13" LostKeyboardFocus="unitPrice_LostKeyboardFocus"/>
         <Label x:Name="label_Copy3" Content="Selling Price" HorizontalAlignment="Left" Margin="26,118,0,0" VerticalAlignment="Top" FontSize="13"/>
         <TextBox x:Name="sellingPrice" HorizontalAlignment="Left" Height="23" Margin="115,119,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="177" FontSize="13" LostKeyboardFocus="sellingPrice_LostKeyboardFocus"/>
-        <Button x:Name="ok" Content="Create" HorizontalAlignment="Left" Margin="177,199,0,0" VerticalAlignment="Top" Width="74" FontSize="13" Click="ok_Click"/>
+        <Button x:Name="ok" Content="Create" HorizontalAlignment="Left" Margin="177,199,0,0" VerticalAlignment="Top" Width="74" FontSize="13" Click="ok_Click" IsDefault="True"/>
         <Button x:Name="close" Content="Close" HorizontalAlignment="Left" Margin="68,199,0,0" VerticalAlignment="Top" Width="74" IsCancel="True" FontSize="13" Click="close_Click"/>
         <Label x:Name="label" Content="Note: No duplication is Allowed" HorizontalAlignment="Left" Margin="17,225,0,0" VerticalAlignment="Top" FontSize="11"/>
         

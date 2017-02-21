@@ -105,12 +105,9 @@ namespace Point_Of_Sale.PL
         }
         private void ProductType_ComboBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            deleteProductType.IsEnabled = false;
+            
             productModel.ItemsSource = ProductTableData.getAllTypeMachedModels(productType.Text);
-            if(productModel.Items.Count == 0)
-            {
-                deleteProductType.IsEnabled = true;
-            }
+            
         }
         
         
@@ -257,6 +254,7 @@ namespace Point_Of_Sale.PL
                 if (ProductTableData.deleteProduct(product.ID) == true)
                 {
                     Xceed.Wpf.Toolkit.MessageBox.Show("Product deleted form database");
+                    productType.ItemsSource = ProductTableData.getAllProductTypes();
                     productModel.SelectedIndex = -1;
                     productType.SelectedIndex = -1;
                 }
@@ -304,41 +302,7 @@ namespace Point_Of_Sale.PL
 
         }
 
-        private void deleteProductType_Click(object sender, RoutedEventArgs e)
-        {
-            if(productType.SelectedIndex == -1)
-            {
-                MessageBox.Show("Please select a product type to delete.");
-                return;
-            }
-
-            if(productModel.Items.Count != 0) // delete the product model first
-            {
-                MessageBox.Show("First delete the product by pressing the Delete Product Button.");
-                return;
-            }
-            else
-            {
-                MessageBoxResult res = Xceed.Wpf.Toolkit.MessageBox.Show("Are you sure?. Press 'Yes' to Confirm.", "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Error, MessageBoxResult.No);
-
-                if (res != MessageBoxResult.Yes) //checking confirmation
-                    return;
-
-                try
-                {
-                    if (FileManagement.deleteProductType(productType.Text)) 
-                    {
-                        productType.SelectedIndex = -1;
-                        productType.ItemsSource = ProductTableData.getAllProductTypes();
-                        Xceed.Wpf.Toolkit.MessageBox.Show("Product Type deleted.");
-                    }
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.Message);
-                }
-            }
-        }
+        
 
         private void adjustQuantity_Click(object sender, RoutedEventArgs e)
         {

@@ -783,29 +783,7 @@ namespace Point_Of_Sale.DAL
             }
             
         }
-        public static bool deleteProductType(string type)
-        {
-            try
-            {
-                var temp = ProductTableData.getAllTypeMachedModels(type);
-
-                if(temp.Count == 0)
-                {
-                    var tempFile = Path.GetTempFileName();
-                    var linesToKeep = File.ReadLines(ProductTypePath).Where(l => l != type);
-
-                    File.WriteAllLines(tempFile, linesToKeep);
-
-                    File.Delete(ProductTypePath);
-                    File.Move(tempFile, ProductTypePath);
-                }
-                return true;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Error deleting the product type.\n\nDetailed Error: " + ex.Message);
-            }
-        }
+        
         public static void setNewProductType(string type)
         {
             //setPath();

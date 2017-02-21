@@ -39,12 +39,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_770129EC75C546C0808706A829F11B64"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_79D2CD9AC365D6008353B5063542F90B"
         "OwnerKey" = "8:_D5DC6CD930DF4EDE9350CBB0E2CA9D10"
         "MsmSig" = "8:_UNDEFINED"
@@ -59,12 +53,6 @@
         {
         "MsmKey" = "8:_98B6A6E8C0D4D99AC3AB75D73882EF58"
         "OwnerKey" = "8:_D5DC6CD930DF4EDE9350CBB0E2CA9D10"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_A4B4A3E4FB9A4E029EB98A562CCD6F66"
-        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -408,26 +396,6 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_770129EC75C546C0808706A829F11B64"
-            {
-            "SourcePath" = "8:..\\Point Of Sale\\Files\\Product Model.dat"
-            "TargetName" = "8:Product Model.dat"
-            "Tag" = "8:"
-            "Folder" = "8:_30F582889B2843D292011CFB403B7F60"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_79D2CD9AC365D6008353B5063542F90B"
             {
             "AssemblyRegister" = "3:1"
@@ -488,26 +456,6 @@
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:TRUE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_A4B4A3E4FB9A4E029EB98A562CCD6F66"
-            {
-            "SourcePath" = "8:..\\Point Of Sale\\Files\\Product Type.dat"
-            "TargetName" = "8:Product Type.dat"
-            "Tag" = "8:"
-            "Folder" = "8:_30F582889B2843D292011CFB403B7F60"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_B4B9AD63F19445DDB1AA23C8198582EF"

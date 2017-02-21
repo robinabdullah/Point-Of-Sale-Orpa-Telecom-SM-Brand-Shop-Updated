@@ -296,12 +296,6 @@
     <Content Include="Files\Color.dat">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Files\Product Model.dat">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Files\Product Type.dat">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="Files\receipt form field.pdf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

@@ -110,72 +110,74 @@ namespace Point_Of_Sale.PL
         }
         private void ok_Click(object sender, RoutedEventArgs e)
         {
-            POSDataContext db = new POSDataContext(ConnectionString.connectionStringLinq);
-            //string model = newProductModel.Text;
-            //string type = newProductType.Text;
-                        
-
-            if (isTextBox == true && newProductModel.Text != "" && newProductTypeTextBox.Text != "" && unitPrice.Text != "" && sellingPrice.Text != "")
+            try
             {
-                Console.WriteLine(ProductTableData.IsProductAlreadyExists(newProductTypeTextBox.Text, newProductModel.Text));
 
-                if (ProductTableData.IsProductAlreadyExists(newProductTypeTextBox.Text, newProductModel.Text) == true)
+                if (isTextBox == true && newProductModel.Text != "" && newProductTypeTextBox.Text != "" && unitPrice.Text != "" && sellingPrice.Text != "")
                 {
-                    Xceed.Wpf.Toolkit.MessageBox.Show("Product type or model is already in database. Please try again.\n\nPress ok to exit.", "Duplicate Product", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK);
-                    return;
+                    Console.WriteLine(ProductTableData.IsProductAlreadyExists(newProductTypeTextBox.Text, newProductModel.Text));
+
+                    if (ProductTableData.IsProductAlreadyExists(newProductTypeTextBox.Text, newProductModel.Text) == true)
+                    {
+                        Xceed.Wpf.Toolkit.MessageBox.Show("Product type or model is already in database. Please try again.\n\nPress ok to exit.", "Duplicate Product", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK);
+                        return;
+                    }
+
+                    Product product = new Product { Model = newProductModel.Text, Type = newProductTypeTextBox.Text, Quantity_Available = 0, Quantity_Sold = 0, Unit_Price = unitPriceInt, Selling_Price = sellingPriceInt, Des = "None", Date_Updated = DateTime.Now, Unique_Barcode = getBarcodeSystem() };
+
+
+                    if (ProductTableData.addNewProduct(product) == true)
+                    {
+                        //FileManagement.setNewProductType(product.Type);
+                        //FileManagement.setNewProductModel(product.Model);
+
+                        productType.ItemsSource = ProductTableData.getAllProductTypes();
+                        productModel.ItemsSource = ProductTableData.getAllTypeMachedModels(product.Type);
+
+                        productType.SelectedItem = product.Type;
+                        productModel.SelectedItem = product.Model;
+                    }
+                    else
+                        Xceed.Wpf.Toolkit.MessageBox.Show("product is not added.", "No Intput", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK);
+                    this.Close();
                 }
-
-                Product product = new Product { Model = newProductModel.Text, Type = newProductTypeTextBox.Text, Quantity_Available = 0, Quantity_Sold = 0, Unit_Price = unitPriceInt, Selling_Price = sellingPriceInt, Des = "None", Date_Updated = DateTime.Now, Unique_Barcode = getBarcodeSystem() };  
-                
-
-                if (ProductTableData.addNewProduct(product) == true)
+                else if (isTextBox == false && newProductModel.Text != "" && newProductTypeComboBox.SelectedIndex != -1 && unitPrice.Text != "" && sellingPrice.Text != "")
                 {
-                    FileManagement.setNewProductType(product.Type);
-                    //FileManagement.setNewProductModel(product.Model);
+                    if (ProductTableData.IsProductAlreadyExists("", newProductModel.Text) == true)
+                    {
+                        Xceed.Wpf.Toolkit.MessageBox.Show("Product model is already in database. Please try again.\n\nPress ok to exit.", "Duplicate Product Model", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK);
+                        return;
+                    }
+                    Product product = new Product { Model = newProductModel.Text, Type = newProductTypeComboBox.Text, Quantity_Available = 0, Quantity_Sold = 0, Unit_Price = unitPriceInt, Selling_Price = sellingPriceInt, Des = "None", Date_Updated = DateTime.Now, Unique_Barcode = getBarcodeSystem() };
 
-                    productType.ItemsSource = ProductTableData.getAllProductTypes();
-                    productModel.ItemsSource = ProductTableData.getAllTypeMachedModels(product.Type);
 
-                    productType.SelectedItem = product.Type;
-                    productModel.SelectedItem = product.Model;                    
+                    if (ProductTableData.addNewProduct(product) == true)
+                    {
+
+                        //FileManagement.setNewProductModel(product.Model);
+
+                        productType.ItemsSource = ProductTableData.getAllProductTypes();
+                        productModel.ItemsSource = ProductTableData.getAllTypeMachedModels(product.Type);
+
+                        //productType.SelectedIndex = productType.Items.Count - 1;
+                        //productModel.SelectedIndex = productModel.Items.Count - 1;
+                        productType.Text = newProductTypeComboBox.Text;
+                        productModel.Text = newProductModel.Text;
+                    }
+                    else
+                        Xceed.Wpf.Toolkit.MessageBox.Show("product is not added.", "No Intput", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK);
+                    this.Close();
                 }
                 else
-                    Xceed.Wpf.Toolkit.MessageBox.Show("product is not added.", "No Intput", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK);
-                this.Close();
-            }
-            else if(isTextBox == false && newProductModel.Text != "" && newProductTypeComboBox.SelectedIndex != -1 && unitPrice.Text != "" && sellingPrice.Text != "")
-            {
-                if (ProductTableData.IsProductAlreadyExists("", newProductModel.Text) == true)
                 {
-                    Xceed.Wpf.Toolkit.MessageBox.Show("Product model is already in database. Please try again.\n\nPress ok to exit.", "Duplicate Product Model", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK);
-                    return;
+                    Xceed.Wpf.Toolkit.MessageBox.Show("Some fields are empty.", "No Intput Error", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK);
+                    //this.Close();
                 }
-                Product product = new Product { Model = newProductModel.Text, Type = newProductTypeComboBox.Text, Quantity_Available = 0, Quantity_Sold = 0, Unit_Price = unitPriceInt, Selling_Price = sellingPriceInt, Des = "None", Date_Updated = DateTime.Now, Unique_Barcode = getBarcodeSystem() };
-                
-
-                if (ProductTableData.addNewProduct(product) == true)
-                {
-                    
-                    //FileManagement.setNewProductModel(product.Model);
-
-                    productType.ItemsSource = ProductTableData.getAllProductTypes();
-                    productModel.ItemsSource = ProductTableData.getAllTypeMachedModels(product.Type);
-
-                    //productType.SelectedIndex = productType.Items.Count - 1;
-                    //productModel.SelectedIndex = productModel.Items.Count - 1;
-                    productType.Text = newProductTypeComboBox.Text;
-                    productModel.Text = newProductModel.Text;
-                }
-                else
-                    Xceed.Wpf.Toolkit.MessageBox.Show("product is not added.", "No Intput", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK);
-                this.Close();
             }
-            else
+            catch (Exception ex)
             {
-                Xceed.Wpf.Toolkit.MessageBox.Show("Some fields are empty.", "No Intput Error", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK);
-                //this.Close();
+                MessageBox.Show(ex.Message + "\n\n" + ex.StackTrace);
             }
-
         }
         
 
