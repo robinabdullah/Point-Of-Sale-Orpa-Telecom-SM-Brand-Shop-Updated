@@ -15,6 +15,7 @@ using Point_Of_Sale.DAL;
 using iTextSharp.text.pdf;
 using System.IO;
 using System.Diagnostics;
+using Point_Of_Sale.BL;
 
 namespace Point_Of_Sale.PL
 {

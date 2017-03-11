@@ -12,103 +12,9 @@ using System.Security.Principal;
 
 namespace Point_Of_Sale.DAL
 {
-    class Register
-    {
-        public static DateTime SubscriptionDateEnd = new DateTime(2017, 3, 10);
-        public static string ProductKey = "45659123in";
-        public static string OrgName = "";
-        public static string Mac = "";
-        public static string SubscriptionDateString = "";
-
-        public static bool validateRegistration()
-        {
-            return true;
-        }
-        public static string getPcMac()
-        {
-            NetworkInterface[] nics = NetworkInterface.GetAllNetworkInterfaces();
-            string sMacAddress = string.Empty;
-            foreach (NetworkInterface adapter in nics)
-            {
-                if (sMacAddress == String.Empty)// only return MAC Address from first card  
-                {
-                    //IPInterfaceProperties properties = adapter.GetIPProperties(); Line is not required
-                    sMacAddress = adapter.GetPhysicalAddress().ToString();
-                }
-            }
-            return sMacAddress;
-        }
-        public static string Encrypt( string stringToEncrypt, string key)
-        {
-            if (string.IsNullOrEmpty(stringToEncrypt))
-            {
-                throw new ArgumentException("An empty string value cannot be encrypted.");
-            }
-
-            if (string.IsNullOrEmpty(key))
-            {
-                throw new ArgumentException("Cannot encrypt using an empty key. Please supply an encryption key.");
-            }
-
-            System.Security.Cryptography.CspParameters cspp = new System.Security.Cryptography.CspParameters();
-            cspp.KeyContainerName = key;
-
-            System.Security.Cryptography.RSACryptoServiceProvider rsa = new System.Security.Cryptography.RSACryptoServiceProvider(cspp);
-            rsa.PersistKeyInCsp = true;
-
-            byte[] bytes = rsa.Encrypt(System.Text.UTF8Encoding.UTF8.GetBytes(stringToEncrypt), true);
-
-            return BitConverter.ToString(bytes);
-        }
-
-        public static string Decrypt( string stringToDecrypt, string key)
-        {
-            string result = null;
-
-            if (string.IsNullOrEmpty(stringToDecrypt))
-            {
-                //throw new ArgumentException("An empty string value cannot be encrypted.");
-                
-            }
-
-            if (string.IsNullOrEmpty(key))
-            {
-                throw new ArgumentException("Cannot decrypt using an empty key. Please supply a decryption key.");
-            }
-
-            try
-            {
-                System.Security.Cryptography.CspParameters cspp = new System.Security.Cryptography.CspParameters();
-                cspp.KeyContainerName = key;
-
-                System.Security.Cryptography.RSACryptoServiceProvider rsa = new System.Security.Cryptography.RSACryptoServiceProvider(cspp);
-                rsa.PersistKeyInCsp = true;
-
-                string[] decryptArray = stringToDecrypt.Split(new string[] { "-" }, StringSplitOptions.None);
-                byte[] decryptByteArray = Array.ConvertAll<string, byte>(decryptArray, (s => Convert.ToByte(byte.Parse(s, System.Globalization.NumberStyles.HexNumber))));
-
-
-                byte[] bytes = rsa.Decrypt(decryptByteArray, true);
-
-                result = System.Text.UTF8Encoding.UTF8.GetString(bytes);
-
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-            finally
-            {
-                // no need for further processing
-            }
-
-            return result;
-        }
-
-    }
+    
     class DB
     {
-        
         public static POSDataContext db = new POSDataContext(ConnectionString.connectionStringLinq);
         public static void resetConnString()
         {
@@ -816,6 +722,7 @@ namespace Point_Of_Sale.DAL
         }
         
     }
+
     class Login_TableData : DB
     {
         public static bool verifyLogin(string username, string password)
@@ -823,7 +730,8 @@ namespace Point_Of_Sale.DAL
             try
             {
                 var abc = db.Logins.Where(x => x.Username == username && x.Password == password).First();
-
+                BL.Login.UserType = abc.User_Type;
+                BL.Login.Username = abc.Username;
                 if (abc != null)
                 {
                     abc.Last_Login = DateTime.Now;

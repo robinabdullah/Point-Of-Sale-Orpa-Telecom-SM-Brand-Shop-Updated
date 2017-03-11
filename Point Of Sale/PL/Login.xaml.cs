@@ -14,6 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Point_Of_Sale.DAL;
+using Point_Of_Sale.BL;
 
 namespace Point_Of_Sale.PL
 {
@@ -160,6 +161,7 @@ namespace Point_Of_Sale.PL
                 {
                     this.Close();
                     main.welcome.Content = "WELCOME TO " + Register.OrgName;///saving org name in dsply
+                    main.username.Content = "Logged in as, "  + BL.Login.Username;
                     main.Show();
                 }
             }

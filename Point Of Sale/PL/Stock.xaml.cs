@@ -16,7 +16,7 @@ using Point_Of_Sale.DAL;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Collections;
-//using Xceed.Wpf.Toolkit;
+using Point_Of_Sale.BL;
 
 namespace Point_Of_Sale.PL
 {

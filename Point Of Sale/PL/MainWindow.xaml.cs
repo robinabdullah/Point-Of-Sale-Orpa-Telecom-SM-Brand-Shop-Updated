@@ -14,6 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Point_Of_Sale.DAL;
+using Point_Of_Sale.BL;
 
 namespace Point_Of_Sale.PL
 {
@@ -25,7 +26,8 @@ namespace Point_Of_Sale.PL
         public MainWindow()
         {
             InitializeComponent();
-            
+            username.Content = "Logged in as, " + BL.Login.Username;
+
         }
 
         private void sellProduct_Click(object sender, RoutedEventArgs e)
@@ -51,40 +53,60 @@ namespace Point_Of_Sale.PL
             ProductsWindow products = new ProductsWindow();
             //ss.ShowDialog();    
 
-            Login loginInterface = new Login(products);
-            loginInterface.userName.Text = "PRODUCT ADMIN";
-            loginInterface.userName.IsEnabled = false;
-            loginInterface.password.Clear();
-            loginInterface.password.Focus();
-            loginInterface.ShowDialog();
+
+
+            if (BL.Login.UserType != "admin")
+            {
+                Login loginInterface = new Login(products);
+                loginInterface.userName.Text = "PRODUCT ADMIN";
+                loginInterface.userName.IsEnabled = false;
+                loginInterface.password.Clear();
+                loginInterface.password.Focus(); loginInterface.ShowDialog();
+            }
+            else
+                products.ShowDialog();
         }
 
         private void settings_Click(object sender, RoutedEventArgs e)
         {
-            Settings  setting = new Settings();
-            //ss.ShowDialog();
+            Settings setting = new Settings();
 
-            Login loginInterface = new Login(setting);
-            loginInterface.userName.Text = "SETTING ADMIN";
-            loginInterface.userName.IsEnabled = false;
-            loginInterface.password.Clear();
-            loginInterface.password.Focus();
-            loginInterface.ShowDialog();
+            if (BL.Login.UserType != "admin")
+            {
+                Login loginInterface = new Login(setting);
+                loginInterface.userName.Text = "SETTING ADMIN";
+                loginInterface.userName.IsEnabled = false;
+                loginInterface.password.Clear();
+                loginInterface.password.Focus();
+                loginInterface.ShowDialog();
+
+            }
+            else
+                setting.ShowDialog();
         }
-
         private void reports_Click(object sender, RoutedEventArgs e)
         {
             Reports reports = new Reports();
             //reports.ShowDialog();
 
-            Login loginInterface = new Login(reports);
-            loginInterface.userName.Text = "REPORT ADMIN";
-            loginInterface.userName.IsEnabled = false;
-            loginInterface.password.Focus();
-            loginInterface.password.Clear();
-            loginInterface.ShowDialog();
+            if (BL.Login.UserType != "admin")
+            {
+                Login loginInterface = new Login(reports);
+                loginInterface.userName.Text = "REPORT ADMIN";
+                loginInterface.userName.IsEnabled = false;
+                loginInterface.password.Focus();
+                loginInterface.password.Clear();
+                loginInterface.ShowDialog();
+            }
+            else
+                reports.ShowDialog();
         }
 
-        
+        private void logout_Click(object sender, RoutedEventArgs e)
+        {
+            Login login = new Login();
+            login.Show();
+            this.Close();
+        }
     }
 }

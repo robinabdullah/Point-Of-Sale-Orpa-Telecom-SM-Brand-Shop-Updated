@@ -15,5 +15,7 @@
         <Button x:Name="reports" Content="Reports" HorizontalAlignment="Center" Margin="297,407,306,57" VerticalAlignment="Center"  Width="139" Height="56" FontSize="16" Click="reports_Click"/>
         <Label x:Name="label" Content="Copy Right 2017  Friends Software Solution. Call for Support 01676797123" HorizontalAlignment="Left" Margin="10,0,0,10" VerticalAlignment="Bottom" Width="476" FontWeight="Bold"/>
         <Label x:Name="welcome" Content="Welcome" HorizontalAlignment="Center" Margin="193,10,202,0" VerticalAlignment="Top" FontSize="30" FontWeight="Bold" FontFamily="Times New Roman"/>
+        <Button x:Name="logout" Content="Logout" HorizontalAlignment="Right" Margin="0,10,10,0" VerticalAlignment="Top" Width="50" Click="logout_Click"/>
+        <Label x:Name="username" Content="Logged in as, " HorizontalAlignment="Right" Margin="0,36,16,0" VerticalAlignment="Top"/>
     </Grid>
 </Window>

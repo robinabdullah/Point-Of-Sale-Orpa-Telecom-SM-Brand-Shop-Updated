@@ -42,9 +42,6 @@ namespace Point_Of_Sale.DAL
     partial void InsertGift(Gift instance);
     partial void UpdateGift(Gift instance);
     partial void DeleteGift(Gift instance);
-    partial void InsertLogin(Login instance);
-    partial void UpdateLogin(Login instance);
-    partial void DeleteLogin(Login instance);
     partial void InsertFree_Product(Free_Product instance);
     partial void UpdateFree_Product(Free_Product instance);
     partial void DeleteFree_Product(Free_Product instance);
@@ -118,14 +115,6 @@ namespace Point_Of_Sale.DAL
 			}
 		}
 		
-		public System.Data.Linq.Table<Login> Logins
-		{
-			get
-			{
-				return this.GetTable<Login>();
-			}
-		}
-		
 		public System.Data.Linq.Table<Free_Product> Free_Products
 		{
 			get
@@ -147,6 +136,14 @@ namespace Point_Of_Sale.DAL
 			get
 			{
 				return this.GetTable<Customer_Sale>();
+			}
+		}
+		
+		public System.Data.Linq.Table<Login> Logins
+		{
+			get
+			{
+				return this.GetTable<Login>();
 			}
 		}
 	}
@@ -1122,116 +1119,6 @@ namespace Point_Of_Sale.DAL
 		}
 	}
 	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Login")]
-	public partial class Login : INotifyPropertyChanging, INotifyPropertyChanged
-	{
-		
-		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
-		
-		private string _Username;
-		
-		private string _Password;
-		
-		private System.Nullable<System.DateTime> _Last_Login;
-		
-    #region Extensibility Method Definitions
-    partial void OnLoaded();
-    partial void OnValidate(System.Data.Linq.ChangeAction action);
-    partial void OnCreated();
-    partial void OnUsernameChanging(string value);
-    partial void OnUsernameChanged();
-    partial void OnPasswordChanging(string value);
-    partial void OnPasswordChanged();
-    partial void OnLast_LoginChanging(System.Nullable<System.DateTime> value);
-    partial void OnLast_LoginChanged();
-    #endregion
-		
-		public Login()
-		{
-			OnCreated();
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Username", DbType="VarChar(50) NOT NULL", CanBeNull=false, IsPrimaryKey=true)]
-		public string Username
-		{
-			get
-			{
-				return this._Username;
-			}
-			set
-			{
-				if ((this._Username != value))
-				{
-					this.OnUsernameChanging(value);
-					this.SendPropertyChanging();
-					this._Username = value;
-					this.SendPropertyChanged("Username");
-					this.OnUsernameChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Password", DbType="VarChar(50)")]
-		public string Password
-		{
-			get
-			{
-				return this._Password;
-			}
-			set
-			{
-				if ((this._Password != value))
-				{
-					this.OnPasswordChanging(value);
-					this.SendPropertyChanging();
-					this._Password = value;
-					this.SendPropertyChanged("Password");
-					this.OnPasswordChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Last_Login", DbType="DateTime")]
-		public System.Nullable<System.DateTime> Last_Login
-		{
-			get
-			{
-				return this._Last_Login;
-			}
-			set
-			{
-				if ((this._Last_Login != value))
-				{
-					this.OnLast_LoginChanging(value);
-					this.SendPropertyChanging();
-					this._Last_Login = value;
-					this.SendPropertyChanged("Last_Login");
-					this.OnLast_LoginChanged();
-				}
-			}
-		}
-		
-		public event PropertyChangingEventHandler PropertyChanging;
-		
-		public event PropertyChangedEventHandler PropertyChanged;
-		
-		protected virtual void SendPropertyChanging()
-		{
-			if ((this.PropertyChanging != null))
-			{
-				this.PropertyChanging(this, emptyChangingEventArgs);
-			}
-		}
-		
-		protected virtual void SendPropertyChanged(String propertyName)
-		{
-			if ((this.PropertyChanged != null))
-			{
-				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-			}
-		}
-	}
-	
 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Free_Product")]
 	public partial class Free_Product : INotifyPropertyChanging, INotifyPropertyChanged
 	{
@@ -1944,6 +1831,87 @@ namespace Point_Of_Sale.DAL
 		{
 			this.SendPropertyChanging();
 			entity.Customer_Sale = null;
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Login")]
+	public partial class Login
+	{
+		
+		private string _Username;
+		
+		private string _Password;
+		
+		private string _User_Type;
+		
+		private System.Nullable<System.DateTime> _Last_Login;
+		
+		public Login()
+		{
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Username", DbType="VarChar(50)")]
+		public string Username
+		{
+			get
+			{
+				return this._Username;
+			}
+			set
+			{
+				if ((this._Username != value))
+				{
+					this._Username = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Password", DbType="VarChar(50)")]
+		public string Password
+		{
+			get
+			{
+				return this._Password;
+			}
+			set
+			{
+				if ((this._Password != value))
+				{
+					this._Password = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_User_Type", DbType="VarChar(50)")]
+		public string User_Type
+		{
+			get
+			{
+				return this._User_Type;
+			}
+			set
+			{
+				if ((this._User_Type != value))
+				{
+					this._User_Type = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Last_Login", DbType="DateTime")]
+		public System.Nullable<System.DateTime> Last_Login
+		{
+			get
+			{
+				return this._Last_Login;
+			}
+			set
+			{
+				if ((this._Last_Login != value))
+				{
+					this._Last_Login = value;
+				}
+			}
 		}
 	}
 }

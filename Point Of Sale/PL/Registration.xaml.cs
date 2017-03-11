@@ -14,6 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Point_Of_Sale.DAL;
+using Point_Of_Sale.BL;
 
 namespace Point_Of_Sale.PL
 {
