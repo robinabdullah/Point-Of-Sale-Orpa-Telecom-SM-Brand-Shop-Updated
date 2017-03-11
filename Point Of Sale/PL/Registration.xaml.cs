@@ -52,16 +52,16 @@ namespace Point_Of_Sale.PL
                 }
                 if (productKey.Password == Register.ProductKey)
                 {
-                    Register.SubscriptionDateString = DateTime.Now.AddDays(days).ToShortDateString();
+                    Register.SubscriptionDateEnd = DateTime.Now.AddDays(days);
                     string encryptMac = Register.Encrypt(mac.Text, productKey.Password);
                     string encryptOrg = Register.Encrypt(org.Text, productKey.Password);
-                    string encryptDate = Register.Encrypt(Register.SubscriptionDateString, productKey.Password);
+                    string encryptDate = Register.Encrypt(Register.SubscriptionDateEnd.ToShortDateString(), productKey.Password);
                     //Console.WriteLine(date);
                     bool isDone = FileManagement.saveProductReg(encryptOrg, encryptMac, encryptDate);
                     if (isDone == true) /// if organization name and mac is saved
                     {
                         ///setting the subscription date
-                        Register.SubscriptionDateEnd = DateTime.Parse(Register.SubscriptionDateString);
+                        ///Register.SubscriptionDateEnd = DateTime.Parse(Register.SubscriptionDateString);
                         Xceed.Wpf.Toolkit.MessageBox.Show("Product is registered Successfully", "Registration", MessageBoxButton.OK, MessageBoxImage.Information);
                         this.Close();
                         PL.Login login = new PL.Login();

@@ -51,8 +51,9 @@ namespace Point_Of_Sale.PL
                 {
                     Register.OrgName = Register.Decrypt(storedEncryptedOrg, Register.ProductKey);
                     Register.Mac = Register.Decrypt(storedEncryptedMac, Register.ProductKey);
-                    Register.SubscriptionDateString = Register.Decrypt(storedEncryptedDate, Register.ProductKey);
-                    
+                    string SubscriptionDateString = Register.Decrypt(storedEncryptedDate, Register.ProductKey);
+                    Register.SubscriptionDateEnd = DateTime.Parse(SubscriptionDateString);
+                    //Register.SubscriptionDateEnd = DateTime.Parse(Register.SubscriptionDateString);
                     ///Console.WriteLine(Register.OrgName + " " + Register.Mac + " " + Register.SubscriptionDateString + "HI");
                 }
                 catch
