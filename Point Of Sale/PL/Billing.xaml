@@ -89,7 +89,7 @@
                 <Label x:Name="quantityAvailable" Content="0" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="17.333" FontFamily="Times New Roman"/>
             </StatusBar>
         </DockPanel>
-        <Button x:Name="deleteProduct" Content="Delete" HorizontalAlignment="Left" Margin="378,490,0,0" VerticalAlignment="Top" Width="54" Height="25" Click="deleteProduct_Click" FontSize="14" Visibility="Hidden"/>
+        <Button x:Name="deleteProduct" Content="Delete" HorizontalAlignment="Left" Margin="378,490,0,0" VerticalAlignment="Top" Width="54" Height="25" Click="deleteProduct_Click" FontSize="14"/>
         <Button x:Name="clearDatagrid" Content="Clear All" HorizontalAlignment="Left" Margin="250,490,0,0" VerticalAlignment="Top" Width="64" Height="25" FontSize="14" Click="clearDatagrid_Click" IsTabStop="False"/>
         <Button x:Name="deleteSelected" Content="Delete" HorizontalAlignment="Left" Margin="884,493,0,0" VerticalAlignment="Top" Width="55" Click="deleteSelected_Click" Height="25" FontSize="14" IsTabStop="False" />
         <Button x:Name="refresh_Button" Content="Sort" HorizontalAlignment="Left" Margin="779,493,0,0" VerticalAlignment="Top" Width="55" Click="refresh_Button_Click" Height="25" FontSize="14" IsTabStop="False"/>

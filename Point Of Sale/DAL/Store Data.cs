@@ -69,6 +69,24 @@ namespace Point_Of_Sale.DAL
                 throw new Exception(ex.Message);
             }
         }
+        public static int getProductQuantity(string barcode)
+        {
+            try
+            {
+                var query =
+                       (from pro in db.Products
+                       join bar in db.Barcodes on pro.ID equals bar.Product_ID
+                       where bar.Barcode_Serial.Equals(barcode)
+                        select pro.Quantity_Available).First();
+
+                return (int)query;
+            }
+            catch (Exception ex)
+            {
+                return 0;
+                throw new Exception(ex.Message);
+            }
+        }
         public static bool updateModel(int productID, string model)
         {
             try

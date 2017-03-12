@@ -262,7 +262,7 @@ namespace Point_Of_Sale.PL
                     Xceed.Wpf.Toolkit.MessageBox.Show("You cannot add more than quantity. Pres ok to exit.", "Duplicate Barcode", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK);
                     return;
                 }
-                //matches the entered barcode with the list of barcode in combobox
+                ///matches the entered barcode with the list of barcode in combobox
                 foreach (string obj in barcodeSerial.Items) 
                 {
                     if (obj == barcodeSerial.Text)
@@ -273,9 +273,21 @@ namespace Point_Of_Sale.PL
                     }
                 }
                 bool hasBarcodeinDB = ProductTableData.hasBarcodeinDB(barcodeSerial.Text);
+                bool hasBarcodeinGift = Gift_TableData.hasBarcodeinGiftTable(barcodeSerial.Text);
+                int proQuantity = ProductTableData.getProductQuantity(barcodeSerial.Text);
 
                 ///if user wants to load the product model by entering the barcode
-                if (flag == false && hasBarcodeinDB == true)
+                if (flag == false && hasBarcodeinDB == true && hasBarcodeinGift == true)
+                {
+                    Xceed.Wpf.Toolkit.MessageBox.Show("Cannot add this product. This product is sold already.", "Product Quantity", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK);
+                    return;
+                }
+                else if (flag == false && hasBarcodeinDB == true && proQuantity <= 0)
+                {
+                    Xceed.Wpf.Toolkit.MessageBox.Show("Product quantity is zero.", "Product Quantity", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK);
+                    return;
+                }
+                else if (flag == false && hasBarcodeinDB == true)
                 {
                     barcode = ProductTableData.getBarcode(barcodeSerial.Text);
                     ///if the product type is selected and the barocde is associated with another product then the it will ask to load that model in following code
@@ -291,7 +303,7 @@ namespace Point_Of_Sale.PL
                     {
                         selectProductbyBarcode(barcode);
                     }
-                }
+                }                
                 else if(flag == false && hasBarcodeinDB == false)
                 {
                     Xceed.Wpf.Toolkit.MessageBox.Show("The barcode you entered is not found in DB", "Product not found", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK);
