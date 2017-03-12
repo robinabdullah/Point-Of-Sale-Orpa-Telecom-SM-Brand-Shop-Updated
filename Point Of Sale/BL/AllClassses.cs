@@ -27,7 +27,7 @@ namespace Point_Of_Sale.BL
     }
     class Register
     {
-        public static DateTime SubscriptionDateEnd = new DateTime(2017, 3, 10);
+        public static DateTime SubscriptionDateEnd = new DateTime(2018, 3, 10);
         public static string ProductKey = "45659123in";
         public static string OrgName = "";
         public static string Mac = "";

@@ -590,13 +590,13 @@ namespace Point_Of_Sale.PL
             if (dataGrid.SelectedIndex != -1)
             {
                 //DB.resetConnString();
-                Customer_Sale cc = listCustomerSale.ElementAt(dataGrid.SelectedIndex);
                 DataGridItemsBilling abc = (DataGridItemsBilling) dataGrid.Items.GetItemAt(dataGrid.SelectedIndex);
                 //Console.WriteLine(abc.Discount);
-                totalTaka -= ((int) cc.Sold_Price * (int)cc.Quantity) - abc.Discount; // deduct the deleted product price from total
+                totalTaka -= ( abc.SoldPrice * abc.Quantity) - abc.Discount; // deduct the deleted product price from total
                 totalAmount.Content = totalTaka.ToString();
                 listCustomerSale.RemoveAt(dataGrid.SelectedIndex);
                 dataGrid.Items.RemoveAt(dataGrid.SelectedIndex);
+                //DB.db.Refresh(System.Data.Linq.RefreshMode.OverwriteCurrentValues, DB.db.Products);
             }
         }
         private void clearDatagrid_Click(object sender, RoutedEventArgs e)
@@ -818,6 +818,7 @@ namespace Point_Of_Sale.PL
                     Xceed.Wpf.Toolkit.MessageBox.Show("You can add only 9 products in one invoice or sale receipt.");
                     return;
                 }
+                ///Console.WriteLine(Register.SubscriptionDateEnd);
                 if (DateTime.TryParse(date.ToString(), out datetime) == false)///parsing date for bill
                     datetime = DateTime.Now;
                 if (DateTime.Compare(datetime.Date, Register.SubscriptionDateEnd) > 0)

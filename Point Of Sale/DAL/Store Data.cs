@@ -84,7 +84,7 @@ namespace Point_Of_Sale.DAL
             catch (Exception ex)
             {
                 return 0;
-                throw new Exception(ex.Message);
+                //throw new Exception(ex.Message);
             }
         }
         public static bool updateModel(int productID, string model)
