@@ -197,7 +197,7 @@ namespace Point_Of_Sale.PL
                     foreach (var model in allModels)
                     {
                         var product = ProductTableData.getProductByModel(model);
-                        //printing the product type 
+                        //printing the product model
                         cell = new PdfPCell(new Phrase(string.Format("{0} [ID: {1}]", product.Model, product.ID), columnHeaderFont));
                         cell.Colspan = columns;
                         cell.Border = 0;
@@ -1494,6 +1494,11 @@ namespace Point_Of_Sale.PL
                 //Console.WriteLine(ex.StackTrace);
                 MessageBox.Show(ex.Message + "\n" + ex.StackTrace);
             }
+        }
+
+        private void exit_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
         }
     }
 }
