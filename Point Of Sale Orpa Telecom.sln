@@ -5,7 +5,7 @@ VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Point Of Sale Orpa Telecom", "Point Of Sale\Point Of Sale Orpa Telecom.csproj", "{EBE052E5-9B71-4C02-BCDD-B580B56C9139}"
 EndProject
-Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Setup", "Setup\Setup.vdproj", "{A00D2BB8-287D-4176-A51F-6809BC8247FC}"
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Point of Sale", "Setup\Setup.vdproj", "{A00D2BB8-287D-4176-A51F-6809BC8247FC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

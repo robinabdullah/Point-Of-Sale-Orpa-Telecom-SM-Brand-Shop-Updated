@@ -585,20 +585,7 @@ namespace Point_Of_Sale.PL
             }
             return false;
         }
-        private void deleteProduct_Click(object sender, RoutedEventArgs e)
-        {
-            if (dataGrid.SelectedIndex != -1)
-            {
-                //DB.resetConnString();
-                DataGridItemsBilling abc = (DataGridItemsBilling) dataGrid.Items.GetItemAt(dataGrid.SelectedIndex);
-                //Console.WriteLine(abc.Discount);
-                totalTaka -= ( abc.SoldPrice * abc.Quantity) - abc.Discount; // deduct the deleted product price from total
-                totalAmount.Content = totalTaka.ToString();
-                listCustomerSale.RemoveAt(dataGrid.SelectedIndex);
-                dataGrid.Items.RemoveAt(dataGrid.SelectedIndex);
-                //DB.db.Refresh(System.Data.Linq.RefreshMode.OverwriteCurrentValues, DB.db.Products);
-            }
-        }
+        
         private void clearDatagrid_Click(object sender, RoutedEventArgs e)
         {
             DB.resetConnString();
@@ -804,7 +791,66 @@ namespace Point_Of_Sale.PL
             }
 
         }
+        //used for reset and fetch the product again form database after deleting a product from datagrid
+        private void addProductsAgain()
+        {
+            DB.resetConnString();
+            List<Customer_Sale> newListCustomerSale = new List<Customer_Sale>();
+            foreach (var customerSale in listCustomerSale)
+            {
+                if (hasCustomerinDB) customer = CustomerTableData.getCustomersbyMatchingID(mobile1.Text).First();
+                product = ProductTableData.getProductByID(customerSale.Product_ID);
+                Customer_Sale cus_SaleTemp = customerSale;
+                if (customerSale.Product.Unique_Barcode.StartsWith("Y"))
+                {
+                    Gift gift = customerSale.Gifts.First();
+                    DAL.Barcode bb = ProductTableData.getBarcode(customerSale.Gifts.First().Barcode);
+                    gift.Barcode1 = bb;
+                    gift.Customer_Sale = cus_SaleTemp;
+                }
 
+                product.Quantity_Sold += cus_SaleTemp.Quantity;
+                product.Quantity_Available -= cus_SaleTemp.Quantity;
+                cus_SaleTemp.Product = product;
+                newListCustomerSale.Add(cus_SaleTemp);
+            }
+            listCustomerSale.Clear();
+            listCustomerSale.AddRange(newListCustomerSale);
+        }
+        private void deleteProduct_Click(object sender, RoutedEventArgs e)
+        {
+            if (dataGrid.SelectedIndex != -1)
+            {
+                DataGridItemsBilling abc = (DataGridItemsBilling)dataGrid.Items.GetItemAt(dataGrid.SelectedIndex);
+                totalTaka -= (abc.SoldPrice * abc.Quantity) - abc.Discount; /// deduct the deleted products price from total
+                totalAmount.Content = totalTaka.ToString();
+                listCustomerSale.RemoveAt(dataGrid.SelectedIndex);
+                dataGrid.Items.RemoveAt(dataGrid.SelectedIndex);
+
+                ///if the deleted product is a free product then it should be deleted from the listFreeProducts and the price of this product should also deducted from the parent product(needs bug fixes on selecting parent product to deduct unit price)
+                foreach (var freeProducts in listFree_Product)///finds free pro in list
+                {
+                    if (freeProducts.Product_ID == abc.ID)///if deleted pro is a free pro
+                    {
+                        foreach (var prod in listCustomerSale)///finds parent pro todeduct unit price
+                        {
+                            if (prod.Product.Unique_Barcode.StartsWith("Y"))
+                            {
+                                int price = (int)ProductTableData.getProductByID(abc.ID).Unit_Price;
+                                prod.Unit_Price -= price;///deduct unit price
+                                break;
+                            }
+                        }
+                        
+                        listFree_Product.Remove(freeProducts);///remove the free pro from list
+                        break;
+                    }
+
+                }
+                    addProductsAgain();
+                //DB.db.Refresh(System.Data.Linq.RefreshMode.OverwriteCurrentValues, DB.db.Products);
+            }
+        }
         private void AddProduct_Button_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -854,7 +900,7 @@ namespace Point_Of_Sale.PL
                     {
                         Gift gift = new Gift { };
                         DAL.Barcode bb = ProductTableData.getBarcode(obj.IMEI);
-                        gift.Barcode1 = bb; // adds gift with mobile products
+                        gift.Barcode1 = bb; /// adds gift with mobile products
                         gift.Customer_Sale = cus_Sale;
                         gift.Discount_Price = 0;
 
