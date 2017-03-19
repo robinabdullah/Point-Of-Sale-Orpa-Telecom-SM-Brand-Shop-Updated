@@ -41,8 +41,8 @@ namespace Point_Of_Sale.PL
             DB.resetConnString();
             this.MaxHeight = SystemParameters.MaximizedPrimaryScreenHeight;
             date.Text = DateTime.Now.ToString();
-            giftGrid.IsEnabled = false;
-
+            giftGrid.IsEnabled = true;
+            giftCheckBox.IsChecked = true;
             mobile1.Focus();
 
             productType.AddHandler(System.Windows.Controls.Primitives.TextBoxBase.TextChangedEvent,
@@ -69,7 +69,7 @@ namespace Point_Of_Sale.PL
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                //MessageBox.Show(ex.Message);
             }
             addDatagridColumns();
         }
@@ -128,7 +128,7 @@ namespace Point_Of_Sale.PL
         }
         private void ProductType_ComboBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            
+            productType.IsDropDownOpen = true;
 
             listView.Items.Clear();
             listView.IsEnabled = true;
@@ -188,14 +188,13 @@ namespace Point_Of_Sale.PL
                 {
                     product = ProductTableData.getProductByModel(productModel.Text);
                     
-                    if (product.Unique_Barcode.StartsWith("Y"))//productType.Text == "Samsung Mobile"
-                    {
-                        quantity.IsEnabled = false;
-                        quantity.Text = "1";
-                    }
-
-                    else
-                        quantity.IsEnabled = true;
+                    //if (product.Unique_Barcode.StartsWith("Y"))//productType.Text == "Samsung Mobile"
+                    //{
+                    //    quantity.IsEnabled = false;
+                    //    quantity.Text = "1";
+                    //}
+                    //else
+                    //    quantity.IsEnabled = true;
 
 
                     quantityAvailable.Content = product.Quantity_Available;
@@ -268,7 +267,7 @@ namespace Point_Of_Sale.PL
                     if (obj == barcodeSerial.Text)
                     {
                         barcode = ProductTableData.getBarcode(barcodeSerial.Text);
-                        flag = true; // if true then user selected form the listed barcode
+                        flag = true; /// if true then user selected form the listed barcode
                         break;
                     }
                 }
@@ -314,6 +313,7 @@ namespace Point_Of_Sale.PL
                 listView.SelectedIndex = listView.Items.Count - 1;
                 listView.ScrollIntoView(listView.SelectedItem);
                 barcodeSerial.SelectedIndex = -1;
+                barcodeSerial.IsDropDownOpen = true;
             }
         }
         private void selectProductbyBarcode(DAL.Barcode barcode)
@@ -476,8 +476,8 @@ namespace Point_Of_Sale.PL
 
         private bool checkErrors()
         {
-            int quan = 0, price = 0, disPrice = 0;
-            Int64 mobileOne = 0, mobileTwo = 0;
+            int quan = 0, price = 0;
+            Int64 mobileOne = 0;
             if (Int64.TryParse(mobile1.Text, out mobileOne) == false)
             {
                 Xceed.Wpf.Toolkit.MessageBox.Show("Invalid \"Customer Mobile\".", "Invalid Mobile Number.", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK);
@@ -549,18 +549,19 @@ namespace Point_Of_Sale.PL
                 Xceed.Wpf.Toolkit.MessageBox.Show("Please add barcode to the list.", "Barcode?", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK);
                 return false;
             }
-            else if (giftCode.Text == "" || int.TryParse(discountPrice.Text, out disPrice) == false || disPrice < 0)
-            {
-                // no warning if product has no unique barcode
-                if (product.Unique_Barcode.StartsWith("Y") == false) 
-                    return true;
+            // notifies about the gift
+            //else if (giftCode.Text == "" || int.TryParse(discountPrice.Text, out disPrice) == false || disPrice < 0)
+            //{ 
+            //    // no warning if product has no unique barcode
+            //    if (product.Unique_Barcode.StartsWith("Y") == false) 
+            //        return true;
 
-                MessageBoxResult res = Xceed.Wpf.Toolkit.MessageBox.Show("\"Gift Code\" or \"Discount Price\" is invalid.\n\nDo you want to continue without gift.", "Gift?", MessageBoxButton.YesNo, MessageBoxImage.Error, MessageBoxResult.No);
-                if (res.Equals(MessageBoxResult.Yes))
-                    return true;
-                else
-                    return false;
-            }
+            //    MessageBoxResult res = Xceed.Wpf.Toolkit.MessageBox.Show("\"Gift Code\" or \"Discount Price\" is invalid.\n\nDo you want to continue without gift.", "Gift?", MessageBoxButton.YesNo, MessageBoxImage.Error, MessageBoxResult.No);
+            //    if (res.Equals(MessageBoxResult.Yes))
+            //        return true;
+            //    else
+            //        return false;
+            //}
             //else if(hasShortageQ() == true)
             //{
             //    Xceed.Wpf.Toolkit.MessageBox.Show("Product stock shortage for Type \"" + product.Type + "\" Model \"" + product.Model, "Quantity Shortage?", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK);
@@ -906,8 +907,8 @@ namespace Point_Of_Sale.PL
 
                         if (SLNumber.Text != "")
                             gift.SL = SLNumber.Text;
-
-                        if (giftCheckBox.IsChecked == true)
+                        
+                        if (giftCode.Text != "" && discountPrice.Text != "")///giftCheckBox.IsChecked == true
                         {
                             gift.Gift_Code = giftCode.Text;
 
@@ -976,6 +977,8 @@ namespace Point_Of_Sale.PL
                 giftCode.Clear();
                 loadSellingPrice.IsChecked = false;
                 freeProduct.IsChecked = false;
+                deleteSelected.IsEnabled = false;
+                refresh_Button.IsEnabled = false;
                 //product = null;
             }
             catch (Exception ex)
@@ -986,7 +989,7 @@ namespace Point_Of_Sale.PL
         private void dataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             listView.Items.Clear();
-            listView.IsEnabled = false;
+            deleteSelected.IsEnabled = false;
             //clearAll.IsEnabled = false;
             refresh_Button.IsEnabled = false;
             List<DataGridItemsBilling> items = dataGrid.SelectedItems.Cast<DataGridItemsBilling>().ToList();
@@ -1025,6 +1028,47 @@ namespace Point_Of_Sale.PL
             t.SelectAll();
         }
 
+        private void dropdownOpen_GotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
+        {
+            ComboBox cc = sender as ComboBox;
+            cc.IsDropDownOpen = true;
+            //cc.SelectedIndex = 0;
+        }
+
+        private void Grid_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            var uie = e.OriginalSource as UIElement;
+            ComboBox com = new ComboBox();
+            //Console.WriteLine();
+            int quan = 0;
+            int.TryParse(quantity.Text,out quan);
+
+            
+            try
+            {
+                com = e.Source as ComboBox;
+            }
+            catch { }
+
+            if (e.Key == Key.Enter)
+            {
+                if (com != null && com.Name == "barcodeSerial" && com.Text.Trim() != "") //&& 
+                {
+                    ///do nothing
+                }
+                else
+                {
+                    e.Handled = true;
+                    uie.MoveFocus(new TraversalRequest(FocusNavigationDirection.Next));
+                }
+                
+            }
+        }
+
+        private void barcodeSerial_LostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
+        {
+            barcodeSerial.IsDropDownOpen = false;
+        }
         
     }
     class DataGridItemsBilling : Product
