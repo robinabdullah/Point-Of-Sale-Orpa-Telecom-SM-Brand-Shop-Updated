@@ -132,7 +132,7 @@ namespace Point_Of_Sale.PL
 
             listView.Items.Clear();
             listView.IsEnabled = true;
-            //clearAll.IsEnabled = true;
+            deleteSelected.IsEnabled = true;
             refresh_Button.IsEnabled = true;
             try
             {
@@ -179,35 +179,43 @@ namespace Point_Of_Sale.PL
             }
             return true;
         }
-        private void ProductModel_ComboBox_TextChanged(object sender, TextChangedEventArgs e)
+        private void productModel_KeyDown(object sender, KeyEventArgs e)
         {
+            
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void productModel_LostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
+        {
+            Console.WriteLine(productModel.Text);
             if (productModel.SelectedIndex != -1)
             {
-                
+
                 try
                 {
                     product = ProductTableData.getProductByModel(productModel.Text);
-                    
-                    //if (product.Unique_Barcode.StartsWith("Y"))//productType.Text == "Samsung Mobile"
-                    //{
-                    //    quantity.IsEnabled = false;
-                    //    quantity.Text = "1";
-                    //}
-                    //else
-                    //    quantity.IsEnabled = true;
 
-
-                    quantityAvailable.Content = product.Quantity_Available;
-                    //Console.WriteLine(product.Quantity_Available + " " + quantityAvailable.Content);
+                    //quantityAvailable.Content = product.Quantity_Available;
+                    Console.WriteLine(product.Quantity_Available + " " + quantityAvailable.Content);
 
                     DAL.Barcode[] barcodes = ProductTableData.getBarcodesByPID(product.ID);
                     barcodeSerial.Items.Clear();
-                    
+
                     foreach (DAL.Barcode obj in barcodes)
                     {
-                        //stop adding duplicate barcode which is already added in datagrid and which is already sold out
+                        ///stop adding duplicate barcode which is already added in datagrid and which is already sold out
                         if (premitBarcodeinCombobox(obj.Barcode_Serial) == true)
                             barcodeSerial.Items.Add(obj.Barcode_Serial);
+                    }
+
+
+                    if (product.Unique_Barcode.StartsWith("NY") || product.Quantity_Available == 1)
+                    {
+                        barcodeSerial.SelectedItem = barcodeSerial.Items.GetItemAt(0).ToString();
+                        //DAL.Barcode barcode = ProductTableData.getBarcode
                     }
                 }
                 catch (Exception ex)
@@ -219,7 +227,7 @@ namespace Point_Of_Sale.PL
             }
             else
             {
-                giftCheckBox.IsChecked = false;
+                //giftCheckBox.IsChecked = false;
                 sellingPrice.Clear();
                 loadSellingPrice.IsChecked = false;
                 quantityAvailable.Content = 0;
@@ -232,7 +240,22 @@ namespace Point_Of_Sale.PL
                 listView.Items.Clear();
                 loadSellingPrice.IsChecked = false;
                 freeProduct.IsChecked = false;
+                product = null;
             }
+        }
+        /// <summary>
+        /// only for showing Quantity_Available of products 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ProductModel_ComboBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (productModel.SelectedIndex == -1)
+                return;
+
+            int? t = ProductTableData.getAllProducts().Where(x => x.Model == productModel.Text).Select(x => x.Quantity_Available).Single();
+
+            quantityAvailable.Content = t;
         }
         private bool IsAlreadyExists(string barcode)
         {
@@ -249,7 +272,7 @@ namespace Point_Of_Sale.PL
             int quan = 0;
             bool flag = false;
             var barcode = new DAL.Barcode();
-            if (e.Key == Key.Enter && barcodeSerial.Text != "")
+            if (e.Key == Key.Enter && barcodeSerial.Text.Trim() != "")
             {
                 if (IsAlreadyExists(barcodeSerial.Text) == true)
                 {
@@ -262,6 +285,7 @@ namespace Point_Of_Sale.PL
                     return;
                 }
                 ///matches the entered barcode with the list of barcode in combobox
+                
                 foreach (string obj in barcodeSerial.Items) 
                 {
                     if (obj == barcodeSerial.Text)
@@ -275,7 +299,7 @@ namespace Point_Of_Sale.PL
                 bool hasBarcodeinGift = Gift_TableData.hasBarcodeinGiftTable(barcodeSerial.Text);
                 int proQuantity = ProductTableData.getProductQuantity(barcodeSerial.Text);
 
-                ///if user wants to load the product model by entering the barcode
+                ///if user wants to load the product model by entering the barcode instantly
                 if (flag == false && hasBarcodeinDB == true && hasBarcodeinGift == true)
                 {
                     Xceed.Wpf.Toolkit.MessageBox.Show("Cannot add this product. This product is sold already.", "Product Quantity", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK);
@@ -302,7 +326,7 @@ namespace Point_Of_Sale.PL
                     {
                         selectProductbyBarcode(barcode);
                     }
-                }                
+                }
                 else if(flag == false && hasBarcodeinDB == false)
                 {
                     Xceed.Wpf.Toolkit.MessageBox.Show("The barcode you entered is not found in DB", "Product not found", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK);
@@ -314,6 +338,14 @@ namespace Point_Of_Sale.PL
                 listView.ScrollIntoView(listView.SelectedItem);
                 barcodeSerial.SelectedIndex = -1;
                 barcodeSerial.IsDropDownOpen = true;
+
+                /// if quantity is equal to the entered barcode then it move to the next control
+                if (quan == listView.Items.Count)
+                {
+                    var uie = e.OriginalSource as UIElement;
+                    e.Handled = true;
+                    uie.MoveFocus(new TraversalRequest(FocusNavigationDirection.Next));
+                }
             }
         }
         private void selectProductbyBarcode(DAL.Barcode barcode)
@@ -590,7 +622,7 @@ namespace Point_Of_Sale.PL
         private void clearDatagrid_Click(object sender, RoutedEventArgs e)
         {
             DB.resetConnString();
-            mobile1.Focus(); // to get the customer object from the db again.
+            mobile1.Focus(); /// to get the customer object from the db again
             dataGridItemsBilling = null;
             product = null;
             dataGridSerial = 1;
@@ -604,6 +636,7 @@ namespace Point_Of_Sale.PL
             totalAmount.Content = 0;
             loadSellingPrice.IsChecked = false;
             freeProduct.IsChecked = false;
+            productType.IsDropDownOpen = false;
         }
 
         private void OK_Button_Click(object sender, RoutedEventArgs e)
@@ -961,7 +994,7 @@ namespace Point_Of_Sale.PL
                     dataGridItemsBilling.DiscountPrice = ((float)cus_Sale.Sold_Price - dis) * (int)cus_Sale.Quantity; /// price after discount
                 }
 
-                totalAmount.Content = totalTaka; // set total taka on bill screen
+                totalAmount.Content = totalTaka; /// set total taka on bill screen
                 listCustomerSale.Add(cus_Sale);
                 dataGrid.Items.Add(dataGridItemsBilling);
                 productModel.SelectedIndex = -1;
@@ -983,7 +1016,7 @@ namespace Point_Of_Sale.PL
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                MessageBox.Show(ex.StackTrace);
             }
         }
         private void dataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -1031,37 +1064,52 @@ namespace Point_Of_Sale.PL
         private void dropdownOpen_GotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
         {
             ComboBox cc = sender as ComboBox;
-            cc.IsDropDownOpen = true;
-            //cc.SelectedIndex = 0;
+            if (cc.Name == "barcodeSerial" && cc.Items.Count <= 1)
+            {
+                ///DO NOTHING
+            }
+            else if (cc.Items.Count > 0) /// if combobox items contains 
+                cc.IsDropDownOpen = true;
+            
         }
-
+        /// <summary>
+        /// enter key act as a tab key except barcodeSerial combo
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Grid_PreviewKeyDown(object sender, KeyEventArgs e)
         {
             var uie = e.OriginalSource as UIElement;
             ComboBox com = new ComboBox();
-            //Console.WriteLine();
+            TextBox tex = new TextBox();
+
             int quan = 0;
             int.TryParse(quantity.Text,out quan);
-
             
-            try
-            {
-                com = e.Source as ComboBox;
-            }
-            catch { }
+            try { com = e.Source as ComboBox; } catch { }
+
+            try { tex = e.Source as TextBox; } catch { }
 
             if (e.Key == Key.Enter)
             {
-                if (com != null && com.Name == "barcodeSerial" && com.Text.Trim() != "") //&& 
+                ///move focus doesnot work for barcodeSerial 
+                if (com != null && com.Name == "barcodeSerial" && com.Text.Trim() != "")
                 {
                     ///do nothing
+                }
+                else if (tex != null && tex.Name == "discountPrice")
+                { 
+                    AddProduct_Button_Click(null, null);
+                    productType.Focus();
                 }
                 else
                 {
                     e.Handled = true;
                     uie.MoveFocus(new TraversalRequest(FocusNavigationDirection.Next));
                 }
+
                 
+
             }
         }
 
@@ -1069,6 +1117,13 @@ namespace Point_Of_Sale.PL
         {
             barcodeSerial.IsDropDownOpen = false;
         }
+
+        private void sellingPrice_LostKeyboardFocus_1(object sender, KeyboardFocusChangedEventArgs e)
+        {
+            if (sellingPrice.Text.Trim() == "" && product != null)
+                loadSellingPrice.IsChecked = true;
+        }
+
         
     }
     class DataGridItemsBilling : Product
