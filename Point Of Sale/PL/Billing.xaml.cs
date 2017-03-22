@@ -16,6 +16,7 @@ using iTextSharp.text.pdf;
 using System.IO;
 using System.Diagnostics;
 using Point_Of_Sale.BL;
+using System.Windows.Automation.Peers;
 
 namespace Point_Of_Sale.PL
 {
@@ -1098,8 +1099,8 @@ namespace Point_Of_Sale.PL
                     ///do nothing
                 }
                 else if (tex != null && tex.Name == "discountPrice")
-                { 
-                    AddProduct_Button_Click(null, null);
+                {
+                    AddProduct_Button.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
                     productType.Focus();
                 }
                 else
