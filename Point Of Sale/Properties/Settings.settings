@@ -18,5 +18,8 @@
 &lt;/SerializableConnectionString&gt;</DesignTimeValue>
       <Value Profile="(Default)">Data Source=DESKTOP-5BN9EJ4\SQLEXPRESS;Initial Catalog=POSNew12;Integrated Security=True;Encrypt=False;TrustServerCertificate=True</Value>
     </Setting>
+    <Setting Name="MaxEntry" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">9</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

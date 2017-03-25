@@ -859,9 +859,10 @@ namespace Point_Of_Sale.PL
                 if (checkErrors() == false) ///check all text fields text format
                     return;
 
-                if(dataGrid.Items.Count == 9)
+                int maxEntry = Properties.Settings.Default.MaxEntry;
+                if (dataGrid.Items.Count == maxEntry)
                 {
-                    Xceed.Wpf.Toolkit.MessageBox.Show("You can add only 9 products in one invoice or sale receipt.");
+                    Xceed.Wpf.Toolkit.MessageBox.Show("You can add only "+ maxEntry + " products in one invoice or sale receipt.");
                     return;
                 }
                 ///Console.WriteLine(Register.SubscriptionDateEnd);

@@ -45,12 +45,15 @@ namespace Point_Of_Sale.Properties {
             }
         }
         
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public float Setting {
+        [global::System.Configuration.DefaultSettingValueAttribute("9")]
+        public int MaxEntry {
             get {
-                return ((float)(this["Setting"]));
+                return ((int)(this["MaxEntry"]));
+            }
+            set {
+                this["MaxEntry"] = value;
             }
         }
     }

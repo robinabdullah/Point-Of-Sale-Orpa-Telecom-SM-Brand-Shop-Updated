@@ -28,6 +28,7 @@ namespace Point_Of_Sale.PL
             InitializeComponent();
 
             organization.Text = Register.OrgName;
+            maxInvoiceEntry.Text = Properties.Settings.Default.MaxEntry.ToString();
 
             try
             {
@@ -99,6 +100,18 @@ namespace Point_Of_Sale.PL
             {
                 MessageBox.Show("Can not change password because some fields are empty.", "Warning");
                 return;
+            }
+        }
+
+        private void change_Max_Entry_Click(object sender, RoutedEventArgs e)
+        {
+            int temp = 0;
+            if(int.TryParse(maxInvoiceEntry.Text, out temp))
+            {
+                Properties.Settings.Default.MaxEntry = temp ;
+                Properties.Settings.Default.Save();
+
+                Xceed.Wpf.Toolkit.MessageBox.Show("Saved","Value Saved", MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
     }
