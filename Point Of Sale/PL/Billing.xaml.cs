@@ -17,6 +17,7 @@ using System.IO;
 using System.Diagnostics;
 using Point_Of_Sale.BL;
 using System.Windows.Automation.Peers;
+using System.Windows.Controls.Primitives;
 
 namespace Point_Of_Sale.PL
 {
@@ -25,17 +26,18 @@ namespace Point_Of_Sale.PL
     /// </summary>
     public partial class Billing : Window
     {
-        DataGridItemsBilling dataGridItemsBilling;
+        DataGridItemsBilling dgBilling;
         Product product;
         Customer customer;
         List<Customer_Sale> listCustomerSale = new List<Customer_Sale>();
         List<Free_Product> listFree_Product = new List<Free_Product>();
         DateTime datetime;
+        bool isEditing = false;
         bool hasCustomerinDB = false;
         int dataGridSerial = 1; 
         float totalTaka = 0;
 
-
+        //public static readonly RoutedEvent SelectedEvent = EventManager.RegisterRoutedEvent("Selected", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(Selector));
         public Billing()
         {
             InitializeComponent();
@@ -50,7 +52,8 @@ namespace Point_Of_Sale.PL
                       new TextChangedEventHandler(ProductType_ComboBox_TextChanged));
             productModel.AddHandler(System.Windows.Controls.Primitives.TextBoxBase.TextChangedEvent,
                                   new TextChangedEventHandler(ProductModel_ComboBox_TextChanged));
-            
+            barcodeSerial.AddHandler(System.Windows.Controls.Primitives.TextBoxBase.TextChangedEvent,
+                                  new TextChangedEventHandler(barcodeSerial_ComboBox_TextChanged));
 
             try
             {
@@ -125,12 +128,11 @@ namespace Point_Of_Sale.PL
             dataGrid.Columns.Add(c9);
 
             dataGrid.IsReadOnly = true;
-
         }
-        private void ProductType_ComboBox_TextChanged(object sender, TextChangedEventArgs e)
+        
+        private void productType_LostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
         {
-            productType.IsDropDownOpen = true;
-
+            
             listView.Items.Clear();
             listView.IsEnabled = true;
             deleteSelected.IsEnabled = true;
@@ -151,7 +153,11 @@ namespace Point_Of_Sale.PL
             giftCode.Clear();
             discountPrice.Clear();
             barcodeSerial.Items.Clear();
+        }
+        private void ProductType_ComboBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
 
+            productType.IsDropDownOpen = true;
 
         }
 
@@ -191,7 +197,7 @@ namespace Point_Of_Sale.PL
         /// <param name="e"></param>
         private void productModel_LostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
         {
-            Console.WriteLine(productModel.Text);
+            ///Console.WriteLine(productModel.Text);
             if (productModel.SelectedIndex != -1)
             {
 
@@ -199,9 +205,9 @@ namespace Point_Of_Sale.PL
                 {
                     product = ProductTableData.getProductByModel(productModel.Text);
 
-                    //quantityAvailable.Content = product.Quantity_Available;
-                    Console.WriteLine(product.Quantity_Available + " " + quantityAvailable.Content);
-
+                    ///quantityAvailable.Content = product.Quantity_Available;
+                    ///Console.WriteLine(product.Quantity_Available + " " + quantityAvailable.Content);
+                    
                     DAL.Barcode[] barcodes = ProductTableData.getBarcodesByPID(product.ID);
                     barcodeSerial.Items.Clear();
 
@@ -212,7 +218,7 @@ namespace Point_Of_Sale.PL
                             barcodeSerial.Items.Add(obj.Barcode_Serial);
                     }
 
-
+                    ///if same barcode or quantity availablility is 1 then barcode will select auto
                     if (product.Unique_Barcode.StartsWith("NY") || product.Quantity_Available == 1)
                     {
                         barcodeSerial.SelectedItem = barcodeSerial.Items.GetItemAt(0).ToString();
@@ -255,8 +261,17 @@ namespace Point_Of_Sale.PL
                 return;
 
             int? t = ProductTableData.getAllProducts().Where(x => x.Model == productModel.Text).Select(x => x.Quantity_Available).Single();
+            string tt = ProductTableData.getAllProducts().Where(x => x.Model == productModel.Text).Select(x => x.Unique_Barcode).Single();
 
             quantityAvailable.Content = t;
+
+            if (tt.StartsWith("Y"))
+            {
+                quantity.Text = "1";
+                quantity.IsEnabled = false;
+            }
+            else
+                quantity.IsEnabled = true;
         }
         private bool IsAlreadyExists(string barcode)
         {
@@ -267,6 +282,14 @@ namespace Point_Of_Sale.PL
             }
 
             return false;
+        }
+        private void barcodeSerial_LostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
+        {
+            barcodeSerial.IsDropDownOpen = false;
+        }
+        private void barcodeSerial_ComboBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            
         }
         private void barcodeSerial_KeyDown(object sender, KeyEventArgs e)
         {
@@ -339,7 +362,7 @@ namespace Point_Of_Sale.PL
                 listView.ScrollIntoView(listView.SelectedItem);
                 barcodeSerial.SelectedIndex = -1;
                 barcodeSerial.IsDropDownOpen = true;
-
+                barcodeSerial.Items.Remove(barcode.Barcode_Serial); ///added barcode removed from combo
                 /// if quantity is equal to the entered barcode then it move to the next control
                 if (quan == listView.Items.Count)
                 {
@@ -407,8 +430,9 @@ namespace Point_Of_Sale.PL
             foreach (ListViewItems item in it)
             {
                 listView.Items.Remove(item);
+                barcodeSerial.Items.Add(item.IMEI); ///deleted barcode added to combobox
             }
-
+            
             sort();
         }
 
@@ -624,7 +648,7 @@ namespace Point_Of_Sale.PL
         {
             DB.resetConnString();
             mobile1.Focus(); /// to get the customer object from the db again
-            dataGridItemsBilling = null;
+            dgBilling = null;
             product = null;
             dataGridSerial = 1;
             dataGrid.Items.Clear();
@@ -826,32 +850,7 @@ namespace Point_Of_Sale.PL
             }
 
         }
-        //used for reset and fetch the product again form database after deleting a product from datagrid
-        private void addProductsAgain()
-        {
-            DB.resetConnString();
-            List<Customer_Sale> newListCustomerSale = new List<Customer_Sale>();
-            foreach (var customerSale in listCustomerSale)
-            {
-                if (hasCustomerinDB) customer = CustomerTableData.getCustomersbyMatchingID(mobile1.Text).First();
-                product = ProductTableData.getProductByID(customerSale.Product_ID);
-                Customer_Sale cus_SaleTemp = customerSale;
-                if (customerSale.Product.Unique_Barcode.StartsWith("Y"))
-                {
-                    Gift gift = customerSale.Gifts.First();
-                    DAL.Barcode bb = ProductTableData.getBarcode(customerSale.Gifts.First().Barcode);
-                    gift.Barcode1 = bb;
-                    gift.Customer_Sale = cus_SaleTemp;
-                }
-
-                product.Quantity_Sold += cus_SaleTemp.Quantity;
-                product.Quantity_Available -= cus_SaleTemp.Quantity;
-                cus_SaleTemp.Product = product;
-                newListCustomerSale.Add(cus_SaleTemp);
-            }
-            listCustomerSale.Clear();
-            listCustomerSale.AddRange(newListCustomerSale);
-        }
+        
         private void deleteProduct_Click(object sender, RoutedEventArgs e)
         {
             if (dataGrid.SelectedIndex != -1)
@@ -883,8 +882,49 @@ namespace Point_Of_Sale.PL
 
                 }
                     addProductsAgain();
-                //DB.db.Refresh(System.Data.Linq.RefreshMode.OverwriteCurrentValues, DB.db.Products);
             }
+        }
+        private void EditProduct()
+        {
+            Customer_Sale cus_sale = listCustomerSale.ElementAt(dataGrid.SelectedIndex);
+
+
+
+
+
+            dgBilling.Type = productType.Text;
+            dgBilling.Model = productModel.Text;
+            dgBilling.Quantity = int.Parse(quantity.Text);
+            if (discountPrice.Text != "")  dgBilling.Discount = int.Parse(discountPrice.Text) ;
+            dgBilling.DiscountPrice = (dgBilling.SoldPrice - dgBilling.Discount) * dgBilling.Quantity;
+            dgBilling.SoldPrice = int.Parse(sellingPrice.Text);
+            //dgBilling.Unique_Barcode = 
+        }
+        //used for reset and fetch the product again form database after deleting a product from datagrid
+        private void addProductsAgain()
+        {
+            DB.resetConnString();
+            List<Customer_Sale> newListCustomerSale = new List<Customer_Sale>();
+            foreach (var customerSale in listCustomerSale)
+            {
+                if (hasCustomerinDB) customer = CustomerTableData.getCustomersbyMatchingID(mobile1.Text).First();
+                product = ProductTableData.getProductByID(customerSale.Product_ID);
+                Customer_Sale cus_SaleTemp = customerSale;
+                if (customerSale.Product.Unique_Barcode.StartsWith("Y"))
+                {
+                    Gift gift = customerSale.Gifts.First();
+                    DAL.Barcode bb = ProductTableData.getBarcode(customerSale.Gifts.First().Barcode);
+                    gift.Barcode1 = bb;
+                    gift.Customer_Sale = cus_SaleTemp;
+                }
+
+                product.Quantity_Sold += cus_SaleTemp.Quantity;
+                product.Quantity_Available -= cus_SaleTemp.Quantity;
+                cus_SaleTemp.Product = product;
+                newListCustomerSale.Add(cus_SaleTemp);
+            }
+            listCustomerSale.Clear();
+            listCustomerSale.AddRange(newListCustomerSale);
         }
         private void AddProduct_Button_Click(object sender, RoutedEventArgs e)
         {
@@ -893,6 +933,9 @@ namespace Point_Of_Sale.PL
                 
                 if (checkErrors() == false) ///check all text fields text format
                     return;
+
+                if (isEditing == true)
+                    EditProduct(); ///
 
                 if(dataGrid.Items.Count == 9)
                 {
@@ -922,14 +965,14 @@ namespace Point_Of_Sale.PL
                 product.Quantity_Available -= cus_Sale.Quantity;
                 cus_Sale.Product = product;
 
-                dataGridItemsBilling = new DataGridItemsBilling(dataGridSerial++, cus_Sale);
+                dgBilling = new DataGridItemsBilling(dataGridSerial++, cus_Sale);
 
                 int dis = 0;
                 foreach (ListViewItems obj in listView.Items)
                 {
                     DAL.Barcode b = new DAL.Barcode { Product_ID = product.ID, Barcode_Serial = obj.IMEI, Color = obj.Color };
 
-                    dataGridItemsBilling.Barcodes.Add(b);
+                    dgBilling.Barcodes.Add(b);
 
                     if (product.Unique_Barcode.StartsWith("Y"))
                     {
@@ -949,13 +992,13 @@ namespace Point_Of_Sale.PL
                             if (int.TryParse(discountPrice.Text, out dis))
                             {
                                 gift.Discount_Price = dis;
-                                dataGridItemsBilling.Discount = dis;
+                                dgBilling.Discount = dis;
                             }
                             else
                                 gift.Discount_Price = dis;
                         }
 
-                        dataGridItemsBilling.gift = gift;
+                        dgBilling.gift = gift;
                     }
                 }
                 /// if the product is free
@@ -985,19 +1028,19 @@ namespace Point_Of_Sale.PL
                     listFree_Product.Add(freePro);
 
                     cus_Sale.Sold_Price = product.Unit_Price; ///sold price changed because of free
-                    dataGridItemsBilling.Discount = (int)product.Selling_Price;
-                    dataGridItemsBilling.DiscountPrice = 0;
+                    dgBilling.Discount = (int)product.Selling_Price;
+                    dgBilling.DiscountPrice = 0;
 
                 }
                 else
                 {
                     totalTaka = totalTaka + ((float)cus_Sale.Sold_Price - dis) * (int)cus_Sale.Quantity; /// calculating total bill
-                    dataGridItemsBilling.DiscountPrice = ((float)cus_Sale.Sold_Price - dis) * (int)cus_Sale.Quantity; /// price after discount
+                    dgBilling.DiscountPrice = ((float)cus_Sale.Sold_Price - dis) * (int)cus_Sale.Quantity; /// price after discount
                 }
 
                 totalAmount.Content = totalTaka; /// set total taka on bill screen
                 listCustomerSale.Add(cus_Sale);
-                dataGrid.Items.Add(dataGridItemsBilling);
+                dataGrid.Items.Add(dgBilling);
                 productModel.SelectedIndex = -1;
                 productType.SelectedIndex = -1;
                 barcodeSerial.SelectedIndex = -1;
@@ -1024,16 +1067,16 @@ namespace Point_Of_Sale.PL
         {
             listView.Items.Clear();
             deleteSelected.IsEnabled = false;
-            //clearAll.IsEnabled = false;
+            ///clearAll.IsEnabled = false;
             refresh_Button.IsEnabled = false;
             List<DataGridItemsBilling> items = dataGrid.SelectedItems.Cast<DataGridItemsBilling>().ToList();
-            Console.WriteLine(items.Count);
+            ///Console.WriteLine(items.Count);
             foreach (var obj in items)
             {                
                 foreach (var ob in obj.Barcodes)
                 {
                     listView.Items.Add(new ListViewItems(listView.Items.Count + 1, ob.Barcode_Serial, ob.Color));
-                    Console.WriteLine(ob.Barcode_Serial);
+                    ///Console.WriteLine(ob.Barcode_Serial);
                 }
             }
                     
@@ -1114,10 +1157,7 @@ namespace Point_Of_Sale.PL
             }
         }
 
-        private void barcodeSerial_LostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
-        {
-            barcodeSerial.IsDropDownOpen = false;
-        }
+       
 
         private void sellingPrice_LostKeyboardFocus_1(object sender, KeyboardFocusChangedEventArgs e)
         {
@@ -1125,7 +1165,55 @@ namespace Point_Of_Sale.PL
                 loadSellingPrice.IsChecked = true;
         }
 
-        
+        private void dataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {             
+             dgBilling = (DataGridItemsBilling) dataGrid.SelectedItem;
+
+            if (dgBilling == null)
+                return;
+
+            deleteSelected.IsEnabled = true;
+            refresh_Button.IsEnabled = true;
+            Update_button.IsEnabled = true;
+            isEditing = true;
+            productType.RemoveHandler(System.Windows.Controls.Primitives.TextBoxBase.TextChangedEvent,
+                      new TextChangedEventHandler(ProductType_ComboBox_TextChanged));
+
+            
+            productType.GotKeyboardFocus -= dropdownOpen_GotKeyboardFocus;
+            productModel.GotKeyboardFocus -= dropdownOpen_GotKeyboardFocus;
+            barcodeSerial.GotKeyboardFocus -= dropdownOpen_GotKeyboardFocus;
+
+            
+            productType.SelectedItem = dgBilling.Type;
+            productModel.ItemsSource = ProductTableData.getTypeMachedModelsQNonZero(productType.Text);
+            productModel.SelectedItem = dgBilling.Model;
+            productModel_LostKeyboardFocus(null,null);
+            quantity.Text = dgBilling.Quantity.ToString();
+            sellingPrice.Text = dgBilling.Selling_Price.ToString();
+
+            Gift gift = dgBilling.gift;
+            if (gift != null)
+            {
+                SLNumber.Text = gift.SL;
+                discountPrice.Text = gift.Discount_Price.ToString();
+                giftCode.Text = gift.Gift_Code;
+            }
+            barcodeSerial.Focus();
+
+
+            productType.GotKeyboardFocus += dropdownOpen_GotKeyboardFocus;
+            productModel.GotKeyboardFocus += dropdownOpen_GotKeyboardFocus;
+            barcodeSerial.GotKeyboardFocus += dropdownOpen_GotKeyboardFocus;
+            productType.AddHandler(System.Windows.Controls.Primitives.TextBoxBase.TextChangedEvent,
+                      new TextChangedEventHandler(ProductType_ComboBox_TextChanged));
+
+        }
+
+        private void Update_button_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
     class DataGridItemsBilling : Product
     {
