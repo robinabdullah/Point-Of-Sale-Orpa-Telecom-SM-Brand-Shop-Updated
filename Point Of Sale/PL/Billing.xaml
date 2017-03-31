@@ -73,7 +73,7 @@
 
             </Grid>
         </Border>
-        <DataGrid x:Name="dataGrid" HorizontalAlignment="Left" Margin="11,243,0,0" VerticalAlignment="Top" IsSynchronizedWithCurrentItem="False" FrozenColumnCount="0" Height="238" Width="721" SelectionChanged="dataGrid_SelectionChanged" MouseDoubleClick="dataGrid_MouseDoubleClick" />
+        <DataGrid x:Name="dataGrid" HorizontalAlignment="Left" Margin="11,243,0,0" VerticalAlignment="Top" IsSynchronizedWithCurrentItem="False" FrozenColumnCount="0" Height="238" Width="721" SelectionChanged="dataGrid_SelectionChanged" MouseDoubleClick="dataGrid_MouseDoubleClick"/>
         <ListView x:Name="listView" HorizontalAlignment="Left" Height="238" Margin="745,243,0,0" VerticalAlignment="Top" Width="257">
             <ListView.View>
                 <GridView>
