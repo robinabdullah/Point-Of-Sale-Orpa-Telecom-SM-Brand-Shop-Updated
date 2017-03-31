@@ -12,13 +12,13 @@
             <Label x:Name="label1_Copy1" Content="Cust. Mobile" HorizontalAlignment="Left" Margin="10,47,0,0" VerticalAlignment="Top" Width="102" FontSize="17.333" FontFamily="Times New Roman"/>
             <TextBox x:Name="mobile1" HorizontalAlignment="Left" Height="23" Margin="118,51,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="155" FontWeight="Bold" FontSize="16" FontFamily="Times New Roman" LostKeyboardFocus="mobile1_LostKeyboardFocus" GotKeyboardFocus="mobile1_GotKeyboardFocus" GotMouseCapture="selectAllonGotFocus" Text="1234567810"/>
             <Label x:Name="label1_Copy2" Content="Name" HorizontalAlignment="Left" Margin="278,47,0,0" VerticalAlignment="Top" Width="53" FontSize="17.333" FontFamily="Times New Roman"/>
-            <TextBox x:Name="name" CharacterCasing="Upper" HorizontalAlignment="Left" Height="23" Margin="326,51,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="172" FontWeight="Bold" FontSize="16" FontFamily="Times New Roman"/>
+            <TextBox x:Name="name" CharacterCasing="Upper" HorizontalAlignment="Left" Height="23" Margin="326,51,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="172" FontWeight="Bold" FontSize="16" FontFamily="Times New Roman" GotKeyboardFocus="selectAllonGotFocus" GotMouseCapture="selectAllonGotFocus"/>
             <Label x:Name="label1_Copy3" Content="Mobile 2 " HorizontalAlignment="Left" Margin="509,48,0,0" VerticalAlignment="Top" Width="77" FontSize="17.333" FontFamily="Times New Roman"/>
-            <TextBox x:Name="mobile2" HorizontalAlignment="Left" Height="23" Margin="620,51,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="143" FontWeight="Bold" FontSize="16" FontFamily="Times New Roman"/>
+            <TextBox x:Name="mobile2" HorizontalAlignment="Left" Height="23" Margin="620,51,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="143" FontWeight="Bold" FontSize="16" FontFamily="Times New Roman" GotKeyboardFocus="selectAllonGotFocus" GotMouseCapture="selectAllonGotFocus"/>
             <Label x:Name="label1_Copy4" Content="Address" HorizontalAlignment="Left" Margin="771,48,0,0" VerticalAlignment="Top" Width="69" FontSize="17.333" FontFamily="Times New Roman" RenderTransformOrigin="0.5,0.5"/>
-            <TextBox x:Name="address" CharacterCasing="Upper" HorizontalAlignment="Left" Height="23" Margin="843,51,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="141" FontWeight="Bold" FontSize="16" FontFamily="Times New Roman"/>
+            <TextBox x:Name="address" CharacterCasing="Upper" HorizontalAlignment="Left" Height="23" Margin="843,51,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="141" FontWeight="Bold" FontSize="16" FontFamily="Times New Roman" GotKeyboardFocus="selectAllonGotFocus" GotMouseCapture="selectAllonGotFocus"/>
             <Label x:Name="label1_Copy5" Content="Product Type" HorizontalAlignment="Left" Margin="10,85,0,0" VerticalAlignment="Top" Width="102" FontSize="17.333" FontFamily="Times New Roman"/>
-            <ComboBox x:Name="productType" IsEditable="True" IsTextSearchEnabled="True" MaxDropDownHeight="200" HorizontalAlignment="Left" Margin="117,87,0,0" VerticalAlignment="Top" Width="381" Height="24" FontSize="16" FontFamily="Times New Roman" FontWeight="Bold" GotKeyboardFocus="dropdownOpen_GotKeyboardFocus" LostKeyboardFocus="productType_LostKeyboardFocus"/>
+            <ComboBox x:Name="productType" IsEditable="True" IsTextSearchEnabled="True" MaxDropDownHeight="200" HorizontalAlignment="Left" Margin="117,87,0,0" VerticalAlignment="Top" Width="381" Height="24" FontSize="16" FontFamily="Times New Roman" FontWeight="Bold" GotKeyboardFocus="dropdownOpen_GotKeyboardFocus" LostKeyboardFocus="productType_LostKeyboardFocus" />
             <Label x:Name="label1_Copy9" Content="Product Model:" HorizontalAlignment="Left" Margin="508,85,0,0" VerticalAlignment="Top" Width="113" FontSize="17.333" FontFamily="Times New Roman"/>
             <ComboBox x:Name="productModel" IsEditable="True"  MaxDropDownHeight="200" HorizontalAlignment="Left" Margin="620,87,0,0" VerticalAlignment="Top" Width="364" Height="24" FontSize="16" FontFamily="Times New Roman" FontWeight="Bold" BorderBrush="#FFACACAC" GotKeyboardFocus="dropdownOpen_GotKeyboardFocus" KeyUp="productModel_KeyDown" LostKeyboardFocus="productModel_LostKeyboardFocus"/>
             <Label x:Name="label1_Copy6" Content="Quantity" HorizontalAlignment="Left" Margin="10,122,0,0" VerticalAlignment="Top" Width="107" FontSize="17.333" FontFamily="Times New Roman"/>
@@ -43,10 +43,10 @@
                 </Grid.ColumnDefinitions>
                 <TextBox x:Name="giftCode" CharacterCasing="Upper" HorizontalAlignment="Left" Height="23" Margin="118,18,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="198" FontSize="16" FontFamily="Times New Roman" FontWeight="Bold" Grid.ColumnSpan="2" GotKeyboardFocus="selectAllonGotFocus" GotMouseCapture="selectAllonGotFocus"/>
                 <Label x:Name="label1_Copy11" Content="Gift Code" HorizontalAlignment="Left" Margin="12,14,0,0" VerticalAlignment="Top" Width="86" FontSize="17.333" FontFamily="Times New Roman"/>
-                <TextBox x:Name="discountPrice" HorizontalAlignment="Left" Height="23" Margin="179,18,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="212" FontSize="16" FontFamily="Times New Roman" FontWeight="Bold" Grid.Column="1" GotKeyboardFocus="selectAllonGotFocus" GotMouseCapture="selectAllonGotFocus"/>
+                <TextBox x:Name="discountPrice" HorizontalAlignment="Left" Height="23" Margin="179,18,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="212" FontSize="16" FontFamily="Times New Roman" FontWeight="Bold" Grid.Column="1" GotKeyboardFocus="selectAllonGotFocus" GotMouseCapture="selectAllonGotFocus" />
                 <Label x:Name="label1_Copy12" Content="Discount Price" HorizontalAlignment="Left" Margin="55,14,0,0" VerticalAlignment="Top" Width="116" FontSize="17.333" FontFamily="Times New Roman" Grid.Column="1"/>
             </Grid>
-            <Button x:Name="AddProduct_Button" Content="Add" HorizontalAlignment="Left" Margin="563,490,0,-277" VerticalAlignment="Top" Width="54" Height="25" Click="AddProduct_Button_Click" FontSize="14"/>
+            <Button x:Name="AddProduct_Button" Content="Add" HorizontalAlignment="Left" Margin="563,490,0,-277" VerticalAlignment="Top" Width="54" Height="25" Click="AddProduct_Button_Click" FontSize="14" />
             <Button x:Name="Update_button" Content="Update" HorizontalAlignment="Left" Margin="192,490,0,-277" VerticalAlignment="Top" Width="54" Height="25" Click="Update_button_Click" FontSize="14" IsEnabled="False"/>
 
         </Grid>
@@ -73,7 +73,7 @@
 
             </Grid>
         </Border>
-        <DataGrid x:Name="dataGrid" HorizontalAlignment="Left" Margin="11,243,0,0" VerticalAlignment="Top" IsSynchronizedWithCurrentItem="False" FrozenColumnCount="0" Height="238" Width="721" SelectionChanged="dataGrid_SelectionChanged" MouseDoubleClick="dataGrid_MouseDoubleClick"/>
+        <DataGrid x:Name="dataGrid" HorizontalAlignment="Left" Margin="11,243,0,0" VerticalAlignment="Top" IsSynchronizedWithCurrentItem="False" FrozenColumnCount="0" Height="238" Width="721" SelectionChanged="dataGrid_SelectionChanged" MouseDoubleClick="dataGrid_MouseDoubleClick" LostKeyboardFocus="dataGrid_LostKeyboardFocus"  />
         <ListView x:Name="listView" HorizontalAlignment="Left" Height="238" Margin="745,243,0,0" VerticalAlignment="Top" Width="257">
             <ListView.View>
                 <GridView>
@@ -90,7 +90,7 @@
                 <Label x:Name="quantityAvailable" Content="0" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="17.333" FontFamily="Times New Roman"/>
             </StatusBar>
         </DockPanel>
-        <Button x:Name="deleteProduct" Content="Delete" HorizontalAlignment="Left" Margin="445,490,0,0" VerticalAlignment="Top" Width="54" Height="25" Click="deleteProduct_Click" FontSize="14"/>
+        <Button x:Name="deleteProduct" Content="Delete" HorizontalAlignment="Left" Margin="445,490,0,0" VerticalAlignment="Top" Width="54" Height="25" Click="deleteProduct_Click" FontSize="14" />
         <Button x:Name="clearDatagrid" Content="Clear All" HorizontalAlignment="Left" Margin="317,490,0,0" VerticalAlignment="Top" Width="64" Height="25" FontSize="14" Click="clearDatagrid_Click" IsTabStop="False"/>
         <Button x:Name="deleteSelected" Content="Delete" HorizontalAlignment="Left" Margin="884,493,0,0" VerticalAlignment="Top" Width="55" Click="deleteSelected_Click" Height="25" FontSize="14" IsTabStop="False" />
         <Button x:Name="refresh_Button" Content="Sort" HorizontalAlignment="Left" Margin="779,493,0,0" VerticalAlignment="Top" Width="55" Click="refresh_Button_Click" Height="25" FontSize="14" IsTabStop="False"/>

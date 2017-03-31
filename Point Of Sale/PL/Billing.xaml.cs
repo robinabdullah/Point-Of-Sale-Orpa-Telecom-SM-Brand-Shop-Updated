@@ -37,6 +37,7 @@ namespace Point_Of_Sale.PL
         bool hasCustomerinDB = false;
         int dataGridSerial = 1; 
         float totalTaka = 0;
+        int tobeDeletedProductIndex = -1; ///used to track datagrid.SelectedIndex
 
         //public static readonly RoutedEvent SelectedEvent = EventManager.RegisterRoutedEvent("Selected", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(Selector));
         public Billing()
@@ -243,7 +244,7 @@ namespace Point_Of_Sale.PL
                         //DAL.Barcode barcode = ProductTableData.getBarcode
                     }
                     //sellingPrice.Clear();
-                    loadSellingPrice.IsChecked = false;
+                    //loadSellingPrice.IsChecked = false;
                 }
                 catch (Exception ex)
                 {
@@ -426,6 +427,7 @@ namespace Point_Of_Sale.PL
             {
 
             }
+            tobeDeletedProductIndex = -1;
         }
         private void deleteSelected_Click(object sender, RoutedEventArgs e)
         {
@@ -734,7 +736,8 @@ namespace Point_Of_Sale.PL
         private void generateBillPdf(bool isPreview)
         {
             int i = 0;
-             
+            tobeDeletedProductIndex = -1;
+
             string invoiceNo = Bill.getInvoiceNumber().ToString();
             
             PdfReader reader = new PdfReader(FileManagement.receipt);
@@ -858,39 +861,6 @@ namespace Point_Of_Sale.PL
 
         }
         
-        private void deleteProduct_Click(object sender, RoutedEventArgs e)
-        {
-            if (dataGrid.SelectedIndex != -1)
-            {
-                DataGridItemsBilling abc = (DataGridItemsBilling)dataGrid.Items.GetItemAt(dataGrid.SelectedIndex);
-                totalTaka -= (abc.SoldPrice * abc.Quantity) - abc.Discount; /// deduct the deleted products price from total
-                totalAmount.Content = totalTaka.ToString();
-                listCustomerSale.RemoveAt(dataGrid.SelectedIndex);
-                dataGrid.Items.RemoveAt(dataGrid.SelectedIndex);
-
-                ///if the deleted product is a free product then it should be deleted from the listFreeProducts and the price of this product should also deducted from the parent product(needs bug fixes on selecting parent product to deduct unit price)
-                foreach (var freeProducts in listFree_Product)///finds free pro in list
-                {
-                    if (freeProducts.Product_ID == abc.ID)///if deleted pro is a free pro
-                    {
-                        foreach (var prod in listCustomerSale)///finds parent pro todeduct unit price
-                        {
-                            if (prod.Product.Unique_Barcode.StartsWith("Y"))
-                            {
-                                int price = (int)ProductTableData.getProductByID(abc.ID).Unit_Price;
-                                prod.Unit_Price -= price;///deduct unit price
-                                break;
-                            }
-                        }
-                        
-                        listFree_Product.Remove(freeProducts);///remove the free pro from list
-                        break;
-                    }
-
-                }
-                    addProductsAgain();
-            }
-        }
         private void ClearAllFieldsAddingProduct()
         {
             productModel.SelectedIndex = -1;
@@ -1231,6 +1201,9 @@ namespace Point_Of_Sale.PL
         {
             TextBox t = sender as TextBox;
             t.SelectAll();
+
+            tobeDeletedProductIndex = -1;
+
         }
 
         private void dropdownOpen_GotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
@@ -1242,6 +1215,8 @@ namespace Point_Of_Sale.PL
             }
             else if (cc.Items.Count > 0) /// if combobox items contains 
                 cc.IsDropDownOpen = true;
+             
+            tobeDeletedProductIndex = -1;
             
         }
         /// <summary>
@@ -1302,6 +1277,8 @@ namespace Point_Of_Sale.PL
         }
         private void dataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (dataGrid.SelectedIndex == -1)
+                return;
             listView.Items.Clear();
             deleteSelected.IsEnabled = false;
             ///clearAll.IsEnabled = false;
@@ -1318,7 +1295,51 @@ namespace Point_Of_Sale.PL
             }
 
         }
+        private void deleteProduct_Click(object sender, RoutedEventArgs e)
+        {
+            ///due to use datagrid.lostkeyboardfocus we have to track down the datagrid.selectedindex through tobeDeletedProductIndex
+            if (tobeDeletedProductIndex != -1 && dataGrid.Items.Count > 0)
+            {
+                DataGridItemsBilling abc = (DataGridItemsBilling)dataGrid.Items.GetItemAt(tobeDeletedProductIndex);
+                totalTaka -= (abc.SoldPrice * abc.Quantity) - abc.Discount; /// deduct the deleted products price from total
+                totalAmount.Content = totalTaka.ToString();
+                listCustomerSale.RemoveAt(tobeDeletedProductIndex);
+                dataGrid.Items.RemoveAt(tobeDeletedProductIndex);
 
+                ///if the deleted product is a free product then it should be deleted from the listFreeProducts and the price of this product should also deducted from the parent product(needs bug fixes on selecting parent product to deduct unit price)
+                foreach (var freeProducts in listFree_Product)///finds free pro in list
+                {
+                    if (freeProducts.Product_ID == abc.ID)///if deleted pro is a free pro
+                    {
+                        foreach (var prod in listCustomerSale)///finds parent pro todeduct unit price
+                        {
+                            if (prod.Product.Unique_Barcode.StartsWith("Y"))
+                            {
+                                int price = (int)ProductTableData.getProductByID(abc.ID).Unit_Price;
+                                prod.Unit_Price -= price;///deduct unit price
+                                break;
+                            }
+                        }
+
+                        listFree_Product.Remove(freeProducts);///remove the free pro from list
+                        break;
+                    }
+
+                }
+                addProductsAgain();
+                tobeDeletedProductIndex = -1;
+            }
+        }
+
+        private void dataGrid_LostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
+        {
+            if (isEditing)
+                return;
+
+            tobeDeletedProductIndex = dataGrid.SelectedIndex;
+            dataGrid.SelectedIndex = -1;
+            listView.Items.Clear();
+        }
         private void dataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {             
              dgBilling = (DataGridItemsBilling) dataGrid.SelectedItem;
@@ -1342,7 +1363,7 @@ namespace Point_Of_Sale.PL
             productType.SelectedItem = dgBilling.Type;
             productModel.ItemsSource = ProductTableData.getTypeMachedModelsQNonZero(productType.Text);
             productModel.SelectedItem = dgBilling.Model;
-            //productModel_LostKeyboardFocus(null,null);
+            productModel_LostKeyboardFocus(null,null);
             quantity.Text = dgBilling.Quantity.ToString();
             sellingPrice.Text = dgBilling.Selling_Price.ToString();
 
@@ -1366,14 +1387,12 @@ namespace Point_Of_Sale.PL
 
         }
 
-        
-
         private void Update_button_Click(object sender, RoutedEventArgs e)
         {
 
         }
 
-        
+
     }
     class DataGridItemsBilling : Product
     {
