@@ -33,11 +33,12 @@ namespace Point_Of_Sale.PL
         List<Customer_Sale> listCustomerSale = new List<Customer_Sale>();
         List<Free_Product> listFree_Product = new List<Free_Product>();
         DateTime datetime;
-        bool isEditing = false;
         bool hasCustomerinDB = false;
         int dataGridSerial = 1; 
         float totalTaka = 0;
         int tobeDeletedProductIndex = -1; ///used to track datagrid.SelectedIndex
+        bool isEditing = false;
+        bool isTurnOn = true; /// turn off while setting values in Editing mode
 
         //public static readonly RoutedEvent SelectedEvent = EventManager.RegisterRoutedEvent("Selected", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(Selector));
         public Billing()
@@ -133,13 +134,6 @@ namespace Point_Of_Sale.PL
         }
         private void ProductType_ComboBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            productType.IsDropDownOpen = true;
-        }
-        private void productType_LostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
-        {
-            
-            listView.Items.Clear();
-            listView.IsEnabled = true;
             deleteSelected.IsEnabled = true;
             refresh_Button.IsEnabled = true;
             try
@@ -151,7 +145,11 @@ namespace Point_Of_Sale.PL
             {
                 Xceed.Wpf.Toolkit.MessageBox.Show(ex.Message, "Error getting product models", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK);
             }
+
+            productType.IsDropDownOpen = true;
+            listView.Items.Clear();
             quantity.Text = "1";
+            loadSellingPrice.IsChecked = false;
             sellingPrice.Clear();
             quantityAvailable.Content = 0;
             SLNumber.Clear();
@@ -159,7 +157,6 @@ namespace Point_Of_Sale.PL
             discountPrice.Clear();
             barcodeSerial.Items.Clear();
         }
-        
 
         private bool premitBarcodeinCombobox(string barcodeToTest)
         {
@@ -188,12 +185,7 @@ namespace Point_Of_Sale.PL
         }
         private void productModel_KeyDown(object sender, KeyEventArgs e)
         {
-            if (isEditing)
-            {
-                listView.Items.Clear();///used in editing mode of product
-                sellingPrice.Clear();
-                loadSellingPrice.IsChecked = false;
-            }
+            
         }
         private void ProductModel_ComboBox_TextChanged(object sender, TextChangedEventArgs e)
         {
@@ -212,20 +204,26 @@ namespace Point_Of_Sale.PL
             }
             else
                 quantity.IsEnabled = true;
+
+            if (isTurnOn)
+            {
+                listView.Items.Clear();///used in editing mode of product
+                sellingPrice.Clear();
+                loadSellingPrice.IsChecked = false;
+            }
         }
         private void productModel_LostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
         {
-            ///Console.WriteLine(productModel.Text);
             if (productModel.SelectedIndex != -1)
             {
-
                 try
                 {
                     product = ProductTableData.getProductByModel(productModel.Text);
+                    Console.WriteLine(product.Quantity_Available);
 
                     ///quantityAvailable.Content = product.Quantity_Available;
                     ///Console.WriteLine(product.Quantity_Available + " " + quantityAvailable.Content);
-                    
+
                     DAL.Barcode[] barcodes = ProductTableData.getBarcodesByPID(product.ID);
                     barcodeSerial.Items.Clear();
 
@@ -584,12 +582,16 @@ namespace Point_Of_Sale.PL
                 quantity.SelectAll();
                 return false;
             }
-            else if (product.Quantity_Available == 0 || product.Quantity_Available < quan)
+            else if (!isEditing &&(product.Quantity_Available == 0 || product.Quantity_Available < quan))
             {
                 Xceed.Wpf.Toolkit.MessageBox.Show("No product in stock of Type: " + product.Type + " of Model: " + product.Model, "Product shortage?", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK);
                 return false;
             }
-
+            //else if (isEditing && product.Quantity_Available < quan - 1)
+            //{
+            //    Xceed.Wpf.Toolkit.MessageBox.Show("No product in stock of Type: " + product.Type + " of Model: " + product.Model, "Product shortage?", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK);
+            //    return false;
+            //}
             else if (int.TryParse(sellingPrice.Text, out price) == false || price < 0)
             {
                 Xceed.Wpf.Toolkit.MessageBox.Show("Invalid selling price.", "Selling Price?", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK);
@@ -605,7 +607,7 @@ namespace Point_Of_Sale.PL
             else if (product.Unique_Barcode.StartsWith("Y") && listView.Items.Count != quan)
             {
                 Xceed.Wpf.Toolkit.MessageBox.Show("Please add barcode to the list.", "Barcode?", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK);
-                return false;
+                return false; 
             }
             else if (product.Unique_Barcode.Contains("NY") && listView.Items.Count != 1)
             {
@@ -668,6 +670,7 @@ namespace Point_Of_Sale.PL
             loadSellingPrice.IsChecked = false;
             freeProduct.IsChecked = false;
             productType.IsDropDownOpen = false;
+            isEditing = false;
         }
 
         private void OK_Button_Click(object sender, RoutedEventArgs e)
@@ -733,6 +736,8 @@ namespace Point_Of_Sale.PL
                 p.Kill();
         }
         string tempFilePathforPreview;
+
+
         private void generateBillPdf(bool isPreview)
         {
             int i = 0;
@@ -888,8 +893,8 @@ namespace Point_Of_Sale.PL
             DB.db.Refresh(System.Data.Linq.RefreshMode.OverwriteCurrentValues, cus_Sale.Product);
             //DB.db.Refresh(System.Data.Linq.RefreshMode.OverwriteCurrentValues, giftt.Customer_Sale);
             //DB.db.Refresh(System.Data.Linq.RefreshMode.OverwriteCurrentValues, dgBilling.Customer_Sales);
-            ChangeSet changeset = DB.db.GetChangeSet();
-            Console.WriteLine(changeset);
+            //ChangeSet changeset = DB.db.GetChangeSet();
+            //Console.WriteLine(changeset);
             //Product instanceCustomerSale = DB.db.GetChangeSet().Updates.OfType<Product>().First();
             var instanceCustomerSale = DB.db.GetChangeSet().Inserts.OfType<Customer_Sale>();
 
@@ -928,7 +933,7 @@ namespace Point_Of_Sale.PL
             
 
             //DB.db.Refresh(RefreshMode.OverwriteCurrentValues, changeset.Inserts);
-            Console.WriteLine("after: " + DB.db.GetChangeSet());
+            //Console.WriteLine("after: " + DB.db.GetChangeSet());
             //DB.db.SubmitChanges();
             List<ListViewItems> items = listView.Items.Cast<ListViewItems>().ToList();
             cus_Sale = new Customer_Sale { Quantity = int.Parse(quantity.Text), Unit_Price = product.Unit_Price, Sold_Price = int.Parse(sellingPrice.Text), Sale_Price_was = product.Selling_Price };
@@ -1017,7 +1022,6 @@ namespace Point_Of_Sale.PL
             dgBilling.Selling_Price = cus_Sale.Product.Selling_Price;
             //if (discountPrice.Text != "") dgBilling.Discount = int.Parse(discountPrice.Text);
             //dgBilling.DiscountPrice = (dgBilling.SoldPrice - dgBilling.Discount) * dgBilling.Quantity;
-            Console.WriteLine("before submitchanges: " + DB.db.GetChangeSet());
             listCustomerSale[dataGrid.SelectedIndex] = cus_Sale;
             dataGrid.SelectedItem = dgBilling;
             dataGrid.Items.Refresh();
@@ -1036,7 +1040,8 @@ namespace Point_Of_Sale.PL
             List<Customer_Sale> newListCustomerSale = new List<Customer_Sale>();
             foreach (var customerSale in listCustomerSale)
             {
-                if (hasCustomerinDB) customer = CustomerTableData.getCustomersbyMatchingID(mobile1.Text).First();
+                if (hasCustomerinDB)
+                    customer = CustomerTableData.getCustomersbyMatchingID(mobile1.Text).First();
                 product = ProductTableData.getProductByID(customerSale.Product_ID);
                 Customer_Sale cus_SaleTemp = customerSale;
                 if (customerSale.Product.Unique_Barcode.StartsWith("Y"))
@@ -1173,6 +1178,7 @@ namespace Point_Of_Sale.PL
                 listCustomerSale.Add(cus_Sale);
                 dataGrid.Items.Add(dgBilling);
                 ClearAllFieldsAddingProduct();
+
             }
             catch (Exception ex)
             {
@@ -1279,6 +1285,7 @@ namespace Point_Of_Sale.PL
         {
             if (dataGrid.SelectedIndex == -1)
                 return;
+
             listView.Items.Clear();
             deleteSelected.IsEnabled = false;
             ///clearAll.IsEnabled = false;
@@ -1300,12 +1307,16 @@ namespace Point_Of_Sale.PL
             ///due to use datagrid.lostkeyboardfocus we have to track down the datagrid.selectedindex through tobeDeletedProductIndex
             if (tobeDeletedProductIndex != -1 && dataGrid.Items.Count > 0)
             {
+                int serial = 1;
+                DataGridItemsBilling tempObj;
                 DataGridItemsBilling abc = (DataGridItemsBilling)dataGrid.Items.GetItemAt(tobeDeletedProductIndex);
+                serial = abc.SL;
                 totalTaka -= (abc.SoldPrice * abc.Quantity) - abc.Discount; /// deduct the deleted products price from total
                 totalAmount.Content = totalTaka.ToString();
                 listCustomerSale.RemoveAt(tobeDeletedProductIndex);
                 dataGrid.Items.RemoveAt(tobeDeletedProductIndex);
 
+                
                 ///if the deleted product is a free product then it should be deleted from the listFreeProducts and the price of this product should also deducted from the parent product(needs bug fixes on selecting parent product to deduct unit price)
                 foreach (var freeProducts in listFree_Product)///finds free pro in list
                 {
@@ -1326,8 +1337,19 @@ namespace Point_Of_Sale.PL
                     }
 
                 }
+                ///updating the serial numbers in datagrid
+                serial = tobeDeletedProductIndex;
+                for (int i = serial; i < dataGrid.Items.Count; i++)
+                {
+                    tempObj = (DataGridItemsBilling)dataGrid.Items.GetItemAt(serial++);
+                    tempObj.SL = serial;
+                }    
+                dataGrid.Items.Refresh();
+                ///updating the serial numbers in datagrid
+
                 addProductsAgain();
-                tobeDeletedProductIndex = -1;
+                tobeDeletedProductIndex = -1; ///reset index
+                dataGridSerial--;
             }
         }
 
@@ -1349,12 +1371,12 @@ namespace Point_Of_Sale.PL
 
             deleteSelected.IsEnabled = true;
             refresh_Button.IsEnabled = true;
-            Update_button.IsEnabled = true;
             isEditing = true;
+            isTurnOn = false;
             productType.RemoveHandler(System.Windows.Controls.Primitives.TextBoxBase.TextChangedEvent,
                       new TextChangedEventHandler(ProductType_ComboBox_TextChanged));
+            //productModel.RemoveHandler(System.Windows.Controls.Primitives.TextBoxBase.TextChangedEvent, new TextChangedEventHandler(ProductModel_ComboBox_TextChanged));
 
-            
             productType.GotKeyboardFocus -= dropdownOpen_GotKeyboardFocus;
             productModel.GotKeyboardFocus -= dropdownOpen_GotKeyboardFocus;
             barcodeSerial.GotKeyboardFocus -= dropdownOpen_GotKeyboardFocus;
@@ -1384,7 +1406,9 @@ namespace Point_Of_Sale.PL
             barcodeSerial.GotKeyboardFocus += dropdownOpen_GotKeyboardFocus;
             productType.AddHandler(System.Windows.Controls.Primitives.TextBoxBase.TextChangedEvent,
                       new TextChangedEventHandler(ProductType_ComboBox_TextChanged));
+            //productType.AddHandler(System.Windows.Controls.Primitives.TextBoxBase.TextChangedEvent,                                 new TextChangedEventHandler(ProductModel_ComboBox_TextChanged));
 
+            isTurnOn = true;
         }
 
         private void Update_button_Click(object sender, RoutedEventArgs e)
