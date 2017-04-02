@@ -236,7 +236,8 @@ namespace Point_Of_Sale.PL
                     }
 
                     ///if same barcode or quantity availablility is 1 then barcode will select auto
-                    if (isEditing == false && (product.Unique_Barcode.StartsWith("NY") || product.Quantity_Available == 1))
+                    if ( product.Unique_Barcode.StartsWith("NY")
+                        || (product.Unique_Barcode.StartsWith("Y") && product.Quantity_Available == 1))
                     {
                         barcodeSerial.SelectedItem = barcodeSerial.Items.GetItemAt(0).ToString();
                         //DAL.Barcode barcode = ProductTableData.getBarcode
@@ -1220,7 +1221,9 @@ namespace Point_Of_Sale.PL
                 ///DO NOTHING
             }
             else if (cc.Items.Count > 0) /// if combobox items contains 
+            {
                 cc.IsDropDownOpen = true;
+            }
              
             tobeDeletedProductIndex = -1;
             
@@ -1260,10 +1263,8 @@ namespace Point_Of_Sale.PL
                     e.Handled = true;
                     uie.MoveFocus(new TraversalRequest(FocusNavigationDirection.Next));
                 }
-
-                
-
             }
+
         }
 
        
@@ -1415,7 +1416,6 @@ namespace Point_Of_Sale.PL
         {
 
         }
-
 
     }
     class DataGridItemsBilling : Product
