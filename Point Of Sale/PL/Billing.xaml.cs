@@ -134,6 +134,9 @@ namespace Point_Of_Sale.PL
         }
         private void ProductType_ComboBox_TextChanged(object sender, TextChangedEventArgs e)
         {
+            if (productType.SelectedIndex == -1)
+                return;
+            
             deleteSelected.IsEnabled = true;
             refresh_Button.IsEnabled = true;
             try
@@ -145,7 +148,7 @@ namespace Point_Of_Sale.PL
             {
                 Xceed.Wpf.Toolkit.MessageBox.Show(ex.Message, "Error getting product models", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK);
             }
-
+            
             productType.IsDropDownOpen = true;
             listView.Items.Clear();
             quantity.Text = "1";
@@ -192,18 +195,22 @@ namespace Point_Of_Sale.PL
             if (productModel.SelectedIndex == -1)
                 return;
 
-            int? t = ProductTableData.getAllProducts().Where(x => x.Model == productModel.Text).Select(x => x.Quantity_Available).Single();
-            string tt = ProductTableData.getAllProducts().Where(x => x.Model == productModel.Text).Select(x => x.Unique_Barcode).Single();
-
-            quantityAvailable.Content = t;
-
-            if (tt.StartsWith("Y"))
+            try
             {
-                quantity.Text = "1";
-                quantity.IsEnabled = false;
+                int? t = ProductTableData.getAllProducts().Where(x => x.Model == productModel.Text).Select(x => x.Quantity_Available).Single();
+                string tt = ProductTableData.getAllProducts().Where(x => x.Model == productModel.Text).Select(x => x.Unique_Barcode).Single();
+                quantityAvailable.Content = t;
+
             }
-            else
-                quantity.IsEnabled = true;
+            catch { }
+
+            //if (tt.StartsWith("Y"))
+            //{
+            //    quantity.Text = "1";
+            //    quantity.IsEnabled = false;
+            //}
+            //else
+            //    quantity.IsEnabled = true;
 
             if (isTurnOn)
             {
@@ -257,7 +264,6 @@ namespace Point_Of_Sale.PL
                 //giftCheckBox.IsChecked = false;
                 
                 sellingPrice.Clear();
-                loadSellingPrice.IsChecked = false;
                 quantityAvailable.Content = 0;
                 quantity.Clear();
                 SLNumber.Clear();
@@ -313,7 +319,6 @@ namespace Point_Of_Sale.PL
                     return;
                 }
                 ///matches the entered barcode with the list of barcode in combobox
-                
                 foreach (string obj in barcodeSerial.Items) 
                 {
                     if (obj == barcodeSerial.Text)
@@ -380,8 +385,10 @@ namespace Point_Of_Sale.PL
         {
             //productType.Text = barcode.Product.Type;
             //productModel.Text = barcode.Product.Model;
+            
             productType.SelectedItem = barcode.Product.Type;
             productModel.SelectedItem = barcode.Product.Model;
+            product = barcode.Product;
             barcodeSerial.Text = "";
             loadSellingPrice.IsChecked = true;
         }
@@ -869,8 +876,10 @@ namespace Point_Of_Sale.PL
         
         private void ClearAllFieldsAddingProduct()
         {
-            productModel.SelectedIndex = -1;
+            ///problem here
             productType.SelectedIndex = -1;
+            
+            productModel.SelectedIndex = -1;
             barcodeSerial.SelectedIndex = -1;
             quantityAvailable.Content = 0;
             quantity.Text = "1";
@@ -884,6 +893,8 @@ namespace Point_Of_Sale.PL
             freeProduct.IsChecked = false;
             deleteSelected.IsEnabled = false;
             refresh_Button.IsEnabled = false;
+            productType.SelectedIndex = -1;
+            
         }
         private void EditProduct()
         {
@@ -1178,6 +1189,7 @@ namespace Point_Of_Sale.PL
                 totalAmount.Content = totalTaka; /// set total taka on bill screen
                 listCustomerSale.Add(cus_Sale);
                 dataGrid.Items.Add(dgBilling);
+                tobeDeletedProductIndex = -1;
                 ClearAllFieldsAddingProduct();
 
             }
@@ -1195,13 +1207,16 @@ namespace Point_Of_Sale.PL
 
         private void loadSellingPrice_Checked(object sender, RoutedEventArgs e)
         {
+            //problem while getting product by entering barcode
+            tobeDeletedProductIndex = -1;
             if (productModel.SelectedIndex != -1)//&& productType.SelectedIndex != -1
                 sellingPrice.Text = product.Selling_Price.ToString();
         }
 
         private void loadSellingPrice_Unchecked(object sender, RoutedEventArgs e)
         {
-                sellingPrice.Text = "";
+            tobeDeletedProductIndex = -1;
+            sellingPrice.Text = "";
         }
 
         private void selectAllonGotFocus(object sender, RoutedEventArgs e)
@@ -1282,27 +1297,7 @@ namespace Point_Of_Sale.PL
         {
             Console.WriteLine("property changing");
         }
-        private void dataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (dataGrid.SelectedIndex == -1)
-                return;
-
-            listView.Items.Clear();
-            deleteSelected.IsEnabled = false;
-            ///clearAll.IsEnabled = false;
-            refresh_Button.IsEnabled = false;
-            List<DataGridItemsBilling> items = dataGrid.SelectedItems.Cast<DataGridItemsBilling>().ToList();
-            ///Console.WriteLine(items.Count);
-            foreach (var obj in items)
-            {
-                foreach (var ob in obj.Barcodes)
-                {
-                    listView.Items.Add(new ListViewItems(listView.Items.Count + 1, ob.Barcode_Serial, ob.Color));
-                    ///Console.WriteLine(ob.Barcode_Serial);
-                }
-            }
-
-        }
+        
         private void deleteProduct_Click(object sender, RoutedEventArgs e)
         {
             ///due to use datagrid.lostkeyboardfocus we have to track down the datagrid.selectedindex through tobeDeletedProductIndex
@@ -1353,15 +1348,61 @@ namespace Point_Of_Sale.PL
                 dataGridSerial--;
             }
         }
+        private void listView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (listView.Items.Count <= 0)
+                return;
 
+            Add_New_Values add = new Add_New_Values();
+            add.ShowDialog();
+        }
+
+        private void listView_LostFocus(object sender, RoutedEventArgs e)
+        {
+            if (isEditing)
+                return;
+            /////////////////////////problem here
+
+            ///tobeDeletedProductIndex = dataGrid.SelectedIndex;
+            ///dataGrid.SelectedIndex = -1;
+            listView.Items.Clear();
+        }
+        private void dataGrid_GotFocus(object sender, RoutedEventArgs e)
+        {
+            if (dataGrid.Items.Count > 0)
+                dataGrid_SelectionChanged(null, null);
+        }
         private void dataGrid_LostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
         {
             if (isEditing)
                 return;
+            //Console.WriteLine(Keyboard.FocusedElement.GetType().Name);
 
             tobeDeletedProductIndex = dataGrid.SelectedIndex;
-            dataGrid.SelectedIndex = -1;
+            ///dataGrid.SelectedIndex = -1;
+            if(Keyboard.FocusedElement.GetType().Name != "ListViewItem")
+                listView.Items.Clear();
+        }
+        private void dataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (dataGrid.SelectedIndex == -1)
+                return;
+
             listView.Items.Clear();
+            deleteSelected.IsEnabled = false;
+            ///clearAll.IsEnabled = false;
+            refresh_Button.IsEnabled = false;
+            List<DataGridItemsBilling> items = dataGrid.SelectedItems.Cast<DataGridItemsBilling>().ToList();
+            ///Console.WriteLine(items.Count);
+            foreach (var obj in items)
+            {
+                foreach (var ob in obj.Barcodes)
+                {
+                    listView.Items.Add(new ListViewItems(listView.Items.Count + 1, ob.Barcode_Serial, ob.Color));
+                    ///Console.WriteLine(ob.Barcode_Serial);
+                }
+            }
+
         }
         private void dataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {             
@@ -1417,6 +1458,7 @@ namespace Point_Of_Sale.PL
 
         }
 
+        
     }
     class DataGridItemsBilling : Product
     {

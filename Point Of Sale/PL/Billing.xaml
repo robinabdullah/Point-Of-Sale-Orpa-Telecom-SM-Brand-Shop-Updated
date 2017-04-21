@@ -44,7 +44,7 @@
                 <TextBox x:Name="giftCode" CharacterCasing="Upper" HorizontalAlignment="Left" Height="23" Margin="118,18,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="198" FontSize="16" FontFamily="Times New Roman" FontWeight="Bold" Grid.ColumnSpan="2" GotKeyboardFocus="selectAllonGotFocus" GotMouseCapture="selectAllonGotFocus"/>
                 <Label x:Name="label1_Copy11" Content="Gift Code" HorizontalAlignment="Left" Margin="12,14,0,0" VerticalAlignment="Top" Width="86" FontSize="17.333" FontFamily="Times New Roman"/>
                 <TextBox x:Name="discountPrice" HorizontalAlignment="Left" Height="23" Margin="179,18,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="212" FontSize="16" FontFamily="Times New Roman" FontWeight="Bold" Grid.Column="1" GotKeyboardFocus="selectAllonGotFocus" GotMouseCapture="selectAllonGotFocus" />
-                <Label x:Name="label1_Copy12" Content="Discount Price" HorizontalAlignment="Left" Margin="55,14,0,0" VerticalAlignment="Top" Width="116" FontSize="17.333" FontFamily="Times New Roman" Grid.Column="1"/>
+                <Label x:Name="DiscountOverAll" Content="Discount Price" HorizontalAlignment="Left" Margin="55,14,0,0" VerticalAlignment="Top" Width="116" FontSize="17.333" FontFamily="Times New Roman" Grid.Column="1" ToolTip=""/>
             </Grid>
             <Button x:Name="AddProduct_Button" Content="Add" HorizontalAlignment="Left" Margin="477,490,0,-277" VerticalAlignment="Top" Width="54" Height="25" Click="AddProduct_Button_Click" FontSize="14" />
 
@@ -72,8 +72,8 @@
 
             </Grid>
         </Border>
-        <DataGrid x:Name="dataGrid" HorizontalAlignment="Left" Margin="11,243,0,0" VerticalAlignment="Top" IsSynchronizedWithCurrentItem="False" FrozenColumnCount="0" Height="238" Width="721" SelectionChanged="dataGrid_SelectionChanged" MouseDoubleClick="dataGrid_MouseDoubleClick" LostKeyboardFocus="dataGrid_LostKeyboardFocus"  />
-        <ListView x:Name="listView" HorizontalAlignment="Left" Height="238" Margin="745,243,0,0" VerticalAlignment="Top" Width="257">
+        <DataGrid x:Name="dataGrid" HorizontalAlignment="Left" Margin="11,243,0,0" VerticalAlignment="Top" IsSynchronizedWithCurrentItem="False" FrozenColumnCount="0" Height="238" Width="721" SelectionChanged="dataGrid_SelectionChanged" MouseDoubleClick="dataGrid_MouseDoubleClick" LostKeyboardFocus="dataGrid_LostKeyboardFocus" GotFocus="dataGrid_GotFocus" />
+        <ListView x:Name="listView" HorizontalAlignment="Left" Height="238" Margin="745,243,0,0" VerticalAlignment="Top" Width="257" MouseDoubleClick="listView_MouseDoubleClick" LostFocus="listView_LostFocus">
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="SL" DisplayMemberBinding="{Binding SL}" Width="30" />
