@@ -19,6 +19,7 @@ using Point_Of_Sale.BL;
 using System.Windows.Automation.Peers;
 using System.Windows.Controls.Primitives;
 using System.Data.Linq;
+using System.Collections;
 
 namespace Point_Of_Sale.PL
 {
@@ -32,10 +33,12 @@ namespace Point_Of_Sale.PL
         Customer customer;
         List<Customer_Sale> listCustomerSale = new List<Customer_Sale>();
         List<Free_Product> listFree_Product = new List<Free_Product>();
+        public static List<GiftCodeElements> giftCodeElements = new List<GiftCodeElements>();
         DateTime datetime;
         bool hasCustomerinDB = false;
         int dataGridSerial = 1; 
-        float totalTaka = 0;
+        float totalTakaFloat = 0;
+        float totalQuantityInt = 0;
         int tobeDeletedProductIndex = -1; ///used to track datagrid.SelectedIndex
         bool isEditing = false;
         bool isTurnOn = true; /// turn off while setting values in Editing mode
@@ -234,7 +237,6 @@ namespace Point_Of_Sale.PL
                     DAL.Barcode[] barcodes = ProductTableData.getBarcodesByPID(product.ID);
                     barcodeSerial.Items.Clear();
 
-
                     foreach (DAL.Barcode obj in barcodes)
                     {
                         ///stop adding duplicate barcode which is already added in datagrid and which is already sold out
@@ -282,7 +284,6 @@ namespace Point_Of_Sale.PL
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        
         private bool IsAlreadyExists(string barcode)
         {
             foreach (ListViewItems item in listView.Items)
@@ -296,24 +297,31 @@ namespace Point_Of_Sale.PL
         private void barcodeSerial_LostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
         {
             barcodeSerial.IsDropDownOpen = false;
+            enterPressed = 0;
         }
         private void barcodeSerial_ComboBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             
         }
+        int enterPressed = 0;
         private void barcodeSerial_KeyDown(object sender, KeyEventArgs e)
         {
             int quan = 0;
+            int.TryParse(quantity.Text, out quan);
             bool flag = false;
+            string msg = "";
             var barcode = new DAL.Barcode();
             if (e.Key == Key.Enter && barcodeSerial.Text.Trim() != "")
             {
                 if (IsAlreadyExists(barcodeSerial.Text) == true)
                 {
-                    Xceed.Wpf.Toolkit.MessageBox.Show("The barcode is already in the list. Pres ok to exit.", "Duplicate Barcode", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK);
-                    return;
+                    if (!isEditing)
+                    {
+                        Xceed.Wpf.Toolkit.MessageBox.Show("The barcode is already in the list. Pres ok to exit.", "Duplicate Barcode", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK);
+                        return;
+                    }
                 }
-                if (int.TryParse(quantity.Text, out quan) != true || listView.Items.Count > quan - 1)
+                else if (int.TryParse(quantity.Text, out quan) != true || listView.Items.Count > quan - 1)
                 {
                     Xceed.Wpf.Toolkit.MessageBox.Show("You cannot add more than quantity. Pres ok to exit.", "Duplicate Barcode", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK);
                     return;
@@ -365,20 +373,76 @@ namespace Point_Of_Sale.PL
                     Xceed.Wpf.Toolkit.MessageBox.Show("The barcode you entered is not found in DB", "Product not found", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK);
                     return;
                 }
-
-                listView.Items.Add(new ListViewItems(listView.Items.Count + 1, barcode.Barcode_Serial, barcode.Color));
+                if (!isEditing)
+                    listView.Items.Add(new ListViewItems(listView.Items.Count + 1, barcode.Barcode_Serial, barcode.Color));
                 listView.SelectedIndex = listView.Items.Count - 1;
                 listView.ScrollIntoView(listView.SelectedItem);
                 barcodeSerial.SelectedIndex = -1;
                 barcodeSerial.IsDropDownOpen = true;
-                barcodeSerial.Items.Remove(barcode.Barcode_Serial); ///added barcode removed from combo
-                /// if quantity is equal to the entered barcode then it move to the next control
-                if (quan == listView.Items.Count)
+                barcodeSerial.Items.Remove(barcode.Barcode_Serial);
+                
+                ///added barcode removed from combo
+                
+            }
+            enterPressed++;
+            if (e.Key != Key.Enter) return;
+
+            ///Console.WriteLine(quan + " space " + listView.Items.Count);
+            /// if quantity is equal to the entered barcode then it move to the next control
+            if (quan != listView.Items.Count && product.Unique_Barcode.StartsWith("Y"))
+            {
+                //var uie = e.OriginalSource as UIElement;
+                //e.Handled = true;
+                //uie.MoveFocus(new TraversalRequest(FocusNavigationDirection.Next));
+                return;
+            }
+            if (checkErrors() == false) ///check all text fields text format
+                return;
+
+            if (product.Unique_Barcode.StartsWith("Y"))
+            {
+                MessageBoxResult rs;
+
+                if (!isEditing)
+                    rs = MessageBox.Show("Add SL Number or Gift?", "Select", MessageBoxButton.YesNoCancel, MessageBoxImage.Question, MessageBoxResult.Yes);
+                else
+                    rs = MessageBox.Show("Edit SL Number or Gift?", "Select", MessageBoxButton.YesNoCancel, MessageBoxImage.Exclamation, MessageBoxResult.Yes);
+
+                if (rs == MessageBoxResult.Yes)
                 {
-                    var uie = e.OriginalSource as UIElement;
-                    e.Handled = true;
-                    uie.MoveFocus(new TraversalRequest(FocusNavigationDirection.Next));
+                    ///saving the barcodes to the variable 
+                    List<ListViewItems> it = listView.Items.Cast<ListViewItems>().ToList();
+                    ArrayList imeis = new ArrayList();
+                    if (!isEditing) giftCodeElements.Clear();
+
+                    foreach (var item in it)
+                        imeis.Add(item.IMEI);
+
+                    Gift_Add gift = new Gift_Add(imeis, isEditing);
+                    gift.ShowDialog();
+
+                    if (Gift_Add.saveButtonPressed)
+                    {
+                        AddProduct_Button.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                        productType.Focus();
+                    }
+                    //foreach (var item in giftCodeElements)
+                    //    Console.WriteLine(item.Discount);
                 }
+                else if (rs == MessageBoxResult.No)
+                {
+                    AddProduct_Button.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                    productType.Focus();
+                }
+
+            }
+            else
+            {
+                //AddProduct_Button.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                //productType.Focus();
+                var uie = e.OriginalSource as UIElement;
+                e.Handled = true;
+                uie.MoveFocus(new TraversalRequest(FocusNavigationDirection.Next));
             }
         }
         private void selectProductbyBarcode(DAL.Barcode barcode)
@@ -673,8 +737,10 @@ namespace Point_Of_Sale.PL
             productModel.SelectedIndex = -1;
             barcodeSerial.SelectedIndex = -1;
             listCustomerSale.Clear();
-            totalTaka = 0;
+            totalTakaFloat = 0;
+            totalQuantityInt = 0;
             totalAmount.Content = 0;
+            totalQuantity.Content = 0;
             loadSellingPrice.IsChecked = false;
             freeProduct.IsChecked = false;
             productType.IsDropDownOpen = false;
@@ -688,8 +754,8 @@ namespace Point_Of_Sale.PL
             try
             {
                 Console.WriteLine(customer.Name + listCustomerSale.Count );
-                Customer_Sale cc = listCustomerSale.First();
-                Console.WriteLine(cc.Product.Model);
+                //Customer_Sale cc = listCustomerSale.First();
+                //Console.WriteLine(cc.Product.Model);
                 Bill.createBill(listCustomerSale, customer,listFree_Product, datetime);
 
                 generateBillPdf(false); // show preview false
@@ -901,7 +967,8 @@ namespace Point_Of_Sale.PL
             int dis = 0;
             Customer_Sale cus_Sale = listCustomerSale.ElementAt(dataGrid.SelectedIndex);
             
-            totalTaka = totalTaka - ((float)cus_Sale.Sold_Price - dis) * (int)cus_Sale.Quantity;
+            totalTakaFloat -= dgBilling.DiscountPrice;
+            totalQuantityInt -= dgBilling.Quantity;
             DB.db.Refresh(System.Data.Linq.RefreshMode.OverwriteCurrentValues, cus_Sale.Product);
             //DB.db.Refresh(System.Data.Linq.RefreshMode.OverwriteCurrentValues, giftt.Customer_Sale);
             //DB.db.Refresh(System.Data.Linq.RefreshMode.OverwriteCurrentValues, dgBilling.Customer_Sales);
@@ -916,7 +983,7 @@ namespace Point_Of_Sale.PL
                 //Console.WriteLine(cc.Sale_Price_was);
                 if (cus_Sale.Equals(cc))
                 {
-                    if (cc.Gifts.Count > 0) DB.db.Gifts.DeleteOnSubmit(cc.Gifts.First());
+                    if (cc.Gifts.Count > 0) DB.db.Gifts.DeleteAllOnSubmit(cc.Gifts);
                     DB.db.Customer_Sales.DeleteOnSubmit(cc);
 
                     break;
@@ -953,46 +1020,67 @@ namespace Point_Of_Sale.PL
             product.Quantity_Sold += cus_Sale.Quantity;
             product.Quantity_Available -= cus_Sale.Quantity;
             cus_Sale.Product = product;
-            
+
             ///Console.WriteLine(product.Type + product.Model + product.Quantity_Available);
 
             dgBilling.Type = productType.Text;
             dgBilling.Model = productModel.Text;
             dgBilling.Quantity = int.Parse(quantity.Text);            
             dgBilling.Barcodes.Clear();
-
+            dgBilling.Discount = 0;
+            dgBilling.DiscountPrice = 0;
+            int  counter = 0;
+            string sl = "", gc = "";
+            dis = 0;
             foreach (var item in items)
             {
-                DAL.Barcode barcode = ProductTableData.getBarcode(item.IMEI);
+                ///DAL.Barcode barcode = ProductTableData.getBarcode(item.IMEI);
                 dgBilling.Barcodes.Add(new DAL.Barcode { Product_ID = product.ID, Barcode_Serial = item.IMEI, Color = item.Color });
-                
+
                 if (product.Unique_Barcode.StartsWith("Y"))
                 {
                     Gift gift = new Gift { };
-                    
-                    gift.Barcode1 = barcode; /// adds gift with mobile products
+                    DAL.Barcode bb = ProductTableData.getBarcode(item.IMEI);
+                    gift.Barcode1 = bb; /// adds gift with mobile products
                     gift.Customer_Sale = cus_Sale;
                     gift.Discount_Price = 0;
 
-                    if (SLNumber.Text != "")
-                        gift.SL = SLNumber.Text;
-
-                    if (giftCode.Text != "" && discountPrice.Text != "")///giftCheckBox.IsChecked == true
+                    Console.WriteLine(giftCodeElements.Count + " count");
+                    if (giftCodeElements.Count != 0)
                     {
-                        gift.Gift_Code = giftCode.Text;
+                        sl = giftCodeElements.ElementAt(counter).SL;
+                        gc = giftCodeElements.ElementAt(counter).GiftCode;
+                        dis = (int)giftCodeElements.ElementAt(counter).Discount;
+                        counter++;
+                        //Console.WriteLine(sl + gc + dis);
+                        gift.SL = sl;
 
-                        if (int.TryParse(discountPrice.Text, out dis))
-                        {
+                        //if (gc != "" && dis != 0)///giftCheckBox.IsChecked == true
+                        //{
+                            gift.Gift_Code = gc;
+
                             gift.Discount_Price = dis;
-                            dgBilling.Discount = dis;
-                        }
-                        else
-                            gift.Discount_Price = dis;
+                            //dgBilling.Discount = dis;
+                        //}
                     }
-
                     dgBilling.gift = gift;
+
+                }
+                if (freeProduct.IsChecked == false && product.Unique_Barcode.StartsWith("Y"))
+                {
+                    dgBilling.Discount += dis;
+                    totalTakaFloat = totalTakaFloat + ((float)cus_Sale.Sold_Price - dis);/// calculating total bill
+                    dgBilling.DiscountPrice += ((float)cus_Sale.Sold_Price - dis);/// price after discount
+                }
+                else if (freeProduct.IsChecked == false && !product.Unique_Barcode.StartsWith("Y"))
+                {
+                    dgBilling.Discount += dis;
+                    totalTakaFloat = totalTakaFloat + ((float)cus_Sale.Sold_Price - dis) * (int)cus_Sale.Quantity;/// calculating total bill
+                    dgBilling.DiscountPrice += ((float)cus_Sale.Sold_Price - dis) * (int)cus_Sale.Quantity; /// price after discount
                 }
             }
+            totalQuantityInt += (int)cus_Sale.Quantity; ///set total quantity
+
             /// if the product is free
             if (freeProduct.IsChecked == true)
             {
@@ -1024,11 +1112,7 @@ namespace Point_Of_Sale.PL
                 dgBilling.DiscountPrice = 0;
 
             }
-            else
-            {
-                totalTaka = totalTaka + ((float)cus_Sale.Sold_Price - dis) * (int)cus_Sale.Quantity; /// calculating total bill
-                dgBilling.DiscountPrice = ((float)cus_Sale.Sold_Price - dis) * (int)cus_Sale.Quantity; /// price after discount
-            }
+            
             //dgBilling = new DataGridItemsBilling(dataGridSerial++, cus_Sale);
             dgBilling.SoldPrice = int.Parse(sellingPrice.Text);
             dgBilling.Selling_Price = cus_Sale.Product.Selling_Price;
@@ -1040,49 +1124,23 @@ namespace Point_Of_Sale.PL
             isEditing = false;
             dataGrid.SelectedIndex = -1;
 
-            totalAmount.Content = totalTaka; /// set total taka on bill screen
+            totalAmount.Content = totalTakaFloat; /// set total taka on bill screen
+            totalQuantity.Content = totalQuantityInt; /// set total quantity on bill screen
             //listCustomerSale.Add(cus_Sale);
             //dataGrid.Items.Add(dgBilling);
             ClearAllFieldsAddingProduct();
         }
         //used for reset and fetch the product again form database after deleting a product from datagrid
-        private void addProductsAgain()
-        {
-            DB.resetConnString();
-            List<Customer_Sale> newListCustomerSale = new List<Customer_Sale>();
-            foreach (var customerSale in listCustomerSale)
-            {
-                if (hasCustomerinDB)
-                    customer = CustomerTableData.getCustomersbyMatchingID(mobile1.Text).First();
-                product = ProductTableData.getProductByID(customerSale.Product_ID);
-                Customer_Sale cus_SaleTemp = customerSale;
-                if (customerSale.Product.Unique_Barcode.StartsWith("Y"))
-                {
-                    Gift gift = customerSale.Gifts.First();
-                    DAL.Barcode bb = ProductTableData.getBarcode(customerSale.Gifts.First().Barcode);
-                    gift.Barcode1 = bb;
-                    gift.Customer_Sale = cus_SaleTemp;
-                }
-
-                product.Quantity_Sold += cus_SaleTemp.Quantity;
-                product.Quantity_Available -= cus_SaleTemp.Quantity;
-                cus_SaleTemp.Product = product;
-                newListCustomerSale.Add(cus_SaleTemp);
-            }
-            listCustomerSale.Clear();
-            listCustomerSale.AddRange(newListCustomerSale);
-        }
+        
         private void AddProduct_Button_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                
-                if (checkErrors() == false) ///check all text fields text format
-                    return;
+                ///error checking is moved to gridPreviewKeyDown function and works when the user press enter inside the discount pice textbox
 
                 if (isEditing == true)
                 {
-                    EditProduct(); ///
+                    EditProduct();
                     return;
                 }
                 if(dataGrid.Items.Count == 9)
@@ -1115,7 +1173,8 @@ namespace Point_Of_Sale.PL
 
                 dgBilling = new DataGridItemsBilling(dataGridSerial++, cus_Sale);
 
-                int dis = 0;
+                int dis = 0,counter = 0;
+                string sl = "", gc = "";
                 foreach (ListViewItems obj in listView.Items)
                 {
                     DAL.Barcode b = new DAL.Barcode { Product_ID = product.ID, Barcode_Serial = obj.IMEI, Color = obj.Color };
@@ -1130,25 +1189,41 @@ namespace Point_Of_Sale.PL
                         gift.Customer_Sale = cus_Sale;
                         gift.Discount_Price = 0;
 
-                        if (SLNumber.Text != "")
-                            gift.SL = SLNumber.Text;
-                        
-                        if (giftCode.Text != "" && discountPrice.Text != "")///giftCheckBox.IsChecked == true
+                        //Console.WriteLine(giftCodeElements.Count +" count");
+                        if (giftCodeElements.Count != 0)
                         {
-                            gift.Gift_Code = giftCode.Text;
+                            sl = giftCodeElements.ElementAt(counter).SL;
+                            gc = giftCodeElements.ElementAt(counter).GiftCode;
+                            dis = (int)giftCodeElements.ElementAt(counter).Discount;
+                            counter++;
+                            ///Console.WriteLine("{0} {1} {2}", sl, gc, dis);
+                            gift.SL = sl;
 
-                            if (int.TryParse(discountPrice.Text, out dis))
-                            {
+                            //if (gc != "" && dis != 0)///giftCheckBox.IsChecked == true
+                            //{
+                                gift.Gift_Code = gc;
+
                                 gift.Discount_Price = dis;
-                                dgBilling.Discount = dis;
-                            }
-                            else
-                                gift.Discount_Price = dis;
+                                //dgBilling.Discount = dis;
+                            //}
                         }
-
                         dgBilling.gift = gift;
                     }
+                    if(freeProduct.IsChecked == false && product.Unique_Barcode.StartsWith("Y"))
+                    {
+                        dgBilling.Discount += dis;
+                        totalTakaFloat = totalTakaFloat + ((float)cus_Sale.Sold_Price - dis);/// calculating total bill
+                        dgBilling.DiscountPrice += ((float)cus_Sale.Sold_Price - dis);/// price after discount
+                    }
+                    else if(freeProduct.IsChecked == false && !product.Unique_Barcode.StartsWith("Y"))
+                    {
+                        dgBilling.Discount += dis;
+                        totalTakaFloat = totalTakaFloat + ((float)cus_Sale.Sold_Price - dis) * (int)cus_Sale.Quantity;/// calculating total bill
+                        dgBilling.DiscountPrice += ((float)cus_Sale.Sold_Price - dis) * (int)cus_Sale.Quantity; /// price after discount
+                    }
                 }
+                totalQuantityInt += (int)cus_Sale.Quantity; /// set totalQuantity
+
                 /// if the product is free
                 if (freeProduct.IsChecked == true)
                 {
@@ -1180,13 +1255,10 @@ namespace Point_Of_Sale.PL
                     dgBilling.DiscountPrice = 0;
 
                 }
-                else
-                {
-                    totalTaka = totalTaka + ((float)cus_Sale.Sold_Price - dis) * (int)cus_Sale.Quantity; /// calculating total bill
-                    dgBilling.DiscountPrice = ((float)cus_Sale.Sold_Price - dis) * (int)cus_Sale.Quantity; /// price after discount
-                }
+                
 
-                totalAmount.Content = totalTaka; /// set total taka on bill screen
+                totalAmount.Content = totalTakaFloat; /// set total taka on bill screen
+                totalQuantity.Content = totalQuantityInt; /// set total quantity on bill screen
                 listCustomerSale.Add(cus_Sale);
                 dataGrid.Items.Add(dgBilling);
                 tobeDeletedProductIndex = -1;
@@ -1243,16 +1315,13 @@ namespace Point_Of_Sale.PL
             tobeDeletedProductIndex = -1;
             
         }
-        /// <summary>
-        /// enter key act as a tab key except barcodeSerial combo
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+       
         private void Grid_PreviewKeyDown(object sender, KeyEventArgs e)
         {
             var uie = e.OriginalSource as UIElement;
             ComboBox com = new ComboBox();
             TextBox tex = new TextBox();
+            Button button = new Button();
 
             int quan = 0;
             int.TryParse(quantity.Text,out quan);
@@ -1261,14 +1330,20 @@ namespace Point_Of_Sale.PL
 
             try { tex = e.Source as TextBox; } catch { }
 
+            try { button = e.Source as Button; } catch { }
+
             if (e.Key == Key.Enter)
             {
-                ///move focus doesnot work for barcodeSerial 
-                if (com != null && com.Name == "barcodeSerial" && com.Text.Trim() != "")
+                ///move focus should not work for barcodeSerial 
+                if (com != null && com.Name == "barcodeSerial"  )///&& com.Text.Trim() != ""
                 {
-                    ///do nothing
+                    
                 }
                 else if (tex != null && tex.Name == "discountPrice")
+                {
+
+                }
+                else if (button != null && button.Name == "AddProduct_Button")
                 {
                     AddProduct_Button.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
                     productType.Focus();
@@ -1297,8 +1372,113 @@ namespace Point_Of_Sale.PL
         {
             Console.WriteLine("property changing");
         }
-        
+
         private void deleteProduct_Click(object sender, RoutedEventArgs e)
+        {
+            ///due to use datagrid.lostkeyboardfocus we have to track down the datagrid.selectedindex through tobeDeletedProductIndex
+            if (tobeDeletedProductIndex == -1 || dataGrid.Items.Count <= 0)
+                return;
+            
+            int serial = 1;
+            DataGridItemsBilling tempObj;
+            Customer_Sale cus_Sale = listCustomerSale.ElementAt(tobeDeletedProductIndex);
+            DataGridItemsBilling abc = (DataGridItemsBilling)dataGrid.Items.GetItemAt(tobeDeletedProductIndex);
+            serial = abc.SL;
+            totalTakaFloat -= (abc.SoldPrice * abc.Quantity) - abc.Discount; /// deduct the deleted products price from total
+            totalQuantityInt -= abc.Quantity;
+            totalAmount.Content = totalTakaFloat.ToString();
+            totalQuantity.Content = totalQuantityInt;
+            listCustomerSale.RemoveAt(tobeDeletedProductIndex);
+            dataGrid.Items.RemoveAt(tobeDeletedProductIndex);
+
+
+            ///if the deleted product is a free product then it should be deleted from the listFreeProducts and the price of this product should also deducted from the parent product(needs bug fixes on selecting parent product to deduct unit price)
+            foreach (var freeProducts in listFree_Product)///finds free pro in list
+            {
+                if (freeProducts.Product_ID == abc.ID)///if deleted pro is a free pro
+                {
+                    foreach (var prod in listCustomerSale)///finds parent pro todeduct unit price
+                    {
+                        if (prod.Product.Unique_Barcode.StartsWith("Y"))
+                        {
+                            int price = (int)ProductTableData.getProductByID(abc.ID).Unit_Price;
+                            prod.Unit_Price -= price;///deduct unit price
+                            break;
+                        }
+                    }
+
+                    listFree_Product.Remove(freeProducts);///remove the free pro from list
+                    break;
+                }
+
+            }
+            ///updating the serial numbers in datagrid
+            serial = tobeDeletedProductIndex;
+            for (int i = serial; i < dataGrid.Items.Count; i++)
+            {
+                tempObj = (DataGridItemsBilling)dataGrid.Items.GetItemAt(serial++);
+                tempObj.SL = serial;
+            }
+            dataGrid.Items.Refresh();
+            ///updating the serial numbers in datagrid
+
+            ///addProductsAgain();
+            tobeDeletedProductIndex = -1; ///reset index
+            dataGridSerial--;
+
+            ///deleting from change set of linq
+            DB.db.Refresh(System.Data.Linq.RefreshMode.OverwriteCurrentValues, cus_Sale.Product);
+
+            var instanceCustomerSale = DB.db.GetChangeSet().Inserts.OfType<Customer_Sale>();
+
+            foreach (var item in instanceCustomerSale)
+            {
+                Customer_Sale cc = item;
+                if (cus_Sale.Equals(cc))
+                {
+                    if (cc.Gifts.Count > 0)
+                        DB.db.Gifts.DeleteAllOnSubmit(cc.Gifts);
+                    DB.db.Customer_Sales.DeleteOnSubmit(cc);
+                    break;
+                }
+            }
+        }
+        /// <summary>
+        /// this is a old method of deleting the product this function is called from old deleteProduct() function
+        /// </summary>
+        private void addProductsAgain()
+        {
+            DB.resetConnString();
+            List<Customer_Sale> newListCustomerSale = new List<Customer_Sale>();
+            foreach (var customerSale in listCustomerSale)
+            {
+                if (hasCustomerinDB)
+                    customer = CustomerTableData.getCustomersbyMatchingID(mobile1.Text).First();
+                product = ProductTableData.getProductByID(customerSale.Product_ID);
+                Customer_Sale cus_SaleTemp = customerSale;
+                if (customerSale.Product.Unique_Barcode.StartsWith("Y"))
+                {
+                    Gift gift = customerSale.Gifts.First();
+                    DAL.Barcode bb = ProductTableData.getBarcode(customerSale.Gifts.First().Barcode);
+                    gift.Barcode1 = bb;
+                    gift.Customer_Sale = cus_SaleTemp;
+                }
+
+                product.Quantity_Sold += cus_SaleTemp.Quantity;
+                product.Quantity_Available -= cus_SaleTemp.Quantity;
+                cus_SaleTemp.Product = product;
+                newListCustomerSale.Add(cus_SaleTemp);
+            }
+            listCustomerSale.Clear();
+            listCustomerSale.AddRange(newListCustomerSale);
+        }
+
+        /// <summary>
+        /// this is a old method of deleting product manually 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        /**private void deleteProduct_Click(object sender, RoutedEventArgs e)
         {
             ///due to use datagrid.lostkeyboardfocus we have to track down the datagrid.selectedindex through tobeDeletedProductIndex
             if (tobeDeletedProductIndex != -1 && dataGrid.Items.Count > 0)
@@ -1307,8 +1487,10 @@ namespace Point_Of_Sale.PL
                 DataGridItemsBilling tempObj;
                 DataGridItemsBilling abc = (DataGridItemsBilling)dataGrid.Items.GetItemAt(tobeDeletedProductIndex);
                 serial = abc.SL;
-                totalTaka -= (abc.SoldPrice * abc.Quantity) - abc.Discount; /// deduct the deleted products price from total
-                totalAmount.Content = totalTaka.ToString();
+                totalTakaFloat -= (abc.SoldPrice * abc.Quantity) - abc.Discount; /// deduct the deleted products price from total
+                totalQuantityInt -= abc.Quantity;
+                totalAmount.Content = totalTakaFloat.ToString();
+                totalQuantity.Content = totalQuantityInt;
                 listCustomerSale.RemoveAt(tobeDeletedProductIndex);
                 dataGrid.Items.RemoveAt(tobeDeletedProductIndex);
 
@@ -1339,7 +1521,7 @@ namespace Point_Of_Sale.PL
                 {
                     tempObj = (DataGridItemsBilling)dataGrid.Items.GetItemAt(serial++);
                     tempObj.SL = serial;
-                }    
+                }
                 dataGrid.Items.Refresh();
                 ///updating the serial numbers in datagrid
 
@@ -1348,6 +1530,7 @@ namespace Point_Of_Sale.PL
                 dataGridSerial--;
             }
         }
+        */
         private void listView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             if (listView.Items.Count <= 0)
@@ -1460,6 +1643,29 @@ namespace Point_Of_Sale.PL
 
         
     }
+    public class GiftCodeElements
+    {
+        public string IMEI { get; set; }
+        public string SL { get; set; }
+        public string GiftCode { get; set; }
+        public double Discount { get; set; }
+
+        public GiftCodeElements(string imei, string sl, string giftCode, double discount)
+        {
+            this.IMEI = imei;
+            this.SL = sl;
+            this.GiftCode = giftCode;
+            this.Discount = discount;
+        }
+
+        public GiftCodeElements(string iMEI)
+        {
+            IMEI = iMEI;
+            this.SL = "";
+            this.GiftCode = "";
+            this.Discount = 0;
+        }
+    }
     class DataGridItemsBilling : Product
     {
         public int SL { get; set; }
@@ -1485,14 +1691,3 @@ namespace Point_Of_Sale.PL
         }
     }
 }
-//public static void RefreshObjectByOverwritting(object obj)
-//{
-//    try
-//    {
-//        DB.db.Refresh(System.Data.Linq.RefreshMode.OverwriteCurrentValues, obj);
-//    }
-//    catch (Exception ex)
-//    {
-//        throw new Exception("Error:" + ex.Message + "\n\nDetailed Error: " + ex.StackTrace);
-//    }
-//}

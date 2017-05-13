@@ -548,7 +548,7 @@ namespace Point_Of_Sale.DAL
             try
             {
                 //db = dbtemp;
-                Console.WriteLine(listCustomer_sale.Count);
+                //Console.WriteLine(listCustomer_sale.Count);
                 Sale sale = new Sale { Date = date };
                 sale.Customer = customer;
 
@@ -901,11 +901,9 @@ namespace Point_Of_Sale.DAL
                 product.Quantity_Available += quan;
                 product.Quantity_Sold -= quan;
 
-                Gift gift;
                 if (cus_sale.Gifts.Count != 0)
                 {
-                    gift = cus_sale.Gifts.First();
-                    db.Gifts.DeleteOnSubmit(gift); // delete gift if product has same or unq barcode
+                    db.Gifts.DeleteAllOnSubmit(cus_sale.Gifts); // delete gift if product has same or unq barcode
                 }
 
                 if( count == 1 )

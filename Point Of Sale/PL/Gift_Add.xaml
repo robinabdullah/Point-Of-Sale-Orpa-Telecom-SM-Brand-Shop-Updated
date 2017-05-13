@@ -1,0 +1,25 @@
+﻿<Window x:Class="Point_Of_Sale.PL.Gift_Add"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Point_Of_Sale.PL"
+        mc:Ignorable="d"
+        Title="Gift_Add" Height="163.214" Width="706.622" WindowStartupLocation="CenterScreen">
+    <Grid x:Name="mainGrid">
+
+        
+        <DataGrid x:Name="dataGrid" ItemsSource="{Binding DGElements}" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Height="68" Width="679" IsReadOnly="False" AutoGenerateColumns="False" CanUserResizeRows="False" CanUserReorderColumns="False" AlternatingRowBackground="Gainsboro">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="IMEI" Binding="{Binding IMEI, Mode=TwoWay}" Width="150" IsReadOnly="True" />
+                <DataGridTextColumn Header="SL Number" Binding="{Binding SL, Mode=TwoWay}" Width="180" />
+                <DataGridTextColumn Header="Gift Code" Binding="{Binding GiftCode, Mode=TwoWay}" Width="180"/>
+                <DataGridTextColumn Header="Discount" Binding="{Binding Discount, Mode=TwoWay}" Width="150"/>
+            </DataGrid.Columns>
+
+        </DataGrid>
+        <Button x:Name="save" Content="Save" HorizontalAlignment="Right" Margin="0,0,10,10" VerticalAlignment="Bottom" Width="75" Height="30" Click="save_Click"  />
+        <Button x:Name="cancel" Content="Cancel" HorizontalAlignment="Right" Margin="0,0,115,10" VerticalAlignment="Bottom" Width="75" Height="30" Click="cancel_Click"  />
+
+    </Grid>
+</Window>
