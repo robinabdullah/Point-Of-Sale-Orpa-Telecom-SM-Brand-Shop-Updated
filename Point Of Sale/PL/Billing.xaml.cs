@@ -1536,19 +1536,26 @@ namespace Point_Of_Sale.PL
             if (listView.Items.Count <= 0)
                 return;
 
-            Add_New_Values add = new Add_New_Values();
+            List<ListViewItems> it = listView.SelectedItems.Cast<ListViewItems>().ToList();
+            ArrayList imeis = new ArrayList();
+            //if (!isEditing) giftCodeElements.Clear();
+
+            foreach (var item in it)
+                imeis.Add(item.IMEI);
+
+            Gift_Add add = new Gift_Add(imeis, isEditing);
             add.ShowDialog();
         }
 
         private void listView_LostFocus(object sender, RoutedEventArgs e)
         {
-            if (isEditing)
-                return;
+            //if (isEditing)
+            //    return;
             /////////////////////////problem here
 
             ///tobeDeletedProductIndex = dataGrid.SelectedIndex;
             ///dataGrid.SelectedIndex = -1;
-            listView.Items.Clear();
+            //listView.Items.Clear();
         }
         private void dataGrid_GotFocus(object sender, RoutedEventArgs e)
         {

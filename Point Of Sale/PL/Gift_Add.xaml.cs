@@ -72,8 +72,8 @@ namespace Point_Of_Sale.PL
             Billing.giftCodeElements = (List<GiftCodeElements>)dataGrid.ItemsSource;
             saveButtonPressed = true;
             this.Close();
-            foreach (var item in Billing.giftCodeElements)
-               Console.WriteLine(item.IMEI + item.SL + item.GiftCode + item.Discount);
+            //foreach (var item in Billing.giftCodeElements)
+            //   Console.WriteLine(item.IMEI + item.SL + item.GiftCode + item.Discount);
         }
 
         private void cancel_Click(object sender, RoutedEventArgs e)
