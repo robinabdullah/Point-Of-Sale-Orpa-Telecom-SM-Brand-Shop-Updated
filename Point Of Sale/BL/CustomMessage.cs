@@ -9,5 +9,6 @@ namespace Point_Of_Sale.BL
     class CustomMessage
     {
         public static string Message { get; set; }
+        public static string StackTrace { get; set; }
     }
 }

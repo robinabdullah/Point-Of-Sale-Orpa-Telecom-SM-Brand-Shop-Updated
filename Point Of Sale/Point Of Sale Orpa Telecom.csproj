@@ -173,6 +173,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="PL\Suppllier Add.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="PL\Registration.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -234,6 +238,9 @@
     </Compile>
     <Compile Include="PL\Gift_Add.xaml.cs">
       <DependentUpon>Gift_Add.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="PL\Suppllier Add.xaml.cs">
+      <DependentUpon>Suppllier Add.xaml</DependentUpon>
     </Compile>
     <Compile Include="PL\Registration.xaml.cs">
       <DependentUpon>Registration.xaml</DependentUpon>

@@ -1,0 +1,47 @@
+﻿<Window x:Class="Point_Of_Sale.PL.Supplier_Add"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Point_Of_Sale.PL"
+        mc:Ignorable="d"
+        Title="New Suppllier" Height="532.284" Width="419.861" WindowStartupLocation="CenterScreen" ResizeMode="NoResize">
+    <Grid x:Name="mainGrid" Margin="0,0,4,0" UIElement.PreviewKeyDown="Grid_PreviewKeyDown">
+        <TextBox x:Name="companyName" CharacterCasing="Upper" HorizontalAlignment="Left" Margin="138,13,0,0" VerticalAlignment="Top" Width="253" Height="23" FontSize="16" FontFamily="Times New Roman" FontWeight="Bold" GotKeyboardFocus="SelectAll_GotKeyboardFocus"/>
+        <Label x:Name="label11_Copy" Content="Company Name" HorizontalAlignment="Left" Margin="10,9,0,0" VerticalAlignment="Top" Width="112" FontSize="15" FontFamily="Times New Roman"/>
+        <TextBox x:Name="contactName"  CharacterCasing="Upper" HorizontalAlignment="Left" Margin="138,50,0,0" VerticalAlignment="Top" Width="253" Height="23" FontSize="16" FontFamily="Times New Roman" FontWeight="Bold" GotKeyboardFocus="SelectAll_GotKeyboardFocus"/>
+        <Label x:Name="label11_Copy1" Content="Contact Name" HorizontalAlignment="Left" Margin="10,46,0,0" VerticalAlignment="Top" Width="112" FontSize="15" FontFamily="Times New Roman"/>
+        <ComboBox x:Name="designation" IsEditable="True" HorizontalAlignment="Left" Margin="138,88,0,0" VerticalAlignment="Top" Width="253" Height="23" FontSize="16" FontFamily="Times New Roman" FontWeight="Bold" >
+            <Label Content="Sales Executive"/>
+            <Label Content="Market Representative"/>
+            <Label Content="MD"/>
+            <Label Content="Owner"/>
+            <Label Content="Others"/>
+
+        </ComboBox>
+        <TextBox x:Name="email"  CharacterCasing="Lower" HorizontalAlignment="Left" Margin="138,126,0,0" VerticalAlignment="Top" Width="253" Height="23" FontSize="16" FontFamily="Times New Roman" FontWeight="Bold" GotKeyboardFocus="SelectAll_GotKeyboardFocus"/>
+        <Label x:Name="label11_Copy2" Content="Designation" HorizontalAlignment="Left" Margin="10,84,0,0" VerticalAlignment="Top" Width="112" FontSize="15" FontFamily="Times New Roman"/>
+        <TextBox x:Name="city"  CharacterCasing="Upper" HorizontalAlignment="Left" Margin="138,162,0,0" VerticalAlignment="Top" Width="253" Height="23" FontSize="16" FontFamily="Times New Roman" FontWeight="Bold" GotKeyboardFocus="SelectAll_GotKeyboardFocus"/>
+        <Label x:Name="label11_Copy3" Content="City" HorizontalAlignment="Left" Margin="10,158,0,0" VerticalAlignment="Top" Width="112" FontSize="15" FontFamily="Times New Roman"/>
+        <TextBox x:Name="addressLine"  CharacterCasing="Upper" HorizontalAlignment="Left" Margin="138,199,0,0" VerticalAlignment="Top" Width="253" Height="23" FontSize="16" FontFamily="Times New Roman" FontWeight="Bold" GotKeyboardFocus="SelectAll_GotKeyboardFocus"/>
+        <TextBox x:Name="postalCode" HorizontalAlignment="Left"  CharacterCasing="Upper" Margin="138,236,0,0" VerticalAlignment="Top" Width="253" Height="23" FontSize="16" FontFamily="Times New Roman" FontWeight="Bold" GotKeyboardFocus="SelectAll_GotKeyboardFocus"/>
+        <Label x:Name="label11_Copy10" Content="Postal Code" HorizontalAlignment="Left" Margin="10,232,0,0" VerticalAlignment="Top" Width="112" FontSize="15" FontFamily="Times New Roman"/>
+        <Label x:Name="label11_Copy4" Content="Address Line" HorizontalAlignment="Left" Margin="10,195,0,0" VerticalAlignment="Top" Width="112" FontSize="15" FontFamily="Times New Roman"/>
+        <TextBox x:Name="country" HorizontalAlignment="Left" Text="Bangladesh" CharacterCasing="Upper" Margin="138,272,0,0" VerticalAlignment="Top" Width="253" Height="23" FontSize="16" FontFamily="Times New Roman" FontWeight="Bold" GotKeyboardFocus="SelectAll_GotKeyboardFocus"/>
+        <Label x:Name="label11_Copy5" Content="Country" HorizontalAlignment="Left" Margin="10,268,0,0" VerticalAlignment="Top" Width="112" FontSize="15" FontFamily="Times New Roman"/>
+        <TextBox x:Name="phone1" HorizontalAlignment="Left"  CharacterCasing="Upper" Margin="138,307,0,0" VerticalAlignment="Top" Width="253" Height="23" FontSize="16" FontFamily="Times New Roman" FontWeight="Bold" GotKeyboardFocus="SelectAll_GotKeyboardFocus"/>
+        <Label x:Name="label11_Copy6" Content="Phone"  HorizontalAlignment="Left" Margin="10,303,0,0" VerticalAlignment="Top" Width="112" FontSize="15" FontFamily="Times New Roman"/>
+        <TextBox x:Name="phone2" HorizontalAlignment="Left" Margin="138,344,0,0"  CharacterCasing="Upper" VerticalAlignment="Top" Width="253" Height="23" FontSize="16" FontFamily="Times New Roman" FontWeight="Bold" GotKeyboardFocus="SelectAll_GotKeyboardFocus"/>
+        <Label x:Name="label11_Copy7" Content="Home Phone" HorizontalAlignment="Left" Margin="10,340,0,0" VerticalAlignment="Top" Width="112" FontSize="15" FontFamily="Times New Roman"/>
+        <TextBox x:Name="fax" HorizontalAlignment="Left" Margin="138,382,0,0"  CharacterCasing="Upper" VerticalAlignment="Top" Width="253" Height="23" FontSize="16" FontFamily="Times New Roman" FontWeight="Bold" GotKeyboardFocus="SelectAll_GotKeyboardFocus"/>
+        <Label x:Name="label11_Copy8" Content="Fax" HorizontalAlignment="Left" Margin="10,378,0,0" VerticalAlignment="Top" Width="112" FontSize="15" FontFamily="Times New Roman"/>
+        <TextBox x:Name="website" HorizontalAlignment="Left" Margin="138,417,0,0"  CharacterCasing="Lower" VerticalAlignment="Top" Width="253" Height="23" FontSize="16" FontFamily="Times New Roman" FontWeight="Bold" GotKeyboardFocus="SelectAll_GotKeyboardFocus"/>
+        <Label x:Name="label11_Copy9" Content="Website" HorizontalAlignment="Left" Margin="10,413,0,0" VerticalAlignment="Top" Width="112" FontSize="15" FontFamily="Times New Roman"/>
+        <Button x:Name="save_Button" Content="Save" HorizontalAlignment="Left" Margin="334,457,0,0" VerticalAlignment="Top" Width="57" FontWeight="Bold" Height="31" Click="Save_Button_Click" />
+        <Button x:Name="cancel_Button" Content="Cancel" HorizontalAlignment="Left" Margin="241,457,0,0" VerticalAlignment="Top" Width="57" FontWeight="Bold" Height="31" Click="cancel_Button_Click" IsCancel="True" />
+        
+        <Label x:Name="label11_Copy11" Content="Email" HorizontalAlignment="Left" Margin="10,122,0,0" VerticalAlignment="Top" Width="112" FontSize="15" FontFamily="Times New Roman"/>
+
+
+    </Grid>
+</Window>

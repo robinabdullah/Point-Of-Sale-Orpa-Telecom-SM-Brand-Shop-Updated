@@ -47,10 +47,12 @@ namespace Point_Of_Sale.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public float Setting {
+        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
+        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=ROBIN\\SQLEXPRESS;Initial Catalog=POSNew12;Integrated Security=True;En" +
+            "crypt=False;TrustServerCertificate=True")]
+        public string POSNew12ConnectionString2 {
             get {
-                return ((float)(this["Setting"]));
+                return ((string)(this["POSNew12ConnectionString2"]));
             }
         }
     }

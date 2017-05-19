@@ -309,7 +309,6 @@ namespace Point_Of_Sale.PL
             int quan = 0;
             int.TryParse(quantity.Text, out quan);
             bool flag = false;
-            string msg = "";
             var barcode = new DAL.Barcode();
             if (e.Key == Key.Enter && barcodeSerial.Text.Trim() != "")
             {

@@ -9,6 +9,7 @@ using System.Collections.ObjectModel;
 using System.Net.NetworkInformation;
 using System.Security.AccessControl;
 using System.Security.Principal;
+using Point_Of_Sale.BL;
 
 namespace Point_Of_Sale.DAL
 {
@@ -489,6 +490,48 @@ namespace Point_Of_Sale.DAL
         //    }
         //}
         
+    }
+    class SupplierTableData: DB
+    {
+        public static bool addNewSupplier(Supplier supplier)
+        {
+            try
+            {
+                db.Suppliers.InsertOnSubmit(supplier);
+                db.SubmitChanges();
+                return true;
+            }
+            catch(Exception ex)
+            {
+                ///throw new Exception(ex.Message + "Detailed Error: " + ex.StackTrace);
+                CustomMessage.Message = ex.Message;
+                CustomMessage.StackTrace = ex.StackTrace;
+
+                return false;
+            }
+        }
+        public static List<string> getAllSupplierName()
+        {
+            try
+            {
+                var v = (from ee in db.Suppliers
+                         where ee.Company_Name != "none" && ee.Contact_Name != "none"
+                         select new { ee.Company_Name , ee.Contact_Name});
+                List<string> list = new List<string>();
+                foreach (var item in v)
+                {
+                    list.Add(item.Contact_Name + " - " + item.Company_Name);
+                }
+                return list;
+            }
+            catch (Exception ex)
+            {
+                ///throw new Exception(ex.Message + "Detailed Error: " + ex.StackTrace);
+                CustomMessage.Message = ex.Message;
+                CustomMessage.StackTrace = ex.StackTrace;
+                return null;
+            }
+        }
     }
     class Free_ProductTableData : DB
     {

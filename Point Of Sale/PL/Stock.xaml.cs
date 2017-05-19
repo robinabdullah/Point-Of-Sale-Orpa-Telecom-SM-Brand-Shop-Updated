@@ -27,7 +27,10 @@ namespace Point_Of_Sale.PL
     {
         Product product;
         List<Product> listProduct = new List<Product>();
-        int totalAmountint = 0;
+        int quan = 0, unitP = 0, SellingP = 0;
+        int totalAmountInt = 0;
+        int totalQuantityInt = 0;
+        int serial = 1;
         public Stock()
         {
             InitializeComponent();
@@ -37,6 +40,9 @@ namespace Point_Of_Sale.PL
 
             color.AddHandler(System.Windows.Controls.Primitives.TextBoxBase.TextChangedEvent,
                       new TextChangedEventHandler(Color_ComboBox_TextChanged));
+
+            supplier.AddHandler(System.Windows.Controls.Primitives.TextBoxBase.TextChangedEvent,
+                      new TextChangedEventHandler(Supplier_Combobox_TextChanged));
 
             productType.AddHandler(System.Windows.Controls.Primitives.TextBoxBase.TextChangedEvent,
                       new TextChangedEventHandler(ProductType_ComboBox_TextChanged));
@@ -48,19 +54,31 @@ namespace Point_Of_Sale.PL
             {
                 productType.ItemsSource = ProductTableData.getAllProductTypes();
                 color.ItemsSource = FileManagement.getAllColor();
+                supplier.ItemsSource = SupplierTableData.getAllSupplierName();
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
             }
-            
+
             barcodeType.IsEnabled = false;
-            
+            referenceNo.Focus();
             addDatagridColumns();
         }
         public void addDatagridColumns()
         {
+            //DataGridCheckBoxColumn checkbox = new DataGridCheckBoxColumn();
+            //checkbox.Header = "d";
+            //checkbox.Binding = new Binding("IsChecked");
+            //dataGrid.Columns.Add(checkbox);
+
             DataGridTextColumn c2 = new DataGridTextColumn();
+            c2.Header = "SL.";
+            c2.Width = 30;
+            c2.Binding = new Binding("SL");
+            dataGrid.Columns.Add(c2);
+
+            c2 = new DataGridTextColumn();
             c2.Header = "Product ID";
             c2.Width = 70;
             c2.Binding = new Binding("ID");
@@ -80,13 +98,13 @@ namespace Point_Of_Sale.PL
 
             DataGridTextColumn c5 = new DataGridTextColumn();
             c5.Header = "Quantity";
-            c5.Width = 70;
+            c5.Width = 60;
             c5.Binding = new Binding("Quantity_Available");
             dataGrid.Columns.Add(c5);
 
             DataGridTextColumn c6 = new DataGridTextColumn();
             c6.Header = "Unit Price";
-            c6.Width = 80;
+            c6.Width = 70;
             c6.Binding = new Binding("Unit_Price");
             dataGrid.Columns.Add(c6);
 
@@ -94,6 +112,12 @@ namespace Point_Of_Sale.PL
             c7.Header = "Selling Price";
             c7.Width = 80;
             c7.Binding = new Binding("Selling_Price");
+            dataGrid.Columns.Add(c7);
+
+            c7 = new DataGridTextColumn();
+            c7.Header = "Sub Total";
+            c7.Width = 70;
+            c7.Binding = new Binding("SubTotal");
             dataGrid.Columns.Add(c7);
 
             dataGrid.IsReadOnly = true;
@@ -126,7 +150,10 @@ namespace Point_Of_Sale.PL
                 description.Text = "";
             }
         }
+        private void Supplier_Combobox_TextChanged(object sender, TextChangedEventArgs e)
+        {
 
+        }
         private void ProductType_ComboBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             listView.Items.Clear();
@@ -172,7 +199,7 @@ namespace Point_Of_Sale.PL
 
             return false;
         }
-        
+
         private void barcodeSerial_KeyDown(object sender, KeyEventArgs e)
         {
             int quan = 0;
@@ -207,6 +234,13 @@ namespace Point_Of_Sale.PL
                 listView.ScrollIntoView(listView.SelectedItem);
                 barcodeSerial.Clear();
             }
+
+            if (e.Key == Key.Enter && quan == listView.Items.Count && product.Unique_Barcode.StartsWith("Y"))
+            {
+                var uie = e.OriginalSource as UIElement;
+                e.Handled = true;
+                uie.MoveFocus(new TraversalRequest(FocusNavigationDirection.Next));
+            }
         }
         private void uniqBarcode_Checked(object sender, RoutedEventArgs e)
         {
@@ -214,7 +248,6 @@ namespace Point_Of_Sale.PL
             color.IsEnabled = true;
             Add_Color.IsEnabled = true;
             barcodeSerial.Background = new SolidColorBrush(Colors.White);
-
         }
 
         private void uniqBarcode_Unchecked(object sender, RoutedEventArgs e)
@@ -226,7 +259,7 @@ namespace Point_Of_Sale.PL
             barcodeSerial.IsEnabled = false;
             color.IsEnabled = false;
             Add_Color.IsEnabled = false;
-            listView.IsEnabled = false; 
+            listView.IsEnabled = false;
             barcodeSerial.Background = new SolidColorBrush(Colors.LightBlue);
             //color.Background = new SolidColorBrush(Colors.LightBlue);
         }
@@ -250,6 +283,7 @@ namespace Point_Of_Sale.PL
             {
                 listView.Items.Add(new ListViewItems(1, barcodeList[0].Barcode_Serial, barcodeList[0].Color));
                 barcodeSerial.IsEnabled = false;
+                color.IsEnabled = false;
                 barcodeSerial.Background = new SolidColorBrush(Colors.LightBlue);
                 listView.IsEnabled = false;
                 clearAll.IsEnabled = false;
@@ -271,8 +305,10 @@ namespace Point_Of_Sale.PL
         private void clearAll_Click(object sender, RoutedEventArgs e)
         {
             listView.Items.Clear();
-            totalAmountint = 0;
+            totalAmountInt = 0;
+            totalQuantityInt = 0;
             totalAmount.Content = "0.0";
+            totalQuantity.Content = "0";
         }
 
         private void deleteSelected_Click(object sender, RoutedEventArgs e)
@@ -338,7 +374,7 @@ namespace Point_Of_Sale.PL
             Add_New_Values add = new Add_New_Values(color);
             add.ShowDialog();
         }
-
+        //Loaded="productType_Loaded" 
         private void productType_Loaded(object sender, RoutedEventArgs e)
         {
             var textBox = (productType.Template.FindName("PART_EditableTextBox",
@@ -355,10 +391,76 @@ namespace Point_Of_Sale.PL
             color.SelectedIndex = -1;
         }
         private DateTime datetime;
+        private bool checkErrors()
+        {
+            if (productType.SelectedIndex == -1)
+            {
+                Xceed.Wpf.Toolkit.MessageBox.Show("Please select a \"Product Type\" to continue.", "Select Product Type", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK);
+                productType.Focus();
+                return false;
+            }
+            else if (productModel.SelectedIndex == -1)
+            {
+                Xceed.Wpf.Toolkit.MessageBox.Show("Please select a \"Product Model\" to continue.", "Select Product Type", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK);
+                productModel.Focus();
+                return false;
+            }
+            else if (int.TryParse(quantity.Text, out quan) == false)
+            {
+                Xceed.Wpf.Toolkit.MessageBox.Show("Invalid \"Quantity\"", "Quantity Error", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK);
+                quantity.Focus();
+                return false;
+            }
+            else if (int.TryParse(unitPrice.Text, out unitP) == false)
+            {
+                Xceed.Wpf.Toolkit.MessageBox.Show("Invalid \"Unit Price\"", "Price Error", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK);
+                unitPrice.Focus();
+                return false;
+            }
+            else if (int.TryParse(sellingPrice.Text, out SellingP) == false)
+            {
+                Xceed.Wpf.Toolkit.MessageBox.Show("Invalid \"Selling Price\"", "Price Error", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK);
+                sellingPrice.Focus();
+                return false;
+            }
+            else if (quan <= 0)
+            {
+                Xceed.Wpf.Toolkit.MessageBox.Show("\"Quantity\" cannot be less than or equal zero", "Quantity Error", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK);
+                quantity.Focus();
+                return false;
+            }
+            else if (unitP <= 0)
+            {
+                Xceed.Wpf.Toolkit.MessageBox.Show("\"Unit Price\" cannot be less than or equal zero", "Price Error", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK);
+                unitPrice.Focus();
+                return false;
+            }
+            else if (SellingP <= 0)
+            {
+                Xceed.Wpf.Toolkit.MessageBox.Show("\"Selling Price\" cannot be less than or equal zero", "Price Error", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK);
+                sellingPrice.Focus();
+                return false;
+            }
+            else if (uniqBarcode.IsChecked == true && listView.Items.Count != quan)
+            {
+                Xceed.Wpf.Toolkit.MessageBox.Show("Quantity and Barcodes are not equal in number. Pres ok to exit.", "Barcode List Error", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK);
+                barcodeSerial.Focus();
+                return false;
+            }
+            else if (sameBarcode.IsChecked == true && listView.Items.Count != 1)
+            {
+                Xceed.Wpf.Toolkit.MessageBox.Show("Please add a barcode. Pres ok to exit.", "Barcode List Error", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK);
+                barcodeSerial.Focus();
+
+                return false;
+            }
+
+
+            return true;
+        }
         private void AddProduct_Button_Click(object sender, RoutedEventArgs e)
         {
-            int quan = 0, unitP = 0, SellingP = 0;
-            
+
             if (DateTime.TryParse(date.ToString(), out datetime) == false)//parsing date for bill
                 datetime = DateTime.Now;
             //checking trial subscription 
@@ -367,60 +469,51 @@ namespace Point_Of_Sale.PL
                 Xceed.Wpf.Toolkit.MessageBox.Show("Hey Contact to the developer.", " Subscription Error:", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
-            if (productType.SelectedIndex != -1 && productModel.SelectedIndex != -1 && int.TryParse(quantity.Text, out quan) != false && int.TryParse(unitPrice.Text, out unitP) != false && int.TryParse(sellingPrice.Text, out SellingP) != false && quan >= 0 && unitP >= 0 && SellingP >= 0)
+            if (checkErrors() == false)
             {
-                if (uniqBarcode.IsChecked == true && listView.Items.Count != quan)
-                {
-                    Xceed.Wpf.Toolkit.MessageBox.Show("Quantity and Barcodes are not equal in number. Pres ok to exit.", "Barcode List Error", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK);
-                    return;
-                }
-                else if (sameBarcode.IsChecked == true && listView.Items.Count != 1)
-                {
-                    Xceed.Wpf.Toolkit.MessageBox.Show("Please add one barcode. Pres ok to exit.", "Barcode List Error", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK);
-                    return;
-                }
-                else
-                {
-                    Product pro = new Product { ID = product.ID, Type = productType.Text, Model = productModel.Text, Quantity_Available = quan, Unit_Price = unitP, Selling_Price = SellingP,Unique_Barcode = product.Unique_Barcode, Date_Updated = datetime };
-                    
-                    foreach (ListViewItems obj in listView.Items)
-                    {
-                        Barcode b = new Barcode {Product_ID = pro.ID, Barcode_Serial = obj.IMEI, Color = obj.Color,Date = datetime };
-                        
-                        pro.Barcodes.Add(b);
-                    }
-
-                    totalAmountint += (int)pro.Unit_Price * quan;//calculation total amount
-                    totalAmount.Content = totalAmountint;
-
-                    dataGrid.Items.Add(pro);
-                    listProduct.Add(pro);
-
-                    productModel.SelectedIndex = -1;
-                    productType.SelectedIndex = -1;
-                    quantity.Clear();
-                    unitPrice.Clear();
-                    sellingPrice.Clear();
-                    listView.Items.Clear();
-                    description.Clear();
-                    color.SelectedIndex = -1;
-                    uniqBarcode.IsChecked = true;
-                }
-            }
-            else
-            {
-                Xceed.Wpf.Toolkit.MessageBox.Show("No blank field is allowed. Pres ok to exit.", "Empty Field", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK);
                 return;
             }
+
+            Product pro = new Product { ID = product.ID, Type = productType.Text, Model = productModel.Text, Quantity_Available = quan, Unit_Price = unitP, Selling_Price = SellingP, Unique_Barcode = product.Unique_Barcode, Date_Updated = datetime };
+
+            foreach (ListViewItems obj in listView.Items)
+            {
+                Barcode b = new Barcode { Product_ID = pro.ID, Barcode_Serial = obj.IMEI, Color = obj.Color, Date = datetime };
+
+                pro.Barcodes.Add(b);
+            }
+
+            totalAmountInt += (int)pro.Unit_Price * quan;///calculation total amount
+            totalQuantityInt +=  quan;///calculation total amount
+            totalAmount.Content = totalAmountInt;
+            totalQuantity.Content = totalQuantityInt;
+            DataGridItems DGItems = new DataGridItems(serial++, pro);
+            DGItems.SubTotal = (int)pro.Unit_Price * quan;
+            dataGrid.Items.Add(DGItems);
+            listProduct.Add(pro);
+
+            productModel.SelectedIndex = -1;
+            productType.SelectedIndex = -1;
+            quantity.Clear();
+            unitPrice.Clear();
+            sellingPrice.Clear();
+            listView.Items.Clear();
+            description.Clear();
+            color.SelectedIndex = -1;
+            uniqBarcode.IsChecked = true;
+            productType.Focus();
         }
+
         private void deleteProduct_Click(object sender, RoutedEventArgs e)
         {
             if (dataGrid.SelectedIndex != -1)
             {
                 Product p = listProduct.ElementAt(dataGrid.SelectedIndex);
 
-                totalAmountint -= (int)p.Unit_Price * (int)p.Quantity_Available;
-                totalAmount.Content = totalAmountint;
+                totalAmountInt -= (int)p.Unit_Price * (int)p.Quantity_Available;
+                totalQuantityInt -= (int)p.Quantity_Available;
+                totalAmount.Content = totalAmountInt;
+                totalQuantity.Content = totalQuantityInt;
                 listProduct.RemoveAt(dataGrid.SelectedIndex);
                 dataGrid.Items.RemoveAt(dataGrid.SelectedIndex);                
             }
@@ -445,7 +538,7 @@ namespace Point_Of_Sale.PL
         {
             if (dataGrid.Items.Count == 0)
                 return;
-            
+            int count = 0;
             foreach(Product obj in listProduct)
             {
                 try
@@ -453,8 +546,8 @@ namespace Point_Of_Sale.PL
 
                     ProductTableData.updateProduct(obj.ID, (int)obj.Quantity_Available, (int)obj.Unit_Price, (int)obj.Selling_Price, obj.Barcodes.ToArray(), obj.Unique_Barcode, DateTime.Now);
 
-                    dataGrid.Items.Remove(obj);
-                    Console.WriteLine(dataGrid.Items.Count);
+                    dataGrid.Items.RemoveAt(count++);
+                    //Console.WriteLine(dataGrid.Items.Count);
                 }
                 catch(Exception ex)
                 {
@@ -470,8 +563,10 @@ namespace Point_Of_Sale.PL
             dataGrid.Items.Clear();
             listProduct.Clear();
 
-            totalAmountint = 0;
+            totalAmountInt = 0;
+            totalQuantityInt = 0;
             totalAmount.Content = "0.0";
+            totalQuantity.Content = "0";
         }
 
         private void close_Click(object sender, RoutedEventArgs e)
@@ -493,6 +588,119 @@ namespace Point_Of_Sale.PL
         {
             TextBox t = sender as TextBox;
             t.SelectAll();
+        }
+
+        private void addSupplier_Button_Click(object sender, RoutedEventArgs e)
+        {
+            Supplier_Add s = new Supplier_Add(supplier);
+            s.ShowDialog();
+        }
+
+        private void dataGrid_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Delete)
+            {
+
+                List<DataGridItems> it = dataGrid.SelectedItems.Cast<DataGridItems>().ToList();
+
+                ///single row delete with keyboard delete button
+                if (it.Count != dataGrid.Items.Count)
+                    foreach (DataGridItems item in it)
+                    {
+                        totalAmountInt -= (int)item.Unit_Price * (int)item.Quantity_Available;
+                        totalQuantityInt -= (int)item.Quantity_Available;
+                        totalAmount.Content = totalAmountInt;
+                        totalQuantity.Content = totalQuantityInt;
+                        listProduct.Remove(item);
+                        dataGrid.Items.Remove(item);
+                    }
+                else ///all row delete with keyboard delete button
+                {
+                    dataGrid.Items.Clear();
+                    listProduct.Clear();
+                    totalAmountInt = 0;
+                    totalQuantityInt = 0;
+                    totalAmount.Content = 0;
+                    totalQuantity.Content = 0;
+                }
+            }
+        }
+
+        private void Datagird_SelectAll_Row(object sender, ExecutedRoutedEventArgs e)
+        {
+            if(dataGrid.Items.Count > 0)
+                dataGrid.SelectAll();
+        }
+
+        private void listView_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Delete)
+            {
+                List<ListViewItems> it = listView.SelectedItems.Cast<ListViewItems>().ToList();
+
+                foreach (ListViewItems item in it)
+                {
+                    listView.Items.Remove(item);
+                }
+
+                sort();
+            }
+        }
+
+        private void Listview_SelectAll_Row(object sender, ExecutedRoutedEventArgs e)
+        {
+            if(listView.Items.Count > 0)
+                listView.SelectAll();
+        }
+
+        private void dropdownOpen_GotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
+        {
+            ComboBox cc = sender as ComboBox;
+            if (cc.Items.Count > 0) /// if combobox items contains 
+            {
+                cc.IsDropDownOpen = true;
+            }
+
+
+        }
+        private void Grid_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            var uie = e.OriginalSource as UIElement;
+            ComboBox com = new ComboBox();
+            TextBox tex = new TextBox();
+            //Button button = new Button();
+
+            //int quan = 0;
+            //int.TryParse(quantity.Text, out quan);
+
+            try { com = e.Source as ComboBox; } catch { }
+
+            try { tex = e.Source as TextBox; } catch { }
+
+            //try { button = e.Source as Button; } catch { }
+
+            if (e.Key == Key.Enter)
+            {
+                ///move focus should not work for barcodeSerial 
+                //if (com != null )///&& com.Text.Trim() != ""
+                //{
+                //    //com.IsDropDownOpen = true;
+                //}
+                if (tex != null && tex.Name == "barcodeSerial")
+                {
+                    //do nothing
+                }
+                else if (tex != null && tex.Name == "description")
+                {
+                    AddProduct_Button.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                    referenceNo.Focus();
+                }
+                else
+                {
+                    e.Handled = true;
+                    uie.MoveFocus(new TraversalRequest(FocusNavigationDirection.Next));
+                }
+            }
         }
     }
 
@@ -518,25 +726,19 @@ namespace Point_Of_Sale.PL
         }
 
     }
-    class DataGridItems
+    class DataGridItems : Product
     {
         public int SL { get; set; }
-        public string ProductID { get; set; }
-        public string ProductType { get; set; }
-        public string ProductModel { get; set; }
-        public int Quantity { get; set; }
-        public int UnitPrice { get; set; }
-        public int SellingPrice { get; set; }
-
-        public DataGridItems(int sl, string productID, string type, string model, int quantity, int unitPrice, int sellingPrice)
+        public int SubTotal { get; set; }
+        public DataGridItems(int sl, Product product)
         {
             SL = sl;
-            ProductID = productID;
-            ProductType = type;
-            ProductModel = model;
-            Quantity = quantity;
-            UnitPrice = unitPrice;
-            SellingPrice = sellingPrice;
+            ID = product.ID;
+            Type = product.Type;
+            Model = product.Model;
+            Quantity_Available = product.Quantity_Available;
+            Unit_Price = product.Unit_Price;
+            Selling_Price = product.Selling_Price;
         }
 
 
