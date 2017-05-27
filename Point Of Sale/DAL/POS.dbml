@@ -7,6 +7,7 @@
       <Column Name="Phone2" Type="System.Int32" DbType="Int" CanBeNull="true" />
       <Column Name="Address" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
       <Association Name="Customer_Sale" Member="Sales" ThisKey="ID" OtherKey="Customer_ID" Type="Sale" />
+      <Association Name="Customer_Transaction_Customer" Member="Transaction_Customers" ThisKey="ID" OtherKey="Customer_ID" Type="Transaction_Customer" />
     </Type>
   </Table>
   <Table Name="dbo.Sales" Member="Sales">
@@ -49,26 +50,13 @@
       <Association Name="Product_Barcode" Member="Product" ThisKey="Product_ID" OtherKey="ID" Type="Product" IsForeignKey="true" />
     </Type>
   </Table>
-  <Table Name="dbo.Customer_Sale" Member="Customer_Sales">
-    <Type Name="Customer_Sale">
-      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
-      <Column Name="Invoice_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
-      <Column Name="Product_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
-      <Column Name="Quantity" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="Unit_Price" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="Sold_Price" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="Sale_Price_was" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Association Name="Customer_Sale_Gift" Member="Gifts" ThisKey="ID" OtherKey="Customer_Sale_ID" Type="Gift" />
-      <Association Name="Sale_Customer_Sale" Member="Sale" ThisKey="Invoice_ID" OtherKey="Invoice_ID" Type="Sale" IsForeignKey="true" />
-      <Association Name="Product_Customer_Sale" Member="Product" ThisKey="Product_ID" OtherKey="ID" Type="Product" IsForeignKey="true" />
-    </Type>
-  </Table>
   <Table Name="dbo.Login" Member="Logins">
     <Type Name="Login">
       <Column Name="Username" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
       <Column Name="Password" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
       <Column Name="User_Type" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
       <Column Name="Last_Login" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Association Name="Login_Customer_Sale" Member="Customer_Sales" ThisKey="Username" OtherKey="Sold_By" Type="Customer_Sale" />
     </Type>
   </Table>
   <Table Name="dbo.Product" Member="Products">
@@ -86,8 +74,8 @@
       <Column Name="Unique_Barcode" Type="System.String" DbType="Char(3)" CanBeNull="true" />
       <Association Name="Product_Free_Product" Member="Free_Products" ThisKey="ID" OtherKey="Product_ID" Type="Free_Product" />
       <Association Name="Product_Barcode" Member="Barcodes" ThisKey="ID" OtherKey="Product_ID" Type="Barcode" />
-      <Association Name="Product_Customer_Sale" Member="Customer_Sales" ThisKey="ID" OtherKey="Product_ID" Type="Customer_Sale" />
       <Association Name="Product_Product_Supplier" Member="Product_Suppliers" ThisKey="ID" OtherKey="Product_ID" Type="Product_Supplier" />
+      <Association Name="Product_Customer_Sale" Member="Customer_Sales" ThisKey="ID" OtherKey="Product_ID" Type="Customer_Sale" />
       <Association Name="Supplier_Product" Member="Supplier" ThisKey="Supplier_ID" OtherKey="ID" Type="Supplier" IsForeignKey="true" />
     </Type>
   </Table>
@@ -115,6 +103,7 @@
       <Column Name="Email" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
       <Association Name="Supplier_Product" Member="Products" ThisKey="ID" OtherKey="Supplier_ID" Type="Product" />
       <Association Name="Supplier_Product_Supplier" Member="Product_Suppliers" ThisKey="ID" OtherKey="Supplier_ID" Type="Product_Supplier" />
+      <Association Name="Supplier_Transaction_Supplier" Member="Transaction_Suppliers" ThisKey="ID" OtherKey="Supplier_ID" Type="Transaction_Supplier" />
       <Association Name="Address_Supplier" Member="Address" ThisKey="Address_ID" OtherKey="ID" Type="Address" IsForeignKey="true" />
     </Type>
   </Table>
@@ -129,6 +118,46 @@
       <Column Name="Balance" Type="System.Decimal" DbType="Money" CanBeNull="true" />
       <Association Name="Product_Product_Supplier" Member="Product" ThisKey="Product_ID" OtherKey="ID" Type="Product" IsForeignKey="true" />
       <Association Name="Supplier_Product_Supplier" Member="Supplier" ThisKey="Supplier_ID" OtherKey="ID" Type="Supplier" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Transaction_Supplier" Member="Transaction_Suppliers">
+    <Type Name="Transaction_Supplier">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Supplier_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Type" Type="System.String" DbType="VarChar(20)" CanBeNull="true" />
+      <Column Name="Amount" Type="System.Decimal" DbType="Money" CanBeNull="true" />
+      <Column Name="DorC" Type="System.String" DbType="VarChar(10)" CanBeNull="true" />
+      <Column Name="Ref_No" Type="System.String" DbType="VarChar(40)" CanBeNull="true" />
+      <Column Name="T_Date" Type="System.Decimal" DbType="Money" CanBeNull="true" />
+      <Association Name="Supplier_Transaction_Supplier" Member="Supplier" ThisKey="Supplier_ID" OtherKey="ID" Type="Supplier" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Transaction_Customer" Member="Transaction_Customers">
+    <Type Name="Transaction_Customer">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Customer_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Type" Type="System.String" DbType="VarChar(20)" CanBeNull="true" />
+      <Column Name="Amount" Type="System.Decimal" DbType="Money" CanBeNull="true" />
+      <Column Name="DorC" Type="System.String" DbType="VarChar(10)" CanBeNull="true" />
+      <Column Name="Ref_No" Type="System.String" DbType="VarChar(40)" CanBeNull="true" />
+      <Column Name="T_Date" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Association Name="Customer_Transaction_Customer" Member="Customer" ThisKey="Customer_ID" OtherKey="ID" Type="Customer" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Customer_Sale" Member="Customer_Sales">
+    <Type Name="Customer_Sale">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Invoice_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Product_ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Quantity" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Unit_Price" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Sold_Price" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Sale_Price_was" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Sold_By" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Association Name="Customer_Sale_Gift" Member="Gifts" ThisKey="ID" OtherKey="Customer_Sale_ID" Type="Gift" />
+      <Association Name="Sale_Customer_Sale" Member="Sale" ThisKey="Invoice_ID" OtherKey="Invoice_ID" Type="Sale" IsForeignKey="true" />
+      <Association Name="Product_Customer_Sale" Member="Product" ThisKey="Product_ID" OtherKey="ID" Type="Product" IsForeignKey="true" />
+      <Association Name="Login_Customer_Sale" Member="Login" ThisKey="Sold_By" OtherKey="Username" Type="Login" IsForeignKey="true" />
     </Type>
   </Table>
 </Database>

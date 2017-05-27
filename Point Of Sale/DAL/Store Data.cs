@@ -793,6 +793,7 @@ namespace Point_Of_Sale.DAL
                 var abc = db.Logins.Where(x => x.Username == username && x.Password == password).First();
                 BL.Login.UserType = abc.User_Type;
                 BL.Login.Username = abc.Username;
+                BL.Login.LastLogin = DateTime.Now.ToString();
                 if (abc != null)
                 {
                     abc.Last_Login = DateTime.Now;

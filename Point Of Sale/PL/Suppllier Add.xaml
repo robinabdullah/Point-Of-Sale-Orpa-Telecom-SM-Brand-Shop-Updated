@@ -12,11 +12,11 @@
         <TextBox x:Name="contactName"  CharacterCasing="Upper" HorizontalAlignment="Left" Margin="138,50,0,0" VerticalAlignment="Top" Width="253" Height="23" FontSize="16" FontFamily="Times New Roman" FontWeight="Bold" GotKeyboardFocus="SelectAll_GotKeyboardFocus"/>
         <Label x:Name="label11_Copy1" Content="Contact Name" HorizontalAlignment="Left" Margin="10,46,0,0" VerticalAlignment="Top" Width="112" FontSize="15" FontFamily="Times New Roman"/>
         <ComboBox x:Name="designation" IsEditable="True" HorizontalAlignment="Left" Margin="138,88,0,0" VerticalAlignment="Top" Width="253" Height="23" FontSize="16" FontFamily="Times New Roman" FontWeight="Bold" >
-            <Label Content="Sales Executive"/>
-            <Label Content="Market Representative"/>
-            <Label Content="MD"/>
-            <Label Content="Owner"/>
-            <Label Content="Others"/>
+            <Label Content="Sales Executive" Height="23" FontSize="14"/>
+            <Label Content="Market Representative" Height="23" FontSize="14"/>
+            <Label Content="MD" Height="23" FontSize="14"/>
+            <Label Content="Owner" Height="23" FontSize="14"/>
+            <Label Content="Others" Height="23" FontSize="14"/>
 
         </ComboBox>
         <TextBox x:Name="email"  CharacterCasing="Lower" HorizontalAlignment="Left" Margin="138,126,0,0" VerticalAlignment="Top" Width="253" Height="23" FontSize="16" FontFamily="Times New Roman" FontWeight="Bold" GotKeyboardFocus="SelectAll_GotKeyboardFocus"/>
@@ -39,7 +39,7 @@
         <Label x:Name="label11_Copy9" Content="Website" HorizontalAlignment="Left" Margin="10,413,0,0" VerticalAlignment="Top" Width="112" FontSize="15" FontFamily="Times New Roman"/>
         <Button x:Name="save_Button" Content="Save" HorizontalAlignment="Left" Margin="334,457,0,0" VerticalAlignment="Top" Width="57" FontWeight="Bold" Height="31" Click="Save_Button_Click" />
         <Button x:Name="cancel_Button" Content="Cancel" HorizontalAlignment="Left" Margin="241,457,0,0" VerticalAlignment="Top" Width="57" FontWeight="Bold" Height="31" Click="cancel_Button_Click" IsCancel="True" />
-        
+
         <Label x:Name="label11_Copy11" Content="Email" HorizontalAlignment="Left" Margin="10,122,0,0" VerticalAlignment="Top" Width="112" FontSize="15" FontFamily="Times New Roman"/>
 
 

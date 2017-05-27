@@ -37,6 +37,7 @@ namespace Point_Of_Sale.PL
             DB.resetConnString();
             this.MaxHeight = SystemParameters.MaximizedPrimaryScreenHeight;
             date.Text = DateTime.Now.ToString();
+            paymentDate.Text = DateTime.Now.ToString("dd/MM/yyyy");
 
             color.AddHandler(System.Windows.Controls.Primitives.TextBoxBase.TextChangedEvent,
                       new TextChangedEventHandler(Color_ComboBox_TextChanged));
@@ -64,6 +65,29 @@ namespace Point_Of_Sale.PL
             barcodeType.IsEnabled = false;
             referenceNo.Focus();
             addDatagridColumns();
+            addDatagridPaymentColumns();
+        }
+        public void addDatagridPaymentColumns()
+        {
+            DataGridTextColumn c = new DataGridTextColumn();
+            c.Header = "Payment Mode";
+            c.Binding = new Binding("Mode");
+            paymentDatagrid.Columns.Add(c);
+
+            c = new DataGridTextColumn();
+            c.Header = "Amount";
+            c.Width = 100;
+            c.Binding = new Binding("Amount");
+            paymentDatagrid.Columns.Add(c);
+
+            c = new DataGridTextColumn();
+            c.Header = "Payment Date";
+            c.Width = 130;
+            c.Binding = new Binding("Date");
+            paymentDatagrid.Columns.Add(c);
+
+            paymentDatagrid.IsReadOnly = true;
+
         }
         public void addDatagridColumns()
         {

@@ -1164,7 +1164,7 @@ namespace Point_Of_Sale.PL
                     //sale.Customer = customer;
                 }
 
-                Customer_Sale cus_Sale = new Customer_Sale { Quantity = int.Parse(quantity.Text), Unit_Price = product.Unit_Price, Sold_Price = int.Parse(sellingPrice.Text), Sale_Price_was = product.Selling_Price };
+                Customer_Sale cus_Sale = new Customer_Sale { Quantity = int.Parse(quantity.Text), Unit_Price = product.Unit_Price, Sold_Price = int.Parse(sellingPrice.Text), Sale_Price_was = product.Selling_Price, Sold_By= BL.Login.Username };
 
                 product.Quantity_Sold += cus_Sale.Quantity;
                 product.Quantity_Available -= cus_Sale.Quantity;
