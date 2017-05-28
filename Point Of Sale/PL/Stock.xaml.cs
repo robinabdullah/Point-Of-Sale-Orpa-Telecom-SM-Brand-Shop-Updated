@@ -27,8 +27,11 @@ namespace Point_Of_Sale.PL
     {
         Product product;
         List<Product> listProduct = new List<Product>();
+        List<Product_Supplier> listProduct_Supplier = new List<Product_Supplier>();
         int quan = 0, unitP = 0, SellingP = 0;
-        int totalAmountInt = 0;
+        double grandTotalDouble = 0;
+        double totalPaymentDouble = 0;
+        double paymentDueDouble = 0;
         int totalQuantityInt = 0;
         int serial = 1;
         public Stock()
@@ -329,9 +332,9 @@ namespace Point_Of_Sale.PL
         private void clearAll_Click(object sender, RoutedEventArgs e)
         {
             listView.Items.Clear();
-            totalAmountInt = 0;
+            grandTotalDouble = 0;
             totalQuantityInt = 0;
-            totalAmount.Content = "0.0";
+            grandTotal.Content = "0.0";
             totalQuantity.Content = "0";
         }
 
@@ -417,7 +420,13 @@ namespace Point_Of_Sale.PL
         private DateTime datetime;
         private bool checkErrors()
         {
-            if (productType.SelectedIndex == -1)
+            if (supplier.SelectedIndex == -1)
+            {
+                Xceed.Wpf.Toolkit.MessageBox.Show("Please select a \"Supplier\" to continue.", "Select Product Type", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK);
+                productType.Focus();
+                return false;
+            }
+            else if (productType.SelectedIndex == -1)
             {
                 Xceed.Wpf.Toolkit.MessageBox.Show("Please select a \"Product Type\" to continue.", "Select Product Type", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK);
                 productType.Focus();
@@ -498,7 +507,11 @@ namespace Point_Of_Sale.PL
                 return;
             }
 
+            int supplierID = SupplierTableData.getIDBySupplier(supplier.Text);
+
             Product pro = new Product { ID = product.ID, Type = productType.Text, Model = productModel.Text, Quantity_Available = quan, Unit_Price = unitP, Selling_Price = SellingP, Unique_Barcode = product.Unique_Barcode, Date_Updated = datetime };
+
+            Product_Supplier pro_supp = new Product_Supplier { Product_ID = product.ID, Quantity = quan, Ref_Number = referenceNo.Text, Supplier_ID = supplierID, Date = datetime };
 
             foreach (ListViewItems obj in listView.Items)
             {
@@ -507,14 +520,21 @@ namespace Point_Of_Sale.PL
                 pro.Barcodes.Add(b);
             }
 
-            totalAmountInt += (int)pro.Unit_Price * quan;///calculation total amount
+            grandTotalDouble += (int)pro.Unit_Price * quan;///calculation total amount
+            grandTotal.Content = grandTotalDouble;
+
+            paymentDueDouble += (int)pro.Unit_Price * quan;
+            paymentDue.Content = paymentDueDouble;
+
+
             totalQuantityInt +=  quan;///calculation total amount
-            totalAmount.Content = totalAmountInt;
             totalQuantity.Content = totalQuantityInt;
+
             DataGridItems DGItems = new DataGridItems(serial++, pro);
             DGItems.SubTotal = (int)pro.Unit_Price * quan;
             dataGrid.Items.Add(DGItems);
             listProduct.Add(pro);
+            listProduct_Supplier.Add(pro_supp);
 
             productModel.SelectedIndex = -1;
             productType.SelectedIndex = -1;
@@ -526,6 +546,8 @@ namespace Point_Of_Sale.PL
             color.SelectedIndex = -1;
             uniqBarcode.IsChecked = true;
             productType.Focus();
+            supplier.IsEnabled = false;
+            addSupplier_Button.IsEnabled = false;
         }
 
         private void deleteProduct_Click(object sender, RoutedEventArgs e)
@@ -534,9 +556,9 @@ namespace Point_Of_Sale.PL
             {
                 Product p = listProduct.ElementAt(dataGrid.SelectedIndex);
 
-                totalAmountInt -= (int)p.Unit_Price * (int)p.Quantity_Available;
+                grandTotalDouble -= (int)p.Unit_Price * (int)p.Quantity_Available;
                 totalQuantityInt -= (int)p.Quantity_Available;
-                totalAmount.Content = totalAmountInt;
+                grandTotal.Content = grandTotalDouble;
                 totalQuantity.Content = totalQuantityInt;
                 listProduct.RemoveAt(dataGrid.SelectedIndex);
                 dataGrid.Items.RemoveAt(dataGrid.SelectedIndex);                
@@ -563,23 +585,27 @@ namespace Point_Of_Sale.PL
             if (dataGrid.Items.Count == 0)
                 return;
             int count = 0;
-            foreach(Product obj in listProduct)
-            {
-                try
-                {
 
+            try
+            {
+                foreach (Product obj in listProduct)
+                {
                     ProductTableData.updateProduct(obj.ID, (int)obj.Quantity_Available, (int)obj.Unit_Price, (int)obj.Selling_Price, obj.Barcodes.ToArray(), obj.Unique_Barcode, DateTime.Now);
 
-                    dataGrid.Items.RemoveAt(count++);
+                    Product_SupplierTableData.addNewProduct_Supplier(listProduct_Supplier[count++]); /// inserting new row in product supplier
+
+                    dataGrid.Items.RemoveAt(0);
                     //Console.WriteLine(dataGrid.Items.Count);
+
                 }
-                catch(Exception ex)
-                {
-                    MessageBox.Show(ex.Message);
-                }
+                listProduct.Clear();
+                listProduct_Supplier.Clear();
+                product = null;
             }
-            listProduct.Clear();
-            product = null;
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         private void clearDatagrid_Click(object sender, RoutedEventArgs e)
@@ -587,9 +613,9 @@ namespace Point_Of_Sale.PL
             dataGrid.Items.Clear();
             listProduct.Clear();
 
-            totalAmountInt = 0;
+            grandTotalDouble = 0;
             totalQuantityInt = 0;
-            totalAmount.Content = "0.0";
+            grandTotal.Content = "0.0";
             totalQuantity.Content = "0";
         }
 
@@ -624,16 +650,15 @@ namespace Point_Of_Sale.PL
         {
             if (e.Key == Key.Delete)
             {
-
                 List<DataGridItems> it = dataGrid.SelectedItems.Cast<DataGridItems>().ToList();
 
                 ///single row delete with keyboard delete button
                 if (it.Count != dataGrid.Items.Count)
                     foreach (DataGridItems item in it)
                     {
-                        totalAmountInt -= (int)item.Unit_Price * (int)item.Quantity_Available;
+                        grandTotalDouble -= (int)item.Unit_Price * (int)item.Quantity_Available;
                         totalQuantityInt -= (int)item.Quantity_Available;
-                        totalAmount.Content = totalAmountInt;
+                        grandTotal.Content = grandTotalDouble;
                         totalQuantity.Content = totalQuantityInt;
                         listProduct.Remove(item);
                         dataGrid.Items.Remove(item);
@@ -642,10 +667,13 @@ namespace Point_Of_Sale.PL
                 {
                     dataGrid.Items.Clear();
                     listProduct.Clear();
-                    totalAmountInt = 0;
+                    supplier.IsEnabled = true;
+                    addSupplier_Button.IsEnabled = true;
+                    grandTotalDouble = 0;
                     totalQuantityInt = 0;
-                    totalAmount.Content = 0;
+                    grandTotal.Content = 0;
                     totalQuantity.Content = 0;
+                    referenceNo.Focus();
                 }
             }
         }
@@ -677,6 +705,134 @@ namespace Point_Of_Sale.PL
                 listView.SelectAll();
         }
 
+        private void addPayment_Click(object sender, RoutedEventArgs e)
+        {
+            double paymentAmount = 0;
+            string mode = "";
+            if (paymentMode.SelectedIndex == 0)
+                mode = "CA";
+            else if (paymentMode.SelectedIndex == 1)
+                mode = "CQ";
+            else if (paymentMode.SelectedIndex == 2)
+                mode = "D";
+            else if (paymentMode.SelectedIndex == 3)
+                mode = "C";
+
+            if (payment.Text != "" && double.TryParse(payment.Text, out paymentAmount))
+            {
+                totalPaymentDouble += paymentAmount;
+                totalPayment.Content = totalPaymentDouble;
+
+                paymentDueDouble = grandTotalDouble - totalPaymentDouble;
+                paymentDue.Content = paymentDueDouble;
+                paymentDatagrid.Items.Add(new { Mode = paymentMode.Text, Amount = paymentAmount, Date = paymentDate });
+
+                payment.Text = "";
+                paymentDatagrid.SelectedIndex = paymentDatagrid.Items.Count - 1;
+                paymentDate.Text = datetime.ToString("dd/MM/yyyy");
+                paymentMode.Focus();
+                
+            }
+            else
+            {
+                MessageBox.Show("error in payment section");
+            }
+        }
+
+        private void Payment_Grid_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            var uie = e.OriginalSource as UIElement;
+            Button button = new Button();
+
+            //int quan = 0;
+            //int.TryParse(quantity.Text, out quan);
+
+
+            try { button = e.Source as Button; } catch { }
+
+            if (e.Key == Key.Enter)
+            {
+                if (button != null && button.Name == "addPayment")
+                {
+                    ///do nothing
+                }
+                else
+                {
+                    e.Handled = true;
+                    uie.MoveFocus(new TraversalRequest(FocusNavigationDirection.Next));
+                }
+            }
+
+        }
+
+        private void removePayment_Click(object sender, RoutedEventArgs e)
+        {
+            if (paymentDatagrid.SelectedIndex == -1)
+                return;
+
+            List<object> items = paymentDatagrid.SelectedItems.Cast<object>().ToList();
+
+            foreach (object item in items)
+            {
+                paymentDatagrid.Items.Remove(item);
+            }
+
+            if (paymentDatagrid.Items.Count <= 0)
+            {
+                removePayment.IsEnabled = false;
+                updatePayment.IsEnabled = false;
+                resetPayment.IsEnabled = false;
+            }
+        }
+
+        private void Payment_DataGrid_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+
+            if (e.Key == Key.Delete)
+            {
+                List<object> it = dataGrid.SelectedItems.Cast<object>().ToList();
+
+                ///single row delete with keyboard delete button
+                if (it.Count != dataGrid.Items.Count)
+                    foreach (object item in it)
+                    {
+                        //grandTotalDouble -= (int)item.Unit_Price * (int)item.Quantity_Available;
+                        //totalQuantityInt -= (int)item.Quantity_Available;
+                        //grandTotal.Content = grandTotalDouble;
+                        //totalQuantity.Content = totalQuantityInt;
+                        //listProduct.Remove(item);
+                        //dataGrid.Items.Remove(item);
+                    }
+                else ///all row delete with keyboard delete button
+                {
+                    //dataGrid.Items.Clear();
+                    //listProduct.Clear();
+                    //supplier.IsEnabled = true;
+                    //addSupplier_Button.IsEnabled = true;
+                    //grandTotalDouble = 0;
+                    //totalQuantityInt = 0;
+                    //grandTotal.Content = 0;
+                    //totalQuantity.Content = 0;
+                    //referenceNo.Focus();
+                }
+            }
+        }
+
+        private void paymentDatagrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (paymentDatagrid.Items.Count > 0)
+            {
+                removePayment.IsEnabled = true;
+                updatePayment.IsEnabled = true;
+                resetPayment.IsEnabled = true;
+            }
+        }
+
+        private void updatePayment_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
         private void dropdownOpen_GotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
         {
             ComboBox cc = sender as ComboBox;
@@ -687,7 +843,7 @@ namespace Point_Of_Sale.PL
 
 
         }
-        private void Grid_PreviewKeyDown(object sender, KeyEventArgs e)
+        private void Info_Grid_PreviewKeyDown(object sender, KeyEventArgs e)
         {
             var uie = e.OriginalSource as UIElement;
             ComboBox com = new ComboBox();

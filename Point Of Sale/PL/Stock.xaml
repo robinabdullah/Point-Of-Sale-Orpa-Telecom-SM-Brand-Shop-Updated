@@ -8,7 +8,7 @@
         mc:Ignorable="d"
         Title="Stock" Width="1012" Height="700" ResizeMode="CanMinimize" WindowStartupLocation="CenterScreen" >
     <Grid x:Name="mainGrid" Margin="0,-1,11,1">
-        <Grid x:Name="infoGrid" HorizontalAlignment="Left" Height="212" VerticalAlignment="Top" Width="994" UIElement.PreviewKeyDown="Grid_PreviewKeyDown">
+        <Grid x:Name="infoGrid" HorizontalAlignment="Left" Height="212" VerticalAlignment="Top" Width="994" UIElement.PreviewKeyDown="Info_Grid_PreviewKeyDown">
             <Label x:Name="label11_Copy" Content="Ref. No." HorizontalAlignment="Left" Margin="10,42,0,0" VerticalAlignment="Top" Width="123" FontSize="15" FontFamily="Times New Roman"/>
             <TextBox x:Name="referenceNo" HorizontalAlignment="Left" Margin="142,46,0,0" VerticalAlignment="Top" Width="347" Height="22" FontSize="16" FontFamily="Times New Roman" FontWeight="Bold" />
             <ComboBox x:Name="supplier" IsEditable="True"  MaxDropDownHeight="200" HorizontalAlignment="Left" Margin="615,46,0,0" VerticalAlignment="Top" Width="316" Height="22" FontSize="16" FontFamily="Times New Roman" FontWeight="Bold" BorderBrush="#FFACACAC" GotKeyboardFocus="dropdownOpen_GotKeyboardFocus"/>
@@ -36,7 +36,7 @@
             <Label x:Name="label1_Copy5" Content="Unit Price" HorizontalAlignment="Left" Margin="497,113,0,0" VerticalAlignment="Top" Width="84" FontSize="15" FontFamily="Times New Roman"/>
             <Label x:Name="label1_Copy7" Content="Selling Price" HorizontalAlignment="Left" Margin="752,114,0,0" VerticalAlignment="Top" Width="99" FontSize="15" FontFamily="Times New Roman"/>
             <Label x:Name="label1_Copy8" Content="Description" HorizontalAlignment="Left" Margin="10,179,0,0" VerticalAlignment="Top" FontSize="15" FontFamily="Times New Roman"/>
-            <TextBox x:Name="description" HorizontalAlignment="Left" Height="22" Margin="142,184,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="489" FontSize="16" FontFamily="Times New Roman" FontWeight="Bold" GotKeyboardFocus="selectAllTextonGotFocus" GotMouseCapture="selectAllTextonGotFocus"/>
+            <TextBox x:Name="description" HorizontalAlignment="Left" Height="22" Margin="142,184,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="454" FontSize="16" FontFamily="Times New Roman" FontWeight="Bold" GotKeyboardFocus="selectAllTextonGotFocus" GotMouseCapture="selectAllTextonGotFocus"/>
 
             <Label x:Name="label1_Copy1" Content="Barcode Serial" HorizontalAlignment="Left" Margin="497,148,0,0" VerticalAlignment="Top" FontSize="15" FontFamily="Times New Roman"/>
             <Label x:Name="py9" Content="Color" HorizontalAlignment="Left" Margin="755,150,0,0" VerticalAlignment="Top" FontSize="15" FontFamily="Times New Roman"/>
@@ -60,7 +60,7 @@
             </DataGrid.CommandBindings>
 
         </DataGrid>
-        <Border Margin="10,569,10,51" BorderThickness="1" BorderBrush="#FF5765F3">
+        <Border Margin="10,557,10,51" BorderThickness="1" BorderBrush="#FF5765F3">
 
             <Grid x:Name="actionGrid">
                 <Button x:Name="OK_Button" Content="Save" HorizontalAlignment="Left" Margin="543,8,0,13" VerticalAlignment="Center" Width="99" Height="28" FontSize="16" Click="OK_Button_Click"/>
@@ -91,30 +91,29 @@
             </ListView.View>
         </ListView>
         <Border Margin="10,418,10,119" BorderThickness="1" BorderBrush="SkyBlue">
-            <Grid x:Name="paymentGrid" Margin="0,0,0,-1">
+            <Grid x:Name="paymentGrid" Margin="0,0,0,-1" UIElement.PreviewKeyDown="Payment_Grid_PreviewKeyDown">
                 <Label x:Name="label" Content="Payment Method" HorizontalAlignment="Left" Margin="4,14,0,0" VerticalAlignment="Top" FontSize="15" FontFamily="Times New Roman"/>
-                <ComboBox x:Name="paymentMethod" HorizontalAlignment="Left" Margin="122,18,0,0" VerticalAlignment="Top" Width="120" SelectedIndex="0">
+                <ComboBox x:Name="paymentMode" HorizontalAlignment="Left" Margin="122,18,0,0" VerticalAlignment="Top" Width="120" SelectedIndex="0">
                     <Label Content="By Cash" Height="25" FontFamily="Times New Roman" Margin="0,-6,0,0" FontSize="13"/>
                     <Label Content="By Cheque" Height="25" FontFamily="Times New Roman" Margin="0,-6,0,0" FontSize="13"/>
                     <Label Content="By Debit Card" Height="25" FontFamily="Times New Roman" Margin="0,-6,0,0" FontSize="13"/>
                     <Label Content="By Credit Card" Height="25" FontFamily="Times New Roman" Margin="0,-6,0,0" FontSize="13"/>
                 </ComboBox>
                 <Label x:Name="label_Copy" Content="Payment" HorizontalAlignment="Left" Margin="4,42,0,0" VerticalAlignment="Top" FontSize="15" FontFamily="Times New Roman"/>
-                <TextBox x:Name="payment" HorizontalAlignment="Left" Height="23" Margin="122,47,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" FontSize="15" FontFamily="Times New Roman" HorizontalContentAlignment="Right"/>
+                <TextBox x:Name="payment" HorizontalAlignment="Left" Height="23" Margin="122,47,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" FontSize="15" FontFamily="Times New Roman" HorizontalContentAlignment="Right" />
                 <Label x:Name="label_Copy1" Content="Payment Date" HorizontalAlignment="Left" Margin="4,71,0,0" VerticalAlignment="Top" FontSize="15" FontFamily="Times New Roman"/>
-                <TextBox x:Name="paymentDate" HorizontalAlignment="Left" Height="23" Margin="122,76,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" FontSize="15" FontFamily="Times New Roman"/>
-
-                <Button x:Name="addPayment" Content="Add" HorizontalAlignment="Left" Margin="269,11,0,0" VerticalAlignment="Top" Width="65"/>
-                <Button x:Name="removePayment" Content="Remove" HorizontalAlignment="Left" Margin="269,36,0,0" VerticalAlignment="Top" Width="65" IsEnabled="False"/>
-                <Button x:Name="updatePayment" Content="Update" HorizontalAlignment="Left" Margin="269,61,0,0" VerticalAlignment="Top" Width="65" IsEnabled="False"/>
+                <DatePicker x:Name="paymentDate" HorizontalAlignment="Left" Height="23" Margin="122,76,0,0" VerticalAlignment="Top" Width="120" FontSize="15" FontFamily="Times New Roman"/>
+                <Button x:Name="addPayment" Content="Add" HorizontalAlignment="Left" Margin="269,11,0,0" VerticalAlignment="Top" Width="65" Click="addPayment_Click"/>
+                <Button x:Name="removePayment" Content="Remove" HorizontalAlignment="Left" Margin="269,36,0,0" VerticalAlignment="Top" Width="65" IsEnabled="False" Click="removePayment_Click"/>
+                <Button x:Name="updatePayment" Content="Update" HorizontalAlignment="Left" Margin="269,61,0,0" VerticalAlignment="Top" Width="65" IsEnabled="False" Click="updatePayment_Click"/>
                 <Button x:Name="resetPayment" Content="Reset" HorizontalAlignment="Left" Margin="269,86,0,0" VerticalAlignment="Top" Width="65" IsEnabled="False"/>
-                <DataGrid x:Name="paymentDatagrid" HorizontalAlignment="Left" VerticalAlignment="Top" Height="118" Width="320" HorizontalContentAlignment="Right" Margin="368,4,0,0"/>
-                <Label x:Name="ll" Content="Total Due" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="16" FontFamily="Times New Roman" Margin="734,84,0,0"/>
-                <Label x:Name="due" Content="0.0" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="16" FontFamily="Times New Roman" Margin="868,84,0,0"/>
+                <DataGrid x:Name="paymentDatagrid" HorizontalAlignment="Left" VerticalAlignment="Top" Height="118" Width="337"   HorizontalContentAlignment="Right" Margin="351,4,0,0" SelectionUnit="FullRow" SelectionChanged="paymentDatagrid_SelectionChanged"  PreviewKeyDown="Payment_DataGrid_PreviewKeyDown"/>
+                <Label x:Name="ll" Content="Payment Due" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="16" FontFamily="Times New Roman" Margin="734,84,0,0"/>
+                <Label x:Name="paymentDue" Content="0.0" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="16" FontFamily="Times New Roman" Margin="868,84,0,0"/>
                 <Label x:Name="ll_Copy" Content="Total Payment" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="16" FontFamily="Times New Roman" Margin="734,59,0,0"/>
                 <Label x:Name="totalPayment" Content="0.0" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="16" FontFamily="Times New Roman" Margin="868,61,0,0"/>
                 <Label x:Name="ll_Copy1" Content="Grand Total" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="16" FontFamily="Times New Roman" Margin="734,33,0,0"/>
-                <Label x:Name="totalAmount" Content="0.0" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="16" FontFamily="Times New Roman" Margin="868,33,0,0"/>
+                <Label x:Name="grandTotal" Content="0.0" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="16" FontFamily="Times New Roman" Margin="868,33,0,0"/>
                 <Label x:Name="ll_Copy2" Content="Total Quantity" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="16" FontFamily="Times New Roman" Margin="734,8,0,0"/>
                 <Label x:Name="totalQuantity" Content="0" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="16" FontFamily="Times New Roman" Margin="868,10,0,0"/>
 

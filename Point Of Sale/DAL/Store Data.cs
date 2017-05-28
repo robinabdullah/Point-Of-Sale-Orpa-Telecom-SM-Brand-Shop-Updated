@@ -491,6 +491,26 @@ namespace Point_Of_Sale.DAL
         //}
         
     }
+    class Product_SupplierTableData: DB
+    {
+        public static bool addNewProduct_Supplier(Product_Supplier pro_supplier)
+        {
+            try
+            {
+                db.Product_Suppliers.InsertOnSubmit(pro_supplier);
+                db.SubmitChanges();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                ///throw new Exception(ex.Message + "Detailed Error: " + ex.StackTrace);
+                CustomMessage.Message = ex.Message;
+                CustomMessage.StackTrace = ex.StackTrace;
+
+                return false;
+            }
+        }
+    }
     class SupplierTableData: DB
     {
         public static bool addNewSupplier(Supplier supplier)
@@ -508,6 +528,45 @@ namespace Point_Of_Sale.DAL
                 CustomMessage.StackTrace = ex.StackTrace;
 
                 return false;
+            }
+        }
+        public static int getIDBySupplier(string supplier)
+        {
+            try
+            {
+                string contactName = supplier.Split('-')[0].Trim();
+                string companyName = supplier.Split('-')[1].Trim();
+
+                var v = (from ee in db.Suppliers
+                         where ee.Company_Name == companyName && ee.Contact_Name == contactName
+                         select ee.ID).Single();
+
+                return v;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message + "Detailed Error: " + ex.StackTrace);
+            }
+        }
+        public static Supplier getSupplier(string supplier)
+        {
+            try
+            {
+                string companyName = supplier.Split('-')[0].Trim();
+                string contactName = supplier.Split('-')[1].Trim();
+
+                var v = (from ee in db.Suppliers
+                         where ee.Company_Name == companyName && ee.Contact_Name == contactName
+                         select ee);
+
+                if (v.Count() > 0)
+                    return v.First();
+                else
+                    return null;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message + "Detailed Error: " + ex.StackTrace);
             }
         }
         public static List<string> getAllSupplierName()
