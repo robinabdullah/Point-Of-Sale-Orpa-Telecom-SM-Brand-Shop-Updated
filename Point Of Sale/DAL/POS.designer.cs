@@ -66,6 +66,24 @@ namespace Point_Of_Sale.DAL
     partial void InsertProduct_Supplier(Product_Supplier instance);
     partial void UpdateProduct_Supplier(Product_Supplier instance);
     partial void DeleteProduct_Supplier(Product_Supplier instance);
+    partial void InsertVoucher(Voucher instance);
+    partial void UpdateVoucher(Voucher instance);
+    partial void DeleteVoucher(Voucher instance);
+    partial void InsertVoucher_Detail(Voucher_Detail instance);
+    partial void UpdateVoucher_Detail(Voucher_Detail instance);
+    partial void DeleteVoucher_Detail(Voucher_Detail instance);
+    partial void InsertSupport(Support instance);
+    partial void UpdateSupport(Support instance);
+    partial void DeleteSupport(Support instance);
+    partial void InsertSub_Account(Sub_Account instance);
+    partial void UpdateSub_Account(Sub_Account instance);
+    partial void DeleteSub_Account(Sub_Account instance);
+    partial void InsertMain_Account(Main_Account instance);
+    partial void UpdateMain_Account(Main_Account instance);
+    partial void DeleteMain_Account(Main_Account instance);
+    partial void InsertLogin(Login instance);
+    partial void UpdateLogin(Login instance);
+    partial void DeleteLogin(Login instance);
     #endregion
 		
 		public POSDataContext() : 
@@ -138,14 +156,6 @@ namespace Point_Of_Sale.DAL
 			}
 		}
 		
-		public System.Data.Linq.Table<Login> Logins
-		{
-			get
-			{
-				return this.GetTable<Login>();
-			}
-		}
-		
 		public System.Data.Linq.Table<Address> Addresses
 		{
 			get
@@ -199,6 +209,54 @@ namespace Point_Of_Sale.DAL
 			get
 			{
 				return this.GetTable<Product_Supplier>();
+			}
+		}
+		
+		public System.Data.Linq.Table<Voucher> Vouchers
+		{
+			get
+			{
+				return this.GetTable<Voucher>();
+			}
+		}
+		
+		public System.Data.Linq.Table<Voucher_Detail> Voucher_Details
+		{
+			get
+			{
+				return this.GetTable<Voucher_Detail>();
+			}
+		}
+		
+		public System.Data.Linq.Table<Support> Supports
+		{
+			get
+			{
+				return this.GetTable<Support>();
+			}
+		}
+		
+		public System.Data.Linq.Table<Sub_Account> Sub_Accounts
+		{
+			get
+			{
+				return this.GetTable<Sub_Account>();
+			}
+		}
+		
+		public System.Data.Linq.Table<Main_Account> Main_Accounts
+		{
+			get
+			{
+				return this.GetTable<Main_Account>();
+			}
+		}
+		
+		public System.Data.Linq.Table<Login> Logins
+		{
+			get
+			{
+				return this.GetTable<Login>();
 			}
 		}
 	}
@@ -1239,87 +1297,6 @@ namespace Point_Of_Sale.DAL
 		}
 	}
 	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Login")]
-	public partial class Login
-	{
-		
-		private string _Username;
-		
-		private string _Password;
-		
-		private string _User_Type;
-		
-		private System.Nullable<System.DateTime> _Last_Login;
-		
-		public Login()
-		{
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Username", DbType="VarChar(50)")]
-		public string Username
-		{
-			get
-			{
-				return this._Username;
-			}
-			set
-			{
-				if ((this._Username != value))
-				{
-					this._Username = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Password", DbType="VarChar(50)")]
-		public string Password
-		{
-			get
-			{
-				return this._Password;
-			}
-			set
-			{
-				if ((this._Password != value))
-				{
-					this._Password = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_User_Type", DbType="VarChar(50)")]
-		public string User_Type
-		{
-			get
-			{
-				return this._User_Type;
-			}
-			set
-			{
-				if ((this._User_Type != value))
-				{
-					this._User_Type = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Last_Login", DbType="DateTime")]
-		public System.Nullable<System.DateTime> Last_Login
-		{
-			get
-			{
-				return this._Last_Login;
-			}
-			set
-			{
-				if ((this._Last_Login != value))
-				{
-					this._Last_Login = value;
-				}
-			}
-		}
-	}
-	
 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Address")]
 	public partial class Address : INotifyPropertyChanging, INotifyPropertyChanged
 	{
@@ -1345,6 +1322,8 @@ namespace Point_Of_Sale.DAL
 		private string _Website;
 		
 		private EntitySet<Supplier> _Suppliers;
+		
+		private EntitySet<Login> _Logins;
 		
     #region Extensibility Method Definitions
     partial void OnLoaded();
@@ -1373,6 +1352,7 @@ namespace Point_Of_Sale.DAL
 		public Address()
 		{
 			this._Suppliers = new EntitySet<Supplier>(new Action<Supplier>(this.attach_Suppliers), new Action<Supplier>(this.detach_Suppliers));
+			this._Logins = new EntitySet<Login>(new Action<Login>(this.attach_Logins), new Action<Login>(this.detach_Logins));
 			OnCreated();
 		}
 		
@@ -1569,6 +1549,19 @@ namespace Point_Of_Sale.DAL
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Address_Login", Storage="_Logins", ThisKey="ID", OtherKey="Address_ID")]
+		public EntitySet<Login> Logins
+		{
+			get
+			{
+				return this._Logins;
+			}
+			set
+			{
+				this._Logins.Assign(value);
+			}
+		}
+		
 		public event PropertyChangingEventHandler PropertyChanging;
 		
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -1596,6 +1589,18 @@ namespace Point_Of_Sale.DAL
 		}
 		
 		private void detach_Suppliers(Supplier entity)
+		{
+			this.SendPropertyChanging();
+			entity.Address = null;
+		}
+		
+		private void attach_Logins(Login entity)
+		{
+			this.SendPropertyChanging();
+			entity.Address = this;
+		}
+		
+		private void detach_Logins(Login entity)
 		{
 			this.SendPropertyChanging();
 			entity.Address = null;
@@ -2403,6 +2408,8 @@ namespace Point_Of_Sale.DAL
 		
 		private EntityRef<Product> _Product;
 		
+		private EntityRef<Login> _Login;
+		
     #region Extensibility Method Definitions
     partial void OnLoaded();
     partial void OnValidate(System.Data.Linq.ChangeAction action);
@@ -2430,6 +2437,7 @@ namespace Point_Of_Sale.DAL
 			this._Gifts = new EntitySet<Gift>(new Action<Gift>(this.attach_Gifts), new Action<Gift>(this.detach_Gifts));
 			this._Sale = default(EntityRef<Sale>);
 			this._Product = default(EntityRef<Product>);
+			this._Login = default(EntityRef<Login>);
 			OnCreated();
 		}
 		
@@ -2592,6 +2600,10 @@ namespace Point_Of_Sale.DAL
 			{
 				if ((this._Sold_By != value))
 				{
+					if (this._Login.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
 					this.OnSold_ByChanging(value);
 					this.SendPropertyChanging();
 					this._Sold_By = value;
@@ -2678,6 +2690,40 @@ namespace Point_Of_Sale.DAL
 						this._Product_ID = default(int);
 					}
 					this.SendPropertyChanged("Product");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Login_Customer_Sale", Storage="_Login", ThisKey="Sold_By", OtherKey="Username", IsForeignKey=true)]
+		public Login Login
+		{
+			get
+			{
+				return this._Login.Entity;
+			}
+			set
+			{
+				Login previousValue = this._Login.Entity;
+				if (((previousValue != value) 
+							|| (this._Login.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Login.Entity = null;
+						previousValue.Customer_Sales.Remove(this);
+					}
+					this._Login.Entity = value;
+					if ((value != null))
+					{
+						value.Customer_Sales.Add(this);
+						this._Sold_By = value.Username;
+					}
+					else
+					{
+						this._Sold_By = default(string);
+					}
+					this.SendPropertyChanged("Login");
 				}
 			}
 		}
@@ -3366,6 +3412,1344 @@ namespace Point_Of_Sale.DAL
 			{
 				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Voucher")]
+	public partial class Voucher : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _ID;
+		
+		private System.Nullable<System.DateTime> _Date;
+		
+		private System.Nullable<int> _Sub_Account_ID;
+		
+		private System.Nullable<int> _Type;
+		
+		private System.Nullable<int> _PreparedBy;
+		
+		private System.Nullable<int> _AuthenticatedBy;
+		
+		private EntitySet<Voucher_Detail> _Voucher_Details;
+		
+		private EntitySet<Support> _Supports;
+		
+		private EntityRef<Sub_Account> _Sub_Account;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnIDChanging(int value);
+    partial void OnIDChanged();
+    partial void OnDateChanging(System.Nullable<System.DateTime> value);
+    partial void OnDateChanged();
+    partial void OnSub_Account_IDChanging(System.Nullable<int> value);
+    partial void OnSub_Account_IDChanged();
+    partial void OnTypeChanging(System.Nullable<int> value);
+    partial void OnTypeChanged();
+    partial void OnPreparedByChanging(System.Nullable<int> value);
+    partial void OnPreparedByChanged();
+    partial void OnAuthenticatedByChanging(System.Nullable<int> value);
+    partial void OnAuthenticatedByChanged();
+    #endregion
+		
+		public Voucher()
+		{
+			this._Voucher_Details = new EntitySet<Voucher_Detail>(new Action<Voucher_Detail>(this.attach_Voucher_Details), new Action<Voucher_Detail>(this.detach_Voucher_Details));
+			this._Supports = new EntitySet<Support>(new Action<Support>(this.attach_Supports), new Action<Support>(this.detach_Supports));
+			this._Sub_Account = default(EntityRef<Sub_Account>);
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ID", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		public int ID
+		{
+			get
+			{
+				return this._ID;
+			}
+			set
+			{
+				if ((this._ID != value))
+				{
+					this.OnIDChanging(value);
+					this.SendPropertyChanging();
+					this._ID = value;
+					this.SendPropertyChanged("ID");
+					this.OnIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Date", DbType="DateTime")]
+		public System.Nullable<System.DateTime> Date
+		{
+			get
+			{
+				return this._Date;
+			}
+			set
+			{
+				if ((this._Date != value))
+				{
+					this.OnDateChanging(value);
+					this.SendPropertyChanging();
+					this._Date = value;
+					this.SendPropertyChanged("Date");
+					this.OnDateChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Sub_Account_ID", DbType="Int")]
+		public System.Nullable<int> Sub_Account_ID
+		{
+			get
+			{
+				return this._Sub_Account_ID;
+			}
+			set
+			{
+				if ((this._Sub_Account_ID != value))
+				{
+					if (this._Sub_Account.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnSub_Account_IDChanging(value);
+					this.SendPropertyChanging();
+					this._Sub_Account_ID = value;
+					this.SendPropertyChanged("Sub_Account_ID");
+					this.OnSub_Account_IDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Type", DbType="Int")]
+		public System.Nullable<int> Type
+		{
+			get
+			{
+				return this._Type;
+			}
+			set
+			{
+				if ((this._Type != value))
+				{
+					this.OnTypeChanging(value);
+					this.SendPropertyChanging();
+					this._Type = value;
+					this.SendPropertyChanged("Type");
+					this.OnTypeChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PreparedBy", DbType="Int")]
+		public System.Nullable<int> PreparedBy
+		{
+			get
+			{
+				return this._PreparedBy;
+			}
+			set
+			{
+				if ((this._PreparedBy != value))
+				{
+					this.OnPreparedByChanging(value);
+					this.SendPropertyChanging();
+					this._PreparedBy = value;
+					this.SendPropertyChanged("PreparedBy");
+					this.OnPreparedByChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AuthenticatedBy", DbType="Int")]
+		public System.Nullable<int> AuthenticatedBy
+		{
+			get
+			{
+				return this._AuthenticatedBy;
+			}
+			set
+			{
+				if ((this._AuthenticatedBy != value))
+				{
+					this.OnAuthenticatedByChanging(value);
+					this.SendPropertyChanging();
+					this._AuthenticatedBy = value;
+					this.SendPropertyChanged("AuthenticatedBy");
+					this.OnAuthenticatedByChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Voucher_Voucher_Detail", Storage="_Voucher_Details", ThisKey="ID", OtherKey="Voucher_ID")]
+		public EntitySet<Voucher_Detail> Voucher_Details
+		{
+			get
+			{
+				return this._Voucher_Details;
+			}
+			set
+			{
+				this._Voucher_Details.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Voucher_Support", Storage="_Supports", ThisKey="ID", OtherKey="Voucher_ID")]
+		public EntitySet<Support> Supports
+		{
+			get
+			{
+				return this._Supports;
+			}
+			set
+			{
+				this._Supports.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Sub_Account_Voucher", Storage="_Sub_Account", ThisKey="Sub_Account_ID", OtherKey="ID", IsForeignKey=true)]
+		public Sub_Account Sub_Account
+		{
+			get
+			{
+				return this._Sub_Account.Entity;
+			}
+			set
+			{
+				Sub_Account previousValue = this._Sub_Account.Entity;
+				if (((previousValue != value) 
+							|| (this._Sub_Account.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Sub_Account.Entity = null;
+						previousValue.Vouchers.Remove(this);
+					}
+					this._Sub_Account.Entity = value;
+					if ((value != null))
+					{
+						value.Vouchers.Add(this);
+						this._Sub_Account_ID = value.ID;
+					}
+					else
+					{
+						this._Sub_Account_ID = default(Nullable<int>);
+					}
+					this.SendPropertyChanged("Sub_Account");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+		
+		private void attach_Voucher_Details(Voucher_Detail entity)
+		{
+			this.SendPropertyChanging();
+			entity.Voucher = this;
+		}
+		
+		private void detach_Voucher_Details(Voucher_Detail entity)
+		{
+			this.SendPropertyChanging();
+			entity.Voucher = null;
+		}
+		
+		private void attach_Supports(Support entity)
+		{
+			this.SendPropertyChanging();
+			entity.Voucher = this;
+		}
+		
+		private void detach_Supports(Support entity)
+		{
+			this.SendPropertyChanging();
+			entity.Voucher = null;
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Voucher_Details")]
+	public partial class Voucher_Detail : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _ID;
+		
+		private System.Nullable<int> _Voucher_ID;
+		
+		private System.Nullable<int> _SNO;
+		
+		private System.Nullable<int> _Sub_Account_ID;
+		
+		private System.Nullable<decimal> _Amount;
+		
+		private string _Narration;
+		
+		private EntityRef<Voucher> _Voucher;
+		
+		private EntityRef<Sub_Account> _Sub_Account;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnIDChanging(int value);
+    partial void OnIDChanged();
+    partial void OnVoucher_IDChanging(System.Nullable<int> value);
+    partial void OnVoucher_IDChanged();
+    partial void OnSNOChanging(System.Nullable<int> value);
+    partial void OnSNOChanged();
+    partial void OnSub_Account_IDChanging(System.Nullable<int> value);
+    partial void OnSub_Account_IDChanged();
+    partial void OnAmountChanging(System.Nullable<decimal> value);
+    partial void OnAmountChanged();
+    partial void OnNarrationChanging(string value);
+    partial void OnNarrationChanged();
+    #endregion
+		
+		public Voucher_Detail()
+		{
+			this._Voucher = default(EntityRef<Voucher>);
+			this._Sub_Account = default(EntityRef<Sub_Account>);
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ID", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		public int ID
+		{
+			get
+			{
+				return this._ID;
+			}
+			set
+			{
+				if ((this._ID != value))
+				{
+					this.OnIDChanging(value);
+					this.SendPropertyChanging();
+					this._ID = value;
+					this.SendPropertyChanged("ID");
+					this.OnIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Voucher_ID", DbType="Int")]
+		public System.Nullable<int> Voucher_ID
+		{
+			get
+			{
+				return this._Voucher_ID;
+			}
+			set
+			{
+				if ((this._Voucher_ID != value))
+				{
+					if (this._Voucher.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnVoucher_IDChanging(value);
+					this.SendPropertyChanging();
+					this._Voucher_ID = value;
+					this.SendPropertyChanged("Voucher_ID");
+					this.OnVoucher_IDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SNO", DbType="Int")]
+		public System.Nullable<int> SNO
+		{
+			get
+			{
+				return this._SNO;
+			}
+			set
+			{
+				if ((this._SNO != value))
+				{
+					this.OnSNOChanging(value);
+					this.SendPropertyChanging();
+					this._SNO = value;
+					this.SendPropertyChanged("SNO");
+					this.OnSNOChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Sub_Account_ID", DbType="Int")]
+		public System.Nullable<int> Sub_Account_ID
+		{
+			get
+			{
+				return this._Sub_Account_ID;
+			}
+			set
+			{
+				if ((this._Sub_Account_ID != value))
+				{
+					if (this._Sub_Account.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnSub_Account_IDChanging(value);
+					this.SendPropertyChanging();
+					this._Sub_Account_ID = value;
+					this.SendPropertyChanged("Sub_Account_ID");
+					this.OnSub_Account_IDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Amount", DbType="Money")]
+		public System.Nullable<decimal> Amount
+		{
+			get
+			{
+				return this._Amount;
+			}
+			set
+			{
+				if ((this._Amount != value))
+				{
+					this.OnAmountChanging(value);
+					this.SendPropertyChanging();
+					this._Amount = value;
+					this.SendPropertyChanged("Amount");
+					this.OnAmountChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Narration", DbType="VarChar(100)")]
+		public string Narration
+		{
+			get
+			{
+				return this._Narration;
+			}
+			set
+			{
+				if ((this._Narration != value))
+				{
+					this.OnNarrationChanging(value);
+					this.SendPropertyChanging();
+					this._Narration = value;
+					this.SendPropertyChanged("Narration");
+					this.OnNarrationChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Voucher_Voucher_Detail", Storage="_Voucher", ThisKey="Voucher_ID", OtherKey="ID", IsForeignKey=true)]
+		public Voucher Voucher
+		{
+			get
+			{
+				return this._Voucher.Entity;
+			}
+			set
+			{
+				Voucher previousValue = this._Voucher.Entity;
+				if (((previousValue != value) 
+							|| (this._Voucher.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Voucher.Entity = null;
+						previousValue.Voucher_Details.Remove(this);
+					}
+					this._Voucher.Entity = value;
+					if ((value != null))
+					{
+						value.Voucher_Details.Add(this);
+						this._Voucher_ID = value.ID;
+					}
+					else
+					{
+						this._Voucher_ID = default(Nullable<int>);
+					}
+					this.SendPropertyChanged("Voucher");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Sub_Account_Voucher_Detail", Storage="_Sub_Account", ThisKey="Sub_Account_ID", OtherKey="ID", IsForeignKey=true)]
+		public Sub_Account Sub_Account
+		{
+			get
+			{
+				return this._Sub_Account.Entity;
+			}
+			set
+			{
+				Sub_Account previousValue = this._Sub_Account.Entity;
+				if (((previousValue != value) 
+							|| (this._Sub_Account.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Sub_Account.Entity = null;
+						previousValue.Voucher_Details.Remove(this);
+					}
+					this._Sub_Account.Entity = value;
+					if ((value != null))
+					{
+						value.Voucher_Details.Add(this);
+						this._Sub_Account_ID = value.ID;
+					}
+					else
+					{
+						this._Sub_Account_ID = default(Nullable<int>);
+					}
+					this.SendPropertyChanged("Sub_Account");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Support")]
+	public partial class Support : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _ID;
+		
+		private System.Nullable<int> _Voucher_ID;
+		
+		private string _Name;
+		
+		private EntityRef<Voucher> _Voucher;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnIDChanging(int value);
+    partial void OnIDChanged();
+    partial void OnVoucher_IDChanging(System.Nullable<int> value);
+    partial void OnVoucher_IDChanged();
+    partial void OnNameChanging(string value);
+    partial void OnNameChanged();
+    #endregion
+		
+		public Support()
+		{
+			this._Voucher = default(EntityRef<Voucher>);
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ID", DbType="Int NOT NULL", IsPrimaryKey=true)]
+		public int ID
+		{
+			get
+			{
+				return this._ID;
+			}
+			set
+			{
+				if ((this._ID != value))
+				{
+					this.OnIDChanging(value);
+					this.SendPropertyChanging();
+					this._ID = value;
+					this.SendPropertyChanged("ID");
+					this.OnIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Voucher_ID", DbType="Int")]
+		public System.Nullable<int> Voucher_ID
+		{
+			get
+			{
+				return this._Voucher_ID;
+			}
+			set
+			{
+				if ((this._Voucher_ID != value))
+				{
+					if (this._Voucher.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnVoucher_IDChanging(value);
+					this.SendPropertyChanging();
+					this._Voucher_ID = value;
+					this.SendPropertyChanged("Voucher_ID");
+					this.OnVoucher_IDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Name", DbType="VarChar(50)")]
+		public string Name
+		{
+			get
+			{
+				return this._Name;
+			}
+			set
+			{
+				if ((this._Name != value))
+				{
+					this.OnNameChanging(value);
+					this.SendPropertyChanging();
+					this._Name = value;
+					this.SendPropertyChanged("Name");
+					this.OnNameChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Voucher_Support", Storage="_Voucher", ThisKey="Voucher_ID", OtherKey="ID", IsForeignKey=true)]
+		public Voucher Voucher
+		{
+			get
+			{
+				return this._Voucher.Entity;
+			}
+			set
+			{
+				Voucher previousValue = this._Voucher.Entity;
+				if (((previousValue != value) 
+							|| (this._Voucher.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Voucher.Entity = null;
+						previousValue.Supports.Remove(this);
+					}
+					this._Voucher.Entity = value;
+					if ((value != null))
+					{
+						value.Supports.Add(this);
+						this._Voucher_ID = value.ID;
+					}
+					else
+					{
+						this._Voucher_ID = default(Nullable<int>);
+					}
+					this.SendPropertyChanged("Voucher");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Sub_Accounts")]
+	public partial class Sub_Account : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _ID;
+		
+		private string _Name;
+		
+		private System.Nullable<int> _Main_Accounts_ID;
+		
+		private EntitySet<Voucher> _Vouchers;
+		
+		private EntitySet<Voucher_Detail> _Voucher_Details;
+		
+		private EntityRef<Main_Account> _Main_Account;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnIDChanging(int value);
+    partial void OnIDChanged();
+    partial void OnNameChanging(string value);
+    partial void OnNameChanged();
+    partial void OnMain_Accounts_IDChanging(System.Nullable<int> value);
+    partial void OnMain_Accounts_IDChanged();
+    #endregion
+		
+		public Sub_Account()
+		{
+			this._Vouchers = new EntitySet<Voucher>(new Action<Voucher>(this.attach_Vouchers), new Action<Voucher>(this.detach_Vouchers));
+			this._Voucher_Details = new EntitySet<Voucher_Detail>(new Action<Voucher_Detail>(this.attach_Voucher_Details), new Action<Voucher_Detail>(this.detach_Voucher_Details));
+			this._Main_Account = default(EntityRef<Main_Account>);
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ID", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		public int ID
+		{
+			get
+			{
+				return this._ID;
+			}
+			set
+			{
+				if ((this._ID != value))
+				{
+					this.OnIDChanging(value);
+					this.SendPropertyChanging();
+					this._ID = value;
+					this.SendPropertyChanged("ID");
+					this.OnIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Name", DbType="VarChar(50)")]
+		public string Name
+		{
+			get
+			{
+				return this._Name;
+			}
+			set
+			{
+				if ((this._Name != value))
+				{
+					this.OnNameChanging(value);
+					this.SendPropertyChanging();
+					this._Name = value;
+					this.SendPropertyChanged("Name");
+					this.OnNameChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Main_Accounts_ID", DbType="Int")]
+		public System.Nullable<int> Main_Accounts_ID
+		{
+			get
+			{
+				return this._Main_Accounts_ID;
+			}
+			set
+			{
+				if ((this._Main_Accounts_ID != value))
+				{
+					if (this._Main_Account.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnMain_Accounts_IDChanging(value);
+					this.SendPropertyChanging();
+					this._Main_Accounts_ID = value;
+					this.SendPropertyChanged("Main_Accounts_ID");
+					this.OnMain_Accounts_IDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Sub_Account_Voucher", Storage="_Vouchers", ThisKey="ID", OtherKey="Sub_Account_ID")]
+		public EntitySet<Voucher> Vouchers
+		{
+			get
+			{
+				return this._Vouchers;
+			}
+			set
+			{
+				this._Vouchers.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Sub_Account_Voucher_Detail", Storage="_Voucher_Details", ThisKey="ID", OtherKey="Sub_Account_ID")]
+		public EntitySet<Voucher_Detail> Voucher_Details
+		{
+			get
+			{
+				return this._Voucher_Details;
+			}
+			set
+			{
+				this._Voucher_Details.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Main_Account_Sub_Account", Storage="_Main_Account", ThisKey="Main_Accounts_ID", OtherKey="ID", IsForeignKey=true)]
+		public Main_Account Main_Account
+		{
+			get
+			{
+				return this._Main_Account.Entity;
+			}
+			set
+			{
+				Main_Account previousValue = this._Main_Account.Entity;
+				if (((previousValue != value) 
+							|| (this._Main_Account.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Main_Account.Entity = null;
+						previousValue.Sub_Accounts.Remove(this);
+					}
+					this._Main_Account.Entity = value;
+					if ((value != null))
+					{
+						value.Sub_Accounts.Add(this);
+						this._Main_Accounts_ID = value.ID;
+					}
+					else
+					{
+						this._Main_Accounts_ID = default(Nullable<int>);
+					}
+					this.SendPropertyChanged("Main_Account");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+		
+		private void attach_Vouchers(Voucher entity)
+		{
+			this.SendPropertyChanging();
+			entity.Sub_Account = this;
+		}
+		
+		private void detach_Vouchers(Voucher entity)
+		{
+			this.SendPropertyChanging();
+			entity.Sub_Account = null;
+		}
+		
+		private void attach_Voucher_Details(Voucher_Detail entity)
+		{
+			this.SendPropertyChanging();
+			entity.Sub_Account = this;
+		}
+		
+		private void detach_Voucher_Details(Voucher_Detail entity)
+		{
+			this.SendPropertyChanging();
+			entity.Sub_Account = null;
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Main_Accounts")]
+	public partial class Main_Account : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _ID;
+		
+		private string _Catagory;
+		
+		private EntitySet<Sub_Account> _Sub_Accounts;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnIDChanging(int value);
+    partial void OnIDChanged();
+    partial void OnCatagoryChanging(string value);
+    partial void OnCatagoryChanged();
+    #endregion
+		
+		public Main_Account()
+		{
+			this._Sub_Accounts = new EntitySet<Sub_Account>(new Action<Sub_Account>(this.attach_Sub_Accounts), new Action<Sub_Account>(this.detach_Sub_Accounts));
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ID", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		public int ID
+		{
+			get
+			{
+				return this._ID;
+			}
+			set
+			{
+				if ((this._ID != value))
+				{
+					this.OnIDChanging(value);
+					this.SendPropertyChanging();
+					this._ID = value;
+					this.SendPropertyChanged("ID");
+					this.OnIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Catagory", DbType="VarChar(50)")]
+		public string Catagory
+		{
+			get
+			{
+				return this._Catagory;
+			}
+			set
+			{
+				if ((this._Catagory != value))
+				{
+					this.OnCatagoryChanging(value);
+					this.SendPropertyChanging();
+					this._Catagory = value;
+					this.SendPropertyChanged("Catagory");
+					this.OnCatagoryChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Main_Account_Sub_Account", Storage="_Sub_Accounts", ThisKey="ID", OtherKey="Main_Accounts_ID")]
+		public EntitySet<Sub_Account> Sub_Accounts
+		{
+			get
+			{
+				return this._Sub_Accounts;
+			}
+			set
+			{
+				this._Sub_Accounts.Assign(value);
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+		
+		private void attach_Sub_Accounts(Sub_Account entity)
+		{
+			this.SendPropertyChanging();
+			entity.Main_Account = this;
+		}
+		
+		private void detach_Sub_Accounts(Sub_Account entity)
+		{
+			this.SendPropertyChanging();
+			entity.Main_Account = null;
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Login")]
+	public partial class Login : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _ID;
+		
+		private string _Name;
+		
+		private string _Username;
+		
+		private string _Password;
+		
+		private System.Nullable<System.DateTime> _Last_Login;
+		
+		private string _User_Type;
+		
+		private System.Nullable<int> _Address_ID;
+		
+		private string _Mobile;
+		
+		private System.Nullable<int> _Manager_ID;
+		
+		private EntitySet<Customer_Sale> _Customer_Sales;
+		
+		private EntityRef<Address> _Address;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnIDChanging(int value);
+    partial void OnIDChanged();
+    partial void OnNameChanging(string value);
+    partial void OnNameChanged();
+    partial void OnUsernameChanging(string value);
+    partial void OnUsernameChanged();
+    partial void OnPasswordChanging(string value);
+    partial void OnPasswordChanged();
+    partial void OnLast_LoginChanging(System.Nullable<System.DateTime> value);
+    partial void OnLast_LoginChanged();
+    partial void OnUser_TypeChanging(string value);
+    partial void OnUser_TypeChanged();
+    partial void OnAddress_IDChanging(System.Nullable<int> value);
+    partial void OnAddress_IDChanged();
+    partial void OnMobileChanging(string value);
+    partial void OnMobileChanged();
+    partial void OnManager_IDChanging(System.Nullable<int> value);
+    partial void OnManager_IDChanged();
+    #endregion
+		
+		public Login()
+		{
+			this._Customer_Sales = new EntitySet<Customer_Sale>(new Action<Customer_Sale>(this.attach_Customer_Sales), new Action<Customer_Sale>(this.detach_Customer_Sales));
+			this._Address = default(EntityRef<Address>);
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ID", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		public int ID
+		{
+			get
+			{
+				return this._ID;
+			}
+			set
+			{
+				if ((this._ID != value))
+				{
+					this.OnIDChanging(value);
+					this.SendPropertyChanging();
+					this._ID = value;
+					this.SendPropertyChanged("ID");
+					this.OnIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Name", DbType="VarChar(50)")]
+		public string Name
+		{
+			get
+			{
+				return this._Name;
+			}
+			set
+			{
+				if ((this._Name != value))
+				{
+					this.OnNameChanging(value);
+					this.SendPropertyChanging();
+					this._Name = value;
+					this.SendPropertyChanged("Name");
+					this.OnNameChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Username", DbType="VarChar(50)")]
+		public string Username
+		{
+			get
+			{
+				return this._Username;
+			}
+			set
+			{
+				if ((this._Username != value))
+				{
+					this.OnUsernameChanging(value);
+					this.SendPropertyChanging();
+					this._Username = value;
+					this.SendPropertyChanged("Username");
+					this.OnUsernameChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Password", DbType="VarChar(50)")]
+		public string Password
+		{
+			get
+			{
+				return this._Password;
+			}
+			set
+			{
+				if ((this._Password != value))
+				{
+					this.OnPasswordChanging(value);
+					this.SendPropertyChanging();
+					this._Password = value;
+					this.SendPropertyChanged("Password");
+					this.OnPasswordChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Last_Login", DbType="DateTime")]
+		public System.Nullable<System.DateTime> Last_Login
+		{
+			get
+			{
+				return this._Last_Login;
+			}
+			set
+			{
+				if ((this._Last_Login != value))
+				{
+					this.OnLast_LoginChanging(value);
+					this.SendPropertyChanging();
+					this._Last_Login = value;
+					this.SendPropertyChanged("Last_Login");
+					this.OnLast_LoginChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_User_Type", DbType="VarChar(50)")]
+		public string User_Type
+		{
+			get
+			{
+				return this._User_Type;
+			}
+			set
+			{
+				if ((this._User_Type != value))
+				{
+					this.OnUser_TypeChanging(value);
+					this.SendPropertyChanging();
+					this._User_Type = value;
+					this.SendPropertyChanged("User_Type");
+					this.OnUser_TypeChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Address_ID", DbType="Int")]
+		public System.Nullable<int> Address_ID
+		{
+			get
+			{
+				return this._Address_ID;
+			}
+			set
+			{
+				if ((this._Address_ID != value))
+				{
+					if (this._Address.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnAddress_IDChanging(value);
+					this.SendPropertyChanging();
+					this._Address_ID = value;
+					this.SendPropertyChanged("Address_ID");
+					this.OnAddress_IDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Mobile", DbType="VarChar(50)")]
+		public string Mobile
+		{
+			get
+			{
+				return this._Mobile;
+			}
+			set
+			{
+				if ((this._Mobile != value))
+				{
+					this.OnMobileChanging(value);
+					this.SendPropertyChanging();
+					this._Mobile = value;
+					this.SendPropertyChanged("Mobile");
+					this.OnMobileChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Manager_ID", DbType="Int")]
+		public System.Nullable<int> Manager_ID
+		{
+			get
+			{
+				return this._Manager_ID;
+			}
+			set
+			{
+				if ((this._Manager_ID != value))
+				{
+					this.OnManager_IDChanging(value);
+					this.SendPropertyChanging();
+					this._Manager_ID = value;
+					this.SendPropertyChanged("Manager_ID");
+					this.OnManager_IDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Login_Customer_Sale", Storage="_Customer_Sales", ThisKey="Username", OtherKey="Sold_By")]
+		public EntitySet<Customer_Sale> Customer_Sales
+		{
+			get
+			{
+				return this._Customer_Sales;
+			}
+			set
+			{
+				this._Customer_Sales.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Address_Login", Storage="_Address", ThisKey="Address_ID", OtherKey="ID", IsForeignKey=true)]
+		public Address Address
+		{
+			get
+			{
+				return this._Address.Entity;
+			}
+			set
+			{
+				Address previousValue = this._Address.Entity;
+				if (((previousValue != value) 
+							|| (this._Address.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Address.Entity = null;
+						previousValue.Logins.Remove(this);
+					}
+					this._Address.Entity = value;
+					if ((value != null))
+					{
+						value.Logins.Add(this);
+						this._Address_ID = value.ID;
+					}
+					else
+					{
+						this._Address_ID = default(Nullable<int>);
+					}
+					this.SendPropertyChanged("Address");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+		
+		private void attach_Customer_Sales(Customer_Sale entity)
+		{
+			this.SendPropertyChanging();
+			entity.Login = this;
+		}
+		
+		private void detach_Customer_Sales(Customer_Sale entity)
+		{
+			this.SendPropertyChanging();
+			entity.Login = null;
 		}
 	}
 }

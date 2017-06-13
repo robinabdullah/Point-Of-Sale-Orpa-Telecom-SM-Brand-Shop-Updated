@@ -50,15 +50,6 @@
       <Association Name="Product_Barcode" Member="Product" ThisKey="Product_ID" OtherKey="ID" Type="Product" IsForeignKey="true" />
     </Type>
   </Table>
-  <Table Name="dbo.Login" Member="Logins">
-    <Type Name="Login">
-      <Column Name="Username" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
-      <Column Name="Password" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
-      <Column Name="User_Type" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
-      <Column Name="Last_Login" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
-      <Association Name="Login_Customer_Sale" Member="Customer_Sales" ThisKey="Username" OtherKey="Sold_By" Type="Customer_Sale" />
-    </Type>
-  </Table>
   <Table Name="dbo.Address" Member="Addresses">
     <Type Name="Address">
       <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
@@ -71,6 +62,7 @@
       <Column Name="Fax" Type="System.String" DbType="VarChar(20)" CanBeNull="true" />
       <Column Name="Website" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
       <Association Name="Address_Supplier" Member="Suppliers" ThisKey="ID" OtherKey="Address_ID" Type="Supplier" />
+      <Association Name="Address_Login" Member="Logins" ThisKey="ID" OtherKey="Address_ID" Type="Login" />
     </Type>
   </Table>
   <Table Name="dbo.Supplier" Member="Suppliers">
@@ -122,8 +114,8 @@
       <Column Name="Sold_By" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
       <Association Name="Customer_Sale_Gift" Member="Gifts" ThisKey="ID" OtherKey="Customer_Sale_ID" Type="Gift" />
       <Association Name="Sale_Customer_Sale" Member="Sale" ThisKey="Invoice_ID" OtherKey="Invoice_ID" Type="Sale" IsForeignKey="true" />
-      <Association Name="Login_Customer_Sale" Member="Login" ThisKey="Sold_By" OtherKey="Username" Type="Login" IsForeignKey="true" />
       <Association Name="Product_Customer_Sale" Member="Product" ThisKey="Product_ID" OtherKey="ID" Type="Product" IsForeignKey="true" />
+      <Association Name="Login_Customer_Sale" Member="Login" ThisKey="Sold_By" OtherKey="Username" Type="Login" IsForeignKey="true" />
     </Type>
   </Table>
   <Table Name="dbo.Product" Member="Products">
@@ -154,6 +146,71 @@
       <Column Name="Date" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
       <Association Name="Product_Product_Supplier" Member="Product" ThisKey="Product_ID" OtherKey="ID" Type="Product" IsForeignKey="true" />
       <Association Name="Supplier_Product_Supplier" Member="Supplier" ThisKey="Supplier_ID" OtherKey="ID" Type="Supplier" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Voucher" Member="Vouchers">
+    <Type Name="Voucher">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Date" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="Sub_Account_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Type" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="PreparedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="AuthenticatedBy" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Association Name="Voucher_Voucher_Detail" Member="Voucher_Details" ThisKey="ID" OtherKey="Voucher_ID" Type="Voucher_Detail" />
+      <Association Name="Voucher_Support" Member="Supports" ThisKey="ID" OtherKey="Voucher_ID" Type="Support" />
+      <Association Name="Sub_Account_Voucher" Member="Sub_Account" ThisKey="Sub_Account_ID" OtherKey="ID" Type="Sub_Account" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Voucher_Details" Member="Voucher_Details">
+    <Type Name="Voucher_Detail">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Voucher_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="SNO" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Sub_Account_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Amount" Type="System.Decimal" DbType="Money" CanBeNull="true" />
+      <Column Name="Narration" Type="System.String" DbType="VarChar(100)" CanBeNull="true" />
+      <Association Name="Voucher_Voucher_Detail" Member="Voucher" ThisKey="Voucher_ID" OtherKey="ID" Type="Voucher" IsForeignKey="true" />
+      <Association Name="Sub_Account_Voucher_Detail" Member="Sub_Account" ThisKey="Sub_Account_ID" OtherKey="ID" Type="Sub_Account" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Support" Member="Supports">
+    <Type Name="Support">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Voucher_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Name" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Association Name="Voucher_Support" Member="Voucher" ThisKey="Voucher_ID" OtherKey="ID" Type="Voucher" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Sub_Accounts" Member="Sub_Accounts">
+    <Type Name="Sub_Account">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Name" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="Main_Accounts_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Association Name="Sub_Account_Voucher" Member="Vouchers" ThisKey="ID" OtherKey="Sub_Account_ID" Type="Voucher" />
+      <Association Name="Sub_Account_Voucher_Detail" Member="Voucher_Details" ThisKey="ID" OtherKey="Sub_Account_ID" Type="Voucher_Detail" />
+      <Association Name="Main_Account_Sub_Account" Member="Main_Account" ThisKey="Main_Accounts_ID" OtherKey="ID" Type="Main_Account" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Main_Accounts" Member="Main_Accounts">
+    <Type Name="Main_Account">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Catagory" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Association Name="Main_Account_Sub_Account" Member="Sub_Accounts" ThisKey="ID" OtherKey="Main_Accounts_ID" Type="Sub_Account" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Login" Member="Logins">
+    <Type Name="Login">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Name" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="Username" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="Password" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="Last_Login" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="User_Type" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="Address_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Mobile" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="Manager_ID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Association Name="Login_Customer_Sale" Member="Customer_Sales" ThisKey="Username" OtherKey="Sold_By" Type="Customer_Sale" />
+      <Association Name="Address_Login" Member="Address" ThisKey="Address_ID" OtherKey="ID" Type="Address" IsForeignKey="true" />
     </Type>
   </Table>
 </Database>
