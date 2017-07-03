@@ -17,6 +17,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Collections;
 using Point_Of_Sale.BL;
+using System.Reflection;
 
 namespace Point_Of_Sale.PL
 {
@@ -25,9 +26,11 @@ namespace Point_Of_Sale.PL
     /// </summary>
     public partial class Stock : Window
     {
+        DateTime datetime;
         Product product;
         List<Product> listProduct = new List<Product>();
         List<Product_Supplier> listProduct_Supplier = new List<Product_Supplier>();
+        List<Journal_Detail> listJournal_Detail = new List<Journal_Detail>();
         int quan = 0, unitP = 0, SellingP = 0;
         double grandTotalDouble = 0;
         double totalPaymentDouble = 0;
@@ -65,6 +68,7 @@ namespace Point_Of_Sale.PL
                 MessageBox.Show(ex.Message);
             }
 
+            paymentCheckBox.IsChecked = false;
             barcodeType.IsEnabled = false;
             referenceNo.Focus();
             addDatagridColumns();
@@ -417,7 +421,6 @@ namespace Point_Of_Sale.PL
         {
             color.SelectedIndex = -1;
         }
-        private DateTime datetime;
         private bool checkErrors()
         {
             if (supplier.SelectedIndex == -1)
@@ -488,7 +491,6 @@ namespace Point_Of_Sale.PL
                 return false;
             }
 
-
             return true;
         }
         private void AddProduct_Button_Click(object sender, RoutedEventArgs e)
@@ -511,7 +513,7 @@ namespace Point_Of_Sale.PL
 
             Product pro = new Product { ID = product.ID, Type = productType.Text, Model = productModel.Text, Quantity_Available = quan, Unit_Price = unitP, Selling_Price = SellingP, Unique_Barcode = product.Unique_Barcode, Date_Updated = datetime };
 
-            Product_Supplier pro_supp = new Product_Supplier { Product_ID = product.ID, Quantity = quan, Ref_Number = referenceNo.Text, Supplier_ID = supplierID, Date = datetime };
+            Product_Supplier pro_supp = new Product_Supplier { Product_ID = product.ID, Quantity = quan, Unit_Price = pro.Unit_Price, Ref_Number = referenceNo.Text, Supplier_ID = supplierID, Date = datetime };
 
             foreach (ListViewItems obj in listView.Items)
             {
@@ -523,9 +525,20 @@ namespace Point_Of_Sale.PL
             grandTotalDouble += (int)pro.Unit_Price * quan;///calculation total amount
             grandTotal.Content = grandTotalDouble;
 
-            paymentDueDouble += (int)pro.Unit_Price * quan;
-            paymentDue.Content = paymentDueDouble;
+            ///checked means he will pay through cash, cheque or card
+            if (paymentCheckBox.IsChecked == true)
+            {
+                paymentDueDouble = grandTotalDouble - totalPaymentDouble;
+                paymentDue.Content = paymentDueDouble;
+            }
+            else
+            {
+                paymentDueDouble = 0;
+                paymentDue.Content = "0.0";
 
+                totalPaymentDouble = grandTotalDouble;
+                totalPayment.Content = totalPaymentDouble;
+            }
 
             totalQuantityInt +=  quan;///calculation total amount
             totalQuantity.Content = totalQuantityInt;
@@ -560,6 +573,10 @@ namespace Point_Of_Sale.PL
                 totalQuantityInt -= (int)p.Quantity_Available;
                 grandTotal.Content = grandTotalDouble;
                 totalQuantity.Content = totalQuantityInt;
+
+                paymentDueDouble = grandTotalDouble - totalPaymentDouble;
+                paymentDue.Content = paymentDueDouble;
+
                 listProduct.RemoveAt(dataGrid.SelectedIndex);
                 dataGrid.Items.RemoveAt(dataGrid.SelectedIndex);                
             }
@@ -592,12 +609,17 @@ namespace Point_Of_Sale.PL
                 {
                     ProductTableData.updateProduct(obj.ID, (int)obj.Quantity_Available, (int)obj.Unit_Price, (int)obj.Selling_Price, obj.Barcodes.ToArray(), obj.Unique_Barcode, DateTime.Now);
 
-                    Product_SupplierTableData.addNewProduct_Supplier(listProduct_Supplier[count++]); /// inserting new row in product supplier
+                    Product_SupplierTableData.addNewProduct_Supplier(listProduct_Supplier[count]); /// inserting new row in product supplier
 
+                    count++;
                     dataGrid.Items.RemoveAt(0);
-                    //Console.WriteLine(dataGrid.Items.Count);
+                    ///Console.WriteLine(dataGrid.Items.Count);
 
                 }
+                int amount = (int)listProduct.Sum(ee => ee.Unit_Price * ee.Quantity_Available);
+
+                Journal j = JurnalTable_Data.PostPurchaseJournal(datetime, listProduct_Supplier, 10, listJournal_Detail, 0, 1, BL.Login.ID, BL.Login.ID, amount); ///posting journal for purchase
+                DB.DBSubmitChanges();
                 listProduct.Clear();
                 listProduct_Supplier.Clear();
                 product = null;
@@ -657,9 +679,12 @@ namespace Point_Of_Sale.PL
                     foreach (DataGridItems item in it)
                     {
                         grandTotalDouble -= (int)item.Unit_Price * (int)item.Quantity_Available;
-                        totalQuantityInt -= (int)item.Quantity_Available;
                         grandTotal.Content = grandTotalDouble;
+
+                        totalQuantityInt -= (int)item.Quantity_Available;
                         totalQuantity.Content = totalQuantityInt;
+
+
                         listProduct.Remove(item);
                         dataGrid.Items.Remove(item);
                     }
@@ -674,6 +699,20 @@ namespace Point_Of_Sale.PL
                     grandTotal.Content = 0;
                     totalQuantity.Content = 0;
                     referenceNo.Focus();
+                }
+
+                if (paymentCheckBox.IsChecked == true)
+                {
+                    paymentDueDouble = grandTotalDouble - totalPaymentDouble;
+                    paymentDue.Content = paymentDueDouble;
+                }
+                else
+                {
+                    paymentDueDouble = 0.0;
+                    paymentDue.Content = "0.0";
+
+                    totalPaymentDouble = grandTotalDouble;
+                    totalPayment.Content = totalPaymentDouble;
                 }
             }
         }
@@ -704,19 +743,10 @@ namespace Point_Of_Sale.PL
             if(listView.Items.Count > 0)
                 listView.SelectAll();
         }
-
+        public static int paymentSerial = 1;
         private void addPayment_Click(object sender, RoutedEventArgs e)
         {
             double paymentAmount = 0;
-            string mode = "";
-            if (paymentMode.SelectedIndex == 0)
-                mode = "CA";
-            else if (paymentMode.SelectedIndex == 1)
-                mode = "CQ";
-            else if (paymentMode.SelectedIndex == 2)
-                mode = "D";
-            else if (paymentMode.SelectedIndex == 3)
-                mode = "C";
 
             if (payment.Text != "" && double.TryParse(payment.Text, out paymentAmount))
             {
@@ -727,9 +757,25 @@ namespace Point_Of_Sale.PL
                 paymentDue.Content = paymentDueDouble;
                 paymentDatagrid.Items.Add(new { Mode = paymentMode.Text, Amount = paymentAmount, Date = paymentDate });
 
+                Journal_Detail jd = new Journal_Detail();
+                jd.Amount = (decimal)paymentAmount;
+
+                if (paymentMode.SelectedIndex == 0)
+                    jd.Sub_Account_ID = 1;
+                else if (paymentMode.SelectedIndex == 1)
+                    jd.Sub_Account_ID = 3;
+                //else if (paymentMode.SelectedIndex == 2)
+                //    mode = "D";
+                //else if (paymentMode.SelectedIndex == 3)
+                //    mode = "C";
+
+                //jd.SNO = paymentSerial++; ///this will be serialized in DB insertion
+                jd.Narration = "";
+                listJournal_Detail.Add(jd);
+
                 payment.Text = "";
                 paymentDatagrid.SelectedIndex = paymentDatagrid.Items.Count - 1;
-                paymentDate.Text = datetime.ToString("dd/MM/yyyy");
+                //paymentDate.Text = DateTime.Now.ToString("dd/MM/yyyy");
                 paymentMode.Focus();
                 
             }
@@ -737,24 +783,33 @@ namespace Point_Of_Sale.PL
             {
                 MessageBox.Show("error in payment section");
             }
+
+            //Type t = paymentDatagrid.Items.GetItemAt(0).GetType();
+            //PropertyInfo p = t.GetProperty("Mode");
+            //object v = p.GetValue(paymentDatagrid.Items.GetItemAt(0), null);
+            //Console.WriteLine(v.ToString());
+            
         }
 
         private void Payment_Grid_PreviewKeyDown(object sender, KeyEventArgs e)
         {
             var uie = e.OriginalSource as UIElement;
             Button button = new Button();
+            DatePicker datePicker = new DatePicker();
 
             //int quan = 0;
             //int.TryParse(quantity.Text, out quan);
 
 
             try { button = e.Source as Button; } catch { }
+            try { datePicker = e.Source as DatePicker; } catch { }
 
             if (e.Key == Key.Enter)
             {
-                if (button != null && button.Name == "addPayment")
+                if (datePicker != null && datePicker.Name == "paymentDate")
                 {
-                    ///do nothing
+                    addPayment.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                    //paymentMode.Focus();
                 }
                 else
                 {
@@ -765,6 +820,15 @@ namespace Point_Of_Sale.PL
 
         }
 
+
+        private void paymentDatagrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (paymentDatagrid.Items.Count > 0)
+            {
+                removePayment.IsEnabled = true;
+                resetPayment.IsEnabled = true;
+            }
+        }
         private void removePayment_Click(object sender, RoutedEventArgs e)
         {
             if (paymentDatagrid.SelectedIndex == -1)
@@ -774,63 +838,122 @@ namespace Point_Of_Sale.PL
 
             foreach (object item in items)
             {
+                object v = item?.GetType().GetProperty("Amount")?.GetValue(item, null);
+                //Console.WriteLine(v);
+                totalPaymentDouble -= int.Parse(v.ToString());
+                paymentDueDouble += int.Parse(v.ToString());
+
+                totalPayment.Content = totalPaymentDouble;
+                paymentDue.Content = paymentDueDouble;
+
+                listJournal_Detail.RemoveAt(paymentDatagrid.Items.IndexOf(item));
                 paymentDatagrid.Items.Remove(item);
             }
 
             if (paymentDatagrid.Items.Count <= 0)
             {
                 removePayment.IsEnabled = false;
-                updatePayment.IsEnabled = false;
                 resetPayment.IsEnabled = false;
             }
         }
-
         private void Payment_DataGrid_PreviewKeyDown(object sender, KeyEventArgs e)
         {
 
             if (e.Key == Key.Delete)
             {
-                List<object> it = dataGrid.SelectedItems.Cast<object>().ToList();
-
+                List<object> it = paymentDatagrid.SelectedItems.Cast<object>().ToList();
+                
                 ///single row delete with keyboard delete button
-                if (it.Count != dataGrid.Items.Count)
+                if (it.Count != paymentDatagrid.Items.Count)
                     foreach (object item in it)
                     {
-                        //grandTotalDouble -= (int)item.Unit_Price * (int)item.Quantity_Available;
-                        //totalQuantityInt -= (int)item.Quantity_Available;
-                        //grandTotal.Content = grandTotalDouble;
-                        //totalQuantity.Content = totalQuantityInt;
-                        //listProduct.Remove(item);
-                        //dataGrid.Items.Remove(item);
+                        object v = item?.GetType().GetProperty("Amount")?.GetValue(item, null);
+
+                        totalPaymentDouble -= int.Parse(v.ToString());
+                        paymentDueDouble += int.Parse(v.ToString());
+
+                        totalPayment.Content = totalPaymentDouble;
+                        paymentDue.Content = paymentDueDouble;
+
+                        listJournal_Detail.RemoveAt(paymentDatagrid.Items.IndexOf(item));
+                        paymentDatagrid.Items.Remove(item);
                     }
                 else ///all row delete with keyboard delete button
                 {
-                    //dataGrid.Items.Clear();
-                    //listProduct.Clear();
-                    //supplier.IsEnabled = true;
-                    //addSupplier_Button.IsEnabled = true;
-                    //grandTotalDouble = 0;
-                    //totalQuantityInt = 0;
-                    //grandTotal.Content = 0;
-                    //totalQuantity.Content = 0;
-                    //referenceNo.Focus();
+                    paymentDatagrid.Items.Clear();
+                    listJournal_Detail.Clear();
+
+                    totalPaymentDouble = 0.0;
+                    paymentDueDouble = 0.0;
+
+                    totalPayment.Content = totalPaymentDouble;
+                    paymentDue.Content = paymentDueDouble;
+
+                    removePayment.IsEnabled = false;
+                    resetPayment.IsEnabled = false;
                 }
+                
             }
         }
-
-        private void paymentDatagrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (paymentDatagrid.Items.Count > 0)
-            {
-                removePayment.IsEnabled = true;
-                updatePayment.IsEnabled = true;
-                resetPayment.IsEnabled = true;
-            }
-        }
-
+        
         private void updatePayment_Click(object sender, RoutedEventArgs e)
         {
+            if (paymentDatagrid.SelectedIndex == -1)
+                return;
 
+            if(paymentDatagrid.SelectedItems.Count >1 )
+            {
+                MessageBox.Show("choose one to edit", "");
+                return;
+            }
+
+
+
+        }
+
+        private void resetPayment_Click(object sender, RoutedEventArgs e)
+        {
+            payment.Text = "";
+            totalPayment.Content = "0.0";
+            paymentDue.Content = "0.0";
+
+            paymentDueDouble = 0;
+            totalPaymentDouble = 0;
+
+            paymentDatagrid.Items.Clear();
+            listJournal_Detail.Clear();
+            removePayment.IsEnabled = false;
+            resetPayment.IsEnabled = false;
+
+        }
+
+        private void paymentCheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            double amount = 0;
+            foreach (var item in paymentDatagrid.Items)
+            {
+                object v = item?.GetType().GetProperty("Amount")?.GetValue(item, null);
+                amount += (double)v;
+            }
+
+            paymentDueDouble = grandTotalDouble - amount;
+            paymentDue.Content = paymentDueDouble;
+
+            totalPaymentDouble = amount;
+            totalPayment.Content = totalPaymentDouble;
+
+            paymentGrid.IsEnabled = true;
+        }
+
+        private void paymentCheckBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            paymentDueDouble = 0;
+            paymentDue.Content = "0.0";
+
+            totalPaymentDouble = grandTotalDouble;
+            totalPayment.Content = totalPaymentDouble;
+
+            paymentGrid.IsEnabled = false;
         }
 
         private void dropdownOpen_GotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)

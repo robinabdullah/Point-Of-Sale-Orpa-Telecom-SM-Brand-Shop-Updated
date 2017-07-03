@@ -180,5 +180,22 @@ namespace Point_Of_Sale.PL
         {
             userName.SelectAll();
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void button_Click(object sender, RoutedEventArgs e)
+        {
+            //Reports_Window.StockSummary_QuantityBased obj = new Reports_Window.StockSummary_QuantityBased();
+            //obj.Show();
+            //this.Close();
+
+            testWindow o = new testWindow();
+            o.Show();
+            this.Close();
+
+        }
     }
 }

@@ -9,14 +9,17 @@ namespace Point_Of_Sale.BL
 {
     class Login
     {
+        public static int ID { get; set; }
         public static string Username { get; set; }
         public static string LastLogin { get; set; }
         public static string UserType { get; set; }
+        public static int ManagerID { get; set; }
         public static string DefaultUserAdmin { get; set; }
         public static string DefaultUser { get; set; }
 
         public Login()
         {
+            ID = 0;
             Username = "";
             LastLogin = "";
             UserType = "";
@@ -113,6 +116,12 @@ namespace Point_Of_Sale.BL
 
             return result;
         }
+
+    }
+
+    class JournalHelper
+    {
+        public static int ID { get; set; }
 
     }
 }

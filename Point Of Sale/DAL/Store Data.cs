@@ -22,6 +22,17 @@ namespace Point_Of_Sale.DAL
             db.Dispose();
             db = new POSDataContext(ConnectionString.connectionStringLinq);
         }
+        public static void DBSubmitChanges()
+        {
+            try
+            {
+                db.SubmitChanges();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.StackTrace);
+            }
+        }
 
         public static bool TestDBConnection()
         {
@@ -51,6 +62,89 @@ namespace Point_Of_Sale.DAL
             }
 
             return result;
+        }
+    }
+    class JurnalTable_Data: DB
+    {
+
+        public static Journal PostPurchaseJournal(DateTime datetime, List<Product_Supplier> listProduct_Supplier, int sub_accountID1, List<Journal_Detail> listJournal_Details, int jurnalType, int status, int prepBy, int authBy,int amount)
+        {
+            int serial = 1;
+            try
+            {
+                Journal j = new Journal();
+                j.Date = datetime;
+                j.Sub_Account_ID = sub_accountID1;
+                j.Type = jurnalType;
+                j.Status = status;
+                j.PreparedBy = prepBy;
+                j.AuthenticatedBy = authBy;
+
+                if (listJournal_Details.Count > 0)
+                    foreach (var item in listJournal_Details)
+                    {
+                        item.SNO = serial++;
+                        item.Journal = j;
+                    }
+                else
+                {
+                    Journal_Detail jd = new Journal_Detail();
+                    jd.SNO = 1;
+                    jd.Sub_Account_ID = 1; ///cash account
+                    jd.Amount = amount;
+                    jd.Narration = "";
+                    jd.Journal = j;
+                }
+
+                foreach (var ps in listProduct_Supplier)
+                {
+                    ps.Journal = j;
+                }
+
+                //var ps = db.Product_Suppliers.OrderByDescending(ep => ep.ID).FirstOrDefault();
+                //ps.Journal = j; ///adding journal id in product supplier 
+
+                db.Journals.InsertOnSubmit(j);
+                //db.SubmitChanges();
+
+                return j;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+        public static Journal PostSalesJournal(DateTime datetime, int sub_accountID1, int sub_accountID2, int jurnalType, int status, int prepBy, int authBy, int amount)
+        {
+            try
+            {
+                Journal j = new Journal();
+                j.Date = datetime;
+                j.Sub_Account_ID = sub_accountID1;
+                j.Type = jurnalType;
+                j.Status = status;
+                j.PreparedBy = prepBy;
+                j.AuthenticatedBy = authBy;
+
+                Journal_Detail jd = new Journal_Detail();
+                jd.SNO = 1;
+                jd.Sub_Account_ID = sub_accountID2;
+                jd.Amount = amount;
+                jd.Narration = "";
+                jd.Journal = j;
+
+                var sale = db.Sales.OrderByDescending(ep => ep.Invoice_ID).FirstOrDefault();
+                sale.Journal = j;
+
+                db.Journals.InsertOnSubmit(j);
+                db.SubmitChanges();
+
+                return j;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
     }
     class ProductTableData : DB
@@ -183,8 +277,7 @@ namespace Point_Of_Sale.DAL
                         if (pro.Barcodes.Count == 0) pro.Barcodes.Add(barcode.First());
                     }
                 }
-                db.SubmitChanges();
-
+                //db.SubmitChanges();
                 return true;
             }
             catch(Exception ex)
@@ -498,7 +591,7 @@ namespace Point_Of_Sale.DAL
             try
             {
                 db.Product_Suppliers.InsertOnSubmit(pro_supplier);
-                db.SubmitChanges();
+                //db.SubmitChanges();
                 return true;
             }
             catch (Exception ex)
@@ -850,8 +943,11 @@ namespace Point_Of_Sale.DAL
             try
             {
                 var abc = db.Logins.Where(x => x.Username == username && x.Password == password).First();
+                BL.Login.ID = abc.ID;
                 BL.Login.UserType = abc.User_Type;
                 BL.Login.Username = abc.Username;
+                if (!abc.Manager_ID.Equals(null))
+                    BL.Login.ManagerID = (int)abc.Manager_ID;
                 BL.Login.LastLogin = DateTime.Now.ToString();
                 if (abc != null)
                 {

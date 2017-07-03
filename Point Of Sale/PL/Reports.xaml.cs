@@ -1500,5 +1500,10 @@ namespace Point_Of_Sale.PL
         {
             this.Close();
         }
+
+        private void button_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }

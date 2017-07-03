@@ -752,10 +752,14 @@ namespace Point_Of_Sale.PL
                 return;
             try
             {
-                Console.WriteLine(customer.Name + listCustomerSale.Count );
+                ///Console.WriteLine(customer.Name + listCustomerSale.Count );
                 //Customer_Sale cc = listCustomerSale.First();
                 //Console.WriteLine(cc.Product.Model);
                 Bill.createBill(listCustomerSale, customer,listFree_Product, datetime);
+
+                int amount = (int)listCustomerSale.Sum(eee => eee.Sold_Price * eee.Quantity);
+
+                JurnalTable_Data.PostSalesJournal(datetime, 1, 3, 0, 1, BL.Login.ID, BL.Login.ID, amount);
 
                 generateBillPdf(false); // show preview false
 
@@ -1208,13 +1212,13 @@ namespace Point_Of_Sale.PL
                         }
                         dgBilling.gift = gift;
                     }
-                    if(freeProduct.IsChecked == false && product.Unique_Barcode.StartsWith("Y"))
+                    if (freeProduct.IsChecked == false && product.Unique_Barcode.StartsWith("Y"))
                     {
                         dgBilling.Discount += dis;
                         totalTakaFloat = totalTakaFloat + ((float)cus_Sale.Sold_Price - dis);/// calculating total bill
                         dgBilling.DiscountPrice += ((float)cus_Sale.Sold_Price - dis);/// price after discount
                     }
-                    else if(freeProduct.IsChecked == false && !product.Unique_Barcode.StartsWith("Y"))
+                    else if (freeProduct.IsChecked == false && !product.Unique_Barcode.StartsWith("Y"))
                     {
                         dgBilling.Discount += dis;
                         totalTakaFloat = totalTakaFloat + ((float)cus_Sale.Sold_Price - dis) * (int)cus_Sale.Quantity;/// calculating total bill
